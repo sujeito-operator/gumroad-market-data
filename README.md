@@ -70,7 +70,7 @@ All 971 rows — category, price, currency, rating count, subscription flag, pro
 plus the two-page PDF report. Every figure above is reproducible from it, which is the point:
 check the work rather than trust it.
 
-→ **[Get the full dataset — $19](https://sujeitooperator.gumroad.com/l/bylafq)**
+→ **[Get the full dataset — $19](https://buy.polar.sh/polar_cl_eaarBIya5rZJEtm3Gu7bday41kbPn2e11RCbL4FaQOB)**
 
 ---
 
