@@ -1,0 +1,390 @@
+{
+ "n": 1511,
+ "cats": 42,
+ "zero": 500,
+ "zpct": 33,
+ "med": 29.7,
+ "p75": 70.0,
+ "p90": 185.64,
+ "subs": 70,
+ "by_category": [
+  {
+   "topic": "vrchat avatar",
+   "median": 25.99,
+   "p90": 35.0,
+   "subs": 0,
+   "rated_share": 100,
+   "med_ratings": 64,
+   "top_n": 2000
+  },
+  {
+   "topic": "unity asset",
+   "median": 25.99,
+   "p90": 37.13,
+   "subs": 0,
+   "rated_share": 97,
+   "med_ratings": 44,
+   "top_n": 4000
+  },
+  {
+   "topic": "blender addon",
+   "median": 17.82,
+   "p90": 40.83,
+   "subs": 1,
+   "rated_share": 94,
+   "med_ratings": 54,
+   "top_n": 4000
+  },
+  {
+   "topic": "procreate brushes",
+   "median": 12.995000000000001,
+   "p90": 39.0,
+   "subs": 0,
+   "rated_share": 89,
+   "med_ratings": 136,
+   "top_n": 3300
+  },
+  {
+   "topic": "video luts",
+   "median": 32.58,
+   "p90": 59.0,
+   "subs": 0,
+   "rated_share": 89,
+   "med_ratings": 7,
+   "top_n": 789
+  },
+  {
+   "topic": "ai prompts",
+   "median": 36.38,
+   "p90": 299.0,
+   "subs": 2,
+   "rated_share": 89,
+   "med_ratings": 6,
+   "top_n": 168
+  },
+  {
+   "topic": "email templates",
+   "median": 38.7,
+   "p90": 199.99,
+   "subs": 3,
+   "rated_share": 86,
+   "med_ratings": 27,
+   "top_n": 2000
+  },
+  {
+   "topic": "after effects template",
+   "median": 35.0,
+   "p90": 215.33,
+   "subs": 0,
+   "rated_share": 86,
+   "med_ratings": 24,
+   "top_n": 430
+  },
+  {
+   "topic": "social media templates",
+   "median": 25.99,
+   "p90": 99.0,
+   "subs": 2,
+   "rated_share": 86,
+   "med_ratings": 14,
+   "top_n": 370
+  },
+  {
+   "topic": "davinci resolve",
+   "median": 28.96,
+   "p90": 126.0,
+   "subs": 0,
+   "rated_share": 86,
+   "med_ratings": 7,
+   "top_n": 314
+  },
+  {
+   "topic": "course trading",
+   "median": 138.0,
+   "p90": 1131.64,
+   "subs": 7,
+   "rated_share": 78,
+   "med_ratings": 12,
+   "top_n": 496
+  },
+  {
+   "topic": "language learning",
+   "median": 52.72,
+   "p90": 380.96,
+   "subs": 1,
+   "rated_share": 78,
+   "med_ratings": 12,
+   "top_n": 496
+  },
+  {
+   "topic": "chrome extension",
+   "median": 19.494999999999997,
+   "p90": 72.03,
+   "subs": 17,
+   "rated_share": 78,
+   "med_ratings": 7,
+   "top_n": 205
+  },
+  {
+   "topic": "lightroom presets",
+   "median": 18.56,
+   "p90": 59.4,
+   "subs": 0,
+   "rated_share": 78,
+   "med_ratings": 6,
+   "top_n": 393
+  },
+  {
+   "topic": "sample pack",
+   "median": 28.96,
+   "p90": 85.8,
+   "subs": 1,
+   "rated_share": 75,
+   "med_ratings": 17,
+   "top_n": 989
+  },
+  {
+   "topic": "font bundle",
+   "median": 50.0,
+   "p90": 205.92,
+   "subs": 0,
+   "rated_share": 75,
+   "med_ratings": 11,
+   "top_n": 700
+  },
+  {
+   "topic": "coloring book",
+   "median": 14.105,
+   "p90": 400.0,
+   "subs": 0,
+   "rated_share": 75,
+   "med_ratings": 10,
+   "top_n": 348
+  },
+  {
+   "topic": "fitness program",
+   "median": 27.235,
+   "p90": 179.99,
+   "subs": 4,
+   "rated_share": 75,
+   "med_ratings": 10,
+   "top_n": 473
+  },
+  {
+   "topic": "notion template",
+   "median": 61.015,
+   "p90": 220.54,
+   "subs": 0,
+   "rated_share": 72,
+   "med_ratings": 25,
+   "top_n": 373
+  },
+  {
+   "topic": "chatgpt prompts",
+   "median": 47.0,
+   "p90": 259.15,
+   "subs": 1,
+   "rated_share": 72,
+   "med_ratings": 6,
+   "top_n": 436
+  },
+  {
+   "topic": "midjourney prompts",
+   "median": 22.465,
+   "p90": 73.51,
+   "subs": 3,
+   "rated_share": 69,
+   "med_ratings": 6,
+   "top_n": 1000
+  },
+  {
+   "topic": "python course",
+   "median": 63.86,
+   "p90": 214.5,
+   "subs": 3,
+   "rated_share": 67,
+   "med_ratings": 8,
+   "top_n": 875
+  },
+  {
+   "topic": "ebook business",
+   "median": 39.0,
+   "p90": 480.43,
+   "subs": 1,
+   "rated_share": 67,
+   "med_ratings": 5,
+   "top_n": 496
+  },
+  {
+   "topic": "meal plan",
+   "median": 27.47,
+   "p90": 74.25,
+   "subs": 1,
+   "rated_share": 67,
+   "med_ratings": 5,
+   "top_n": 373
+  },
+  {
+   "topic": "stock photos",
+   "median": 20.05,
+   "p90": 184.89,
+   "subs": 2,
+   "rated_share": 64,
+   "med_ratings": 7,
+   "top_n": 347
+  },
+  {
+   "topic": "yoga program",
+   "median": 57.18,
+   "p90": 205.69,
+   "subs": 3,
+   "rated_share": 64,
+   "med_ratings": 2,
+   "top_n": 33
+  },
+  {
+   "topic": "ui kit",
+   "median": 100.24,
+   "p90": 326.72,
+   "subs": 1,
+   "rated_share": 61,
+   "med_ratings": 26,
+   "top_n": 284
+  },
+  {
+   "topic": "game assets pixel",
+   "median": 18.56,
+   "p90": 37.13,
+   "subs": 0,
+   "rated_share": 61,
+   "med_ratings": 25,
+   "top_n": 418
+  },
+  {
+   "topic": "seo tool",
+   "median": 69.9,
+   "p90": 299.0,
+   "subs": 7,
+   "rated_share": 56,
+   "med_ratings": 12,
+   "top_n": 184
+  },
+  {
+   "topic": "budget spreadsheet",
+   "median": 23.759999999999998,
+   "p90": 148.5,
+   "subs": 3,
+   "rated_share": 56,
+   "med_ratings": 2,
+   "top_n": 145
+  },
+  {
+   "topic": "canva template",
+   "median": 18.56,
+   "p90": 480.43,
+   "subs": 0,
+   "rated_share": 53,
+   "med_ratings": 6,
+   "top_n": 1200
+  },
+  {
+   "topic": "tarot deck",
+   "median": 9.645,
+   "p90": 57.7,
+   "subs": 0,
+   "rated_share": 50,
+   "med_ratings": 1,
+   "top_n": 29
+  },
+  {
+   "topic": "sourdough recipes",
+   "median": 9.65,
+   "p90": 28.96,
+   "subs": 0,
+   "rated_share": 44,
+   "med_ratings": 4,
+   "top_n": 70
+  },
+  {
+   "topic": "planner printable",
+   "median": 22.28,
+   "p90": 299.0,
+   "subs": 1,
+   "rated_share": 44,
+   "med_ratings": 2,
+   "top_n": 16
+  },
+  {
+   "topic": "wordpress theme",
+   "median": 99.0,
+   "p90": 480.43,
+   "subs": 2,
+   "rated_share": 43,
+   "med_ratings": 4,
+   "top_n": 92
+  },
+  {
+   "topic": "sewing pattern",
+   "median": 9.62,
+   "p90": 20.05,
+   "subs": 1,
+   "rated_share": 42,
+   "med_ratings": 6,
+   "top_n": 224
+  },
+  {
+   "topic": "legal contract template",
+   "median": 57.175,
+   "p90": 210.41,
+   "subs": 0,
+   "rated_share": 42,
+   "med_ratings": 4,
+   "top_n": 106
+  },
+  {
+   "topic": "pitch deck template",
+   "median": 36.19,
+   "p90": 110.64,
+   "subs": 0,
+   "rated_share": 42,
+   "med_ratings": 4,
+   "top_n": 145
+  },
+  {
+   "topic": "knitting pattern",
+   "median": 7.055,
+   "p90": 23.02,
+   "subs": 0,
+   "rated_share": 42,
+   "med_ratings": 3,
+   "top_n": 378
+  },
+  {
+   "topic": "resume template",
+   "median": 53.955,
+   "p90": 222.02,
+   "subs": 1,
+   "rated_share": 42,
+   "med_ratings": 3,
+   "top_n": 125
+  },
+  {
+   "topic": "crochet pattern",
+   "median": 5.57,
+   "p90": 11.14,
+   "subs": 1,
+   "rated_share": 39,
+   "med_ratings": 2,
+   "top_n": 14
+  },
+  {
+   "topic": "excel dashboard",
+   "median": 74.25,
+   "p90": 259.15,
+   "subs": 1,
+   "rated_share": 39,
+   "med_ratings": 1,
+   "top_n": 125
+  }
+ ]
+}
