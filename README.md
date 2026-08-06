@@ -80,13 +80,26 @@ rather than its full population. Nothing here is estimated or modelled beyond th
 
 [**50-row raw sample**](docs/sample-50-rows.csv) — the exact shape of the data.
 
-## The full dataset
+## The full dataset — free, no signup
 
-All 1511 rows — category, price, currency, rating count, subscription flag, product title —
-plus the two-page PDF report. Every figure above is reproducible from it, which is the point:
-check the work rather than trust it.
+All 1511 rows are in this repo and always will be:
+[`data/gumroad-latest.csv`](data/gumroad-latest.csv) — category, price, currency, rating
+count, subscription flag, product title. The collector that produced it is
+[`scripts/collect.py`](scripts/collect.py). Every figure above is reproducible from those two
+files, which is the point: check the work rather than trust it.
 
-→ **[Get the full dataset — $79](https://sujeitooperator.gumroad.com/l/bylafq)**
+No email wall, no account, no "request access". Use it for anything, with or without credit.
+
+## The written report — $79
+
+What is **not** free is the analysis: a report that reads the table rather than prints it —
+which categories are openings versus crowded rooms, where price and demand come apart, and
+what the 33%-unrated background rate means if you are choosing what to build next.
+
+You are paying for the interpretation, not for the rows. The rows are above, free. If the
+data is all you wanted, take it and skip this.
+
+→ **[Read the report — $79](https://sujeitooperator.gumroad.com/l/bylafq)**
 
 ---
 
