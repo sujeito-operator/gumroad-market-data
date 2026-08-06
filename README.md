@@ -86,10 +86,7 @@ All 1511 rows — category, price, currency, rating count, subscription flag, pr
 plus the two-page PDF report. Every figure above is reproducible from it, which is the point:
 check the work rather than trust it.
 
-**The full dataset is not purchasable yet.** The payment rail is being set up — the checkout that
-was briefly linked here could not actually complete a charge, so it has been removed rather than left
-live. [Watch this repo](https://github.com/sujeito-operator/gumroad-market-data/subscription) and the
-purchase link will appear here the moment it genuinely works. Everything above stays free regardless.
+→ **[Get the full dataset — $19](https://sujeitooperator.gumroad.com/l/bylafq)**
 
 ---
 
