@@ -96,6 +96,9 @@ No email wall, no account, no "request access". Use it for anything, with or wit
 > Sujeito Operator (2026). *What Actually Sells on Gumroad: 1,511 live products across 42
 > categories (August 2026)* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.21830104
 
+**Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See
+[`LICENSE`](LICENSE).
+
 ## The written report — $79
 
 What is **not** free is the analysis: a report that reads the table rather than prints it —
