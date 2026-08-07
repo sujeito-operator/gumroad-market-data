@@ -208,5 +208,67 @@
   "unrated_median_sales": 6,
   "unrated_max_sales": 1320,
   "unrated_over_10": 24,
-  "unrated_over_100": 2
+  "unrated_over_100": 2,
+  "gross": {
+    "n": 178,
+    "spread": {
+      "n": 178,
+      "median": 285.5,
+      "q1": 40.0,
+      "q3": 3715.0,
+      "min": 0.0,
+      "max": 1216200.0,
+      "p10": 8.0,
+      "p90": 35356.0
+    },
+    "total": 4005361,
+    "mean": 22502,
+    "top1_share": 40.9,
+    "top10_share": 87.7,
+    "bottom50_share": 0.2,
+    "under_1k": 115,
+    "under_1k_pct": 64.6,
+    "bands": [
+      {
+        "label": "Under $100",
+        "n": 64,
+        "pct": 36.0,
+        "share": 0.1
+      },
+      {
+        "label": "$100 \u2013 $999",
+        "n": 51,
+        "pct": 28.7,
+        "share": 0.4
+      },
+      {
+        "label": "$1,000 \u2013 $9,999",
+        "n": 29,
+        "pct": 16.3,
+        "share": 2.7
+      },
+      {
+        "label": "$10,000 \u2013 $99,999",
+        "n": 26,
+        "pct": 14.6,
+        "share": 25.1
+      },
+      {
+        "label": "$100,000 or more",
+        "n": 8,
+        "pct": 4.5,
+        "share": 71.7
+      }
+    ],
+    "units": {
+      "n": 178,
+      "median": 18.5,
+      "q1": 5.0,
+      "q3": 165.2,
+      "min": 0,
+      "max": 45705,
+      "p10": 2.0,
+      "p90": 1549.9
+    }
+  }
 }

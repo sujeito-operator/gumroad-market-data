@@ -139,6 +139,61 @@ def spearman(a, b):
     return round(num / den, 3) if den else 0.0
 
 
+GROSS_BANDS = [(0, 99.999, "Under $100"), (100, 999.999, "$100 – $999"),
+               (1000, 9999.999, "$1,000 – $9,999"), (10000, 99999.999, "$10,000 – $99,999"),
+               (100000, float("inf"), "$100,000 or more")]
+
+
+def gross_stats(paid_disc):
+    """Observed lifetime gross for every PAID listing that publishes a unit count.
+
+    This is the only figure in the project computed from units actually sold rather than
+    inferred from ratings, so it is the closest thing here to an answer to "how much do
+    people make on Gumroad". It is `current price x lifetime units`, which is an
+    approximation in four named ways, all of which belong on any page that prints it:
+
+      1. The price is TODAY's price. Sellers discount, raise prices and run launch
+         offers, and pay-what-you-want buyers pay above the minimum. Units were not all
+         sold at the price we observed.
+      2. It is GROSS, before Gumroad's fee, refunds, chargebacks and tax.
+      3. It is LIFETIME, over a listing age we cannot see, not annual.
+      4. Disclosure is voluntary and only about a quarter of listings do it. A seller
+         with nothing to show has less reason to show it, so this subsample is biased
+         UPWARD and every figure here should be read as a ceiling on the typical
+         listing, not a middle.
+
+    Reported as a distribution with n, never as an average alone: the mean here is
+    roughly eighty times the median, and quoting it would be the exact error this page
+    exists to correct.
+    """
+    vals = sorted(r["price_usd"] * r["sales_count"] for r in paid_disc)
+    total = sum(vals)
+    n = len(vals)
+
+    def share(sl):
+        return round(100 * sum(sl) / total, 1) if total else 0.0
+
+    bands = []
+    for lo, hi, label in GROSS_BANDS:
+        g = [v for v in vals if lo <= v <= hi]
+        bands.append({"label": label, "n": len(g),
+                      "pct": round(100 * len(g) / n, 1) if n else 0.0,
+                      "share": share(g)})
+    return {
+        "n": n,
+        "spread": spread(vals),
+        "total": round(total),
+        "mean": round(total / n) if n else 0,
+        "top1_share": share(vals[-max(1, round(n * 0.01)):]),
+        "top10_share": share(vals[-max(1, round(n * 0.10)):]),
+        "bottom50_share": share(vals[:n // 2]),
+        "under_1k": sum(1 for v in vals if v < 1000),
+        "under_1k_pct": round(100 * sum(1 for v in vals if v < 1000) / n, 1) if n else 0.0,
+        "bands": bands,
+        "units": spread([r["sales_count"] for r in paid_disc]),
+    }
+
+
 def banded(pairs, bands, key):
     out = []
     for lo, hi, label in bands:
@@ -165,6 +220,10 @@ def main():
     # median above — and they are the direct refutation of "no ratings means it has
     # sold nothing", which this project published on a live page and had to correct.
     unrated = [r for r in disc if not r.get("ratings_count")]
+
+    # Paid AND disclosing, whether or not it has a rating — the ratio work above needs a
+    # rating to divide by, the gross figure does not, so this set is larger than `paid`.
+    paid_disc = [r for r in disc if r["price_usd"] > 0]
 
     paid_all = [r for r in rows if r["price_usd"] > 0]
     free_all = [r for r in rows if r["price_usd"] == 0]
@@ -231,6 +290,7 @@ def main():
         "unrated_max_sales": max((r["sales_count"] for r in unrated), default=0),
         "unrated_over_10": sum(1 for r in unrated if r["sales_count"] >= 10),
         "unrated_over_100": sum(1 for r in unrated if r["sales_count"] >= 100),
+        "gross": gross_stats(paid_disc),
     }
     OUT_JSON.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 

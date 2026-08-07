@@ -49,12 +49,22 @@ def load(name):
 def description():
     tax = load("taxonomy-summary.json")
     sales = load("sales-ratio-summary.json")
+    # The leading words are load-bearing, not decoration. GitHub's default repo search
+    # matches name and description; topics only match under an explicit `in:topics`.
+    # Measured 2026-08-08 ~00:0x UTC: `gumroad dataset` returned 9 repos and this one was
+    # NOT among them, because the description never said "dataset" or "CSV" — the two
+    # words someone looking for this actually types. See SEARCH_WORDS below.
     return (
-        f"{tax['n']:,} Gumroad products from {tax['sellers']:,} sellers across "
-        f"{tax['nodes']} categories, plus {sales['disclosing']} listings publishing a "
-        f"real unit-sales count. Measured Aug 2026, prices normalised to USD. "
-        f"Free, CC BY 4.0, DOI {CONCEPT_DOI}."
+        f"Free Gumroad dataset (CSV): {tax['n']:,} products from {tax['sellers']:,} "
+        f"sellers across {tax['nodes']} categories, plus {sales['disclosing']} listings "
+        f"publishing a real unit-sales count. Measured Aug 2026, prices normalised to "
+        f"USD. CC BY 4.0, DOI {CONCEPT_DOI}."
     )
+
+
+# Words a buyer types into GitHub search. Asserted present, lowercased, so a future
+# rewrite of description() cannot quietly drop the repo out of the queries again.
+SEARCH_WORDS = ("gumroad", "dataset", "csv", "sellers", "products")
 
 
 def api(path, token, method="GET", body=None):
@@ -88,6 +98,11 @@ def main():
     for stale in ("1,511", "1511", "42 categories"):
         if stale in desc:
             sys.exit(f"FAIL: superseded figure {stale!r} in the generated description")
+
+    missing = [w for w in SEARCH_WORDS if w not in desc.lower()]
+    if missing:
+        sys.exit(f"FAIL: description omits search words {missing} — GitHub's default "
+                 f"repo search matches description, not topics")
 
     if "--write" not in sys.argv:
         print("\n(dry run — pass --write to apply)")

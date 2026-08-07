@@ -517,11 +517,78 @@ limits are stated in the repository rather than glossed.</p>
 
 
 def g_earnings(s, a):
+    """The highest-intent query in the set, and until now it answered with the weaker sample.
+
+    This page is built on the 42-search sample and uses ratings as a demand proxy, which
+    is honest but indirect. Meanwhile the taxonomy walk's per-product crawl carries
+    observed unit counts for the listings whose sellers publish them — so `price x units`
+    is a directly observed gross figure, and it was sitting on a different page.
+
+    Worse, this page carried a promise: "the measured ratio will be published here with
+    its spread and its sample size". It was published, on SALES_GUIDE, not here. A live
+    page saying work is forthcoming when it has shipped is a small lie about the state of
+    the project, and it sat on the one URL a buyer is likeliest to land on.
+
+    THE SAMPLES ARE NOT MERGED. The gross section states its own n every time it prints a
+    figure and names the sample it comes from. Nothing in it is averaged with anything
+    above it; the two readings sit side by side and the page says why they differ.
+    """
     top = a["top_listing"]
+    d = sales_analyse()
+    g = d["gross"]
+    gsp, gu = g["spread"], g["units"]
+    gbands = "".join(f"<tr><td>{b['label']}</td><td class=n>{b['n']}</td>"
+                     f"<td class=n>{b['pct']}%</td><td class=n>{b['share']}%</td></tr>"
+                     for b in g["bands"])
     bands = "".join(f"<tr><td>{b['label']}</td><td class=n>{b['n']:,}</td>"
                     f"<td class=n>{b['rated']}%</td><td class=n>{b['med']:,}</td></tr>"
                     for b in a["bands"])
     body = f"""
+<h2>The short answer, from listings that publish their sales</h2>
+<p>Most of this page measures demand through rating counts, because that is what Gumroad
+publishes for every listing. But about a quarter of listings publish a real unit-sales count,
+and for those the question can be answered directly: units sold, multiplied by the asking
+price. That is a <em>different and smaller sample</em> from the {s['n']:,} listings the rest of
+this page uses &mdash; {g['n']} paid listings drawn from the category walk, not the search
+sample &mdash; and the two are never combined.</p>
+
+<div class=kv>
+<div><b>${gsp['median']:,.0f}</b><span>Median lifetime gross, {g['n']} paid listings publishing unit sales</span></div>
+<div><b>{gu['median']:,.0f}</b><span>Median units sold, lifetime, same listings</span></div>
+<div><b>{g['under_1k_pct']}%</b><span>Have grossed under $1,000 in their whole lifetime</span></div>
+<div><b>{g['top1_share']}%</b><span>Of all the money in this sample sits with the top 1%</span></div>
+</div>
+
+<table><thead><tr><th>Lifetime gross</th><th class=n>Listings</th><th class=n>Share of listings</th>
+<th class=n>Share of the money</th></tr></thead><tbody>{gbands}</tbody></table>
+
+<p>The median paid listing here has grossed <strong>${gsp['median']:,.0f}</strong> over its entire
+life, with a quartile range of ${gsp['q1']:,.0f} to ${gsp['q3']:,.0f}. The mean is
+<strong>${g['mean']:,.0f}</strong>, roughly {g['mean'] / gsp['median']:.0f} times the median, and
+that gap is the whole story: {g['bands'][-1]['n']} listings out of {g['n']} account for
+{g['bands'][-1]['share']}% of the ${g['total']:,.0f} this sample has taken between them, while the
+bottom half share {g['bottom50_share']}% of it. Any "average Gumroad seller earns X" figure is
+describing those {g['bands'][-1]['n']} listings and calling it the middle.</p>
+
+<p class=warn><strong>Read this as a ceiling, not a middle &mdash; four reasons.</strong>
+<strong>One:</strong> publishing a sales count is voluntary, and a seller with nothing to show has
+less reason to show it, so this subsample is selected upward. The true median across all listings
+is lower than ${gsp['median']:,.0f}, not higher. <strong>Two:</strong> the price used is today's
+price; sellers discount, raise prices and run launch offers, and pay-what-you-want buyers often pay
+above the minimum, so no listing sold every unit at the price we observed.
+<strong>Three:</strong> this is gross, before Gumroad's fee, refunds and tax &mdash; the seller
+keeps meaningfully less. <strong>Four:</strong> it is lifetime over an age we cannot see, not
+annual: a listing that has grossed ${gsp['q3']:,.0f} may have taken five years to do it.
+So treat these as the shape of the distribution, which is reliable, rather than as anyone's
+income, which they are not.</p>
+
+<p>The same subsample is what makes the rest of this page legible:
+<a href="{SALES_GUIDE}.html">one rating is worth a median of
+&times;{d['paid_ratio']['median']} units on paid listings</a>, with a quartile range from
+&times;{d['paid_ratio']['q1']} to &times;{d['paid_ratio']['q3']} &mdash; so a rating count is a
+floor on sales, and a wide one. Every rating-based figure below should be read with that spread in
+mind.</p>
+
 <h2>What can and cannot be measured</h2>
 <p>Gumroad publishes a unit-sales count only where the seller has opted into showing one, which is a
 minority of listings. For the rest it publishes rating counts, and a rating requires a purchase. So
@@ -533,10 +600,13 @@ which, and it does not tell you anyone's revenue.</p>
 publish sales counts at all. That was wrong: the product page carries a <code>sales_count</code>
 field, populated wherever the seller displays it. The figures on this site are unaffected — they
 have always been rating-derived and are labelled as such — but the stated reason for using a proxy
-was overstated. We are now collecting that field across the sample, because the listings that
-publish both a sales count and a rating count let the sales-per-rating ratio be measured instead of
-assumed. Sellers routinely repeat multipliers like &times;30 or &times;100 with nothing behind them.
-The measured ratio will be published here with its spread and its sample size.</p>
+was overstated. That field has since been collected across the category walk, and the result is the
+section at the top of this page and the <a href="{SALES_GUIDE}.html">sales-per-rating guide</a>:
+{d['disclosing']} of {d['fetched']} listings publish a unit count, {d['units_observed']:,} units in
+total. Sellers routinely repeat multipliers like &times;30 or &times;100 with nothing behind them;
+the measured figure is a median of &times;{d['paid_ratio']['median']} on paid listings with a
+quartile range of &times;{d['paid_ratio']['q1']}&ndash;&times;{d['paid_ratio']['q3']}, which is why
+this site never prints a single multiplier.</p>
 
 <h2>The distribution is the answer</h2>
 <div class=kv>
@@ -596,14 +666,16 @@ any success story you have read, and the base rate is on this page.</p>
 """
     return page(
         "how-much-do-people-make-on-gumroad",
-        f"How much do people actually make on Gumroad? {s['n']:,} listings measured",
-        f"Measured demand across {s['n']:,} live Gumroad listings: {s['zpct']}% have no ratings at "
-        f"all, and the top three listings in a category hold {a['med_conc']:.0f}% of its ratings.",
+        f"How much do people make on Gumroad? Median ${gsp['median']:,.0f} gross, measured",
+        f"{g['n']} paid Gumroad listings that publish a real unit-sales count have grossed a median "
+        f"of ${gsp['median']:,.0f} over their lifetime, and {g['under_1k_pct']}% of them under "
+        f"$1,000. Plus demand across {s['n']:,} more listings.",
         "How much do people actually make on Gumroad?",
-        f"{s['n']:,} live listings measured &middot; 5 August 2026 &middot; free, openly licensed data",
-        "Nobody can tell you Gumroad revenue from public data, and anyone who claims a precise "
-        "figure is guessing. What can be measured is the distribution of demand — and that turns "
-        "out to answer the question people are really asking.",
+        f"{g['n']} listings with published sales counts, plus {s['n']:,} measured for demand "
+        f"&middot; August 2026 &middot; free, openly licensed data",
+        "Most answers to this question are guesses, because Gumroad publishes revenue for nobody. "
+        "But it publishes a unit-sales count for the listings whose sellers switch it on, and that "
+        "is enough to measure the distribution directly rather than infer it.",
         body)
 
 
