@@ -36,6 +36,7 @@ GUIDES = [
     ("how-many-products-to-sell-on-gumroad", "How many products"),
     ("gumroad-sales-per-rating", "Sales per rating"),
     ("gumroad-multiple-categories", "Multiple categories"),
+    ("gumroad-free-product-strategy", "A free product too?"),
 ]
 
 # The one guide derived from the seller column, so the seller pages can link it by name
@@ -68,6 +69,24 @@ BREADTH_BANDS = [(1, 1, "1 category"), (2, 2, "2"), (3, 3, "3"),
 # Catalogue-size groups the breadth bands are re-cut inside. The whole point of the page
 # is that the headline association survives (or does not) once catalogue size is held
 # roughly fixed, so these are the control, not decoration.
+# The third guide off the seller column, and the only one built on `free_products`:
+# whether sellers who carry BOTH free and paid listings do better than sellers who carry
+# only one kind. Referenced by name for the same reason as SELLER_GUIDE.
+MIX_GUIDE = "gumroad-free-product-strategy"
+
+# Catalogue-size bands the free/paid comparison is re-cut inside. Mixed sellers carry
+# more products than paid-only ones (median 4 against 2), so without this control the
+# headline would just be the catalogue-size finding again. Bands start at 2 because a
+# one-product seller cannot mix at all. Coarse for the usual reason: past 10 products
+# there are 77 sellers in the whole sample.
+MIX_CONTROLS = [(2, 2, "2 products"), (3, 4, "3–4"), (5, 9, "5–9"),
+                (10, 10 ** 9, "10 or more")]
+
+# Below this a band's median is noise, and the page prints a dash instead of a number.
+# Free-only sellers fall under it in the two largest bands — that is a real limit of the
+# sample and showing it beats quietly dropping the column.
+MIX_MIN_N = 8
+
 BREADTH_CONTROLS = [
     (1, 1, "Sellers with 1 product", [(1, 1, "1 category"), (2, 2, "2"), (3, 3, "3"),
                                       (4, 10 ** 9, "4 or more")]),
@@ -300,6 +319,58 @@ def breadth_analyse():
         "rated_one_cat_pct": round(100 * sum(1 for r in rated
                                              if r["categories"] == 1) / len(rated), 1),
         "top1_one_cat_pct": round(100 * s["top1_one_category"] / s["top1_count"], 1),
+    }
+
+
+def mix_analyse():
+    """The free-product guide's figures, from the same seller table as seller_analyse().
+
+    The group definitions and the headline figures live in `normalize_sellers.mix_stats`
+    so the downloadable CSV and this page cannot drift. What is computed here is only the
+    catalogue-size control, which is a presentation cut rather than a published statistic.
+
+    WHAT THIS PAGE CANNOT SHOW, STATED BEFORE ANY NUMBER: a cross-section cannot tell you
+    whether the free product produced the demand or the demand arrived first and the free
+    product came after it. A seller who is already selling has every reason to add a lead
+    magnet. The page leads with that and does not resolve it.
+    """
+    import normalize_sellers as NS  # mix_group: one definition, used in both places
+
+    s = json.load(open(B.ROOT / "data" / "sellers-summary.json"))
+    rows = list(csv.DictReader(open(B.ROOT / "data" / "gumroad-sellers.csv")))
+    for r in rows:
+        for k in ("products", "free_products", "ratings_total", "rated_products"):
+            r[k] = int(r[k] or 0)
+        r["med_price_usd"] = float(r["med_price_usd"] or 0)
+
+    controls = []
+    for lo, hi, label in MIX_CONTROLS:
+        band = [r for r in rows if lo <= r["products"] <= hi]
+        cells = {}
+        for k in ("paid", "mixed", "free"):
+            g = [r for r in band if NS.mix_group(r) == k]
+            cells[k] = {
+                "n": len(g),
+                "med": int(st.median([r["ratings_total"] for r in g])) if g else 0,
+                "enough": len(g) >= MIX_MIN_N,
+            }
+        controls.append({"label": label, "n": len(band), **cells})
+
+    # The ratio the page quotes per band, computed once so the prose and the table agree.
+    for c in controls:
+        c["ratio"] = (round(c["mixed"]["med"] / c["paid"]["med"], 1)
+                      if c["paid"]["med"] and c["mixed"]["enough"] and c["paid"]["enough"]
+                      else None)
+
+    sr = json.load(open(B.ROOT / "data" / "sales-ratio-summary.json"))
+    return {
+        "s": s, "controls": controls,
+        # The direction of the ratings bias, read off the only sample with real units.
+        "paid_rating_rate": sr["paid_rating_rate"],
+        "free_rating_rate": sr["free_rating_rate"],
+        "solo_free_pct": round(100 * s["mix_solo_free"] / s["solo_sellers"], 1),
+        "mixed_one_free_pct": round(100 * s["mix_mixed_one_free"] / s["mix_mixed_n"], 1),
+        "mixed_share_pct": round(100 * s["mix_mixed_n"] / s["mix_multi"], 1),
     }
 
 
@@ -1516,8 +1587,153 @@ are in the <a href="https://doi.org/{B.DOI}">DOI-archived record</a>, CC BY 4.0,
         body)
 
 
+def g_mix(s, a):
+    """"Should I give away a free product alongside my paid ones?" — the third guide off
+    the seller column and the only one built on `free_products`.
+
+    The gap here is the largest on the site that survives a control, and it is also the
+    one most exposed to reverse causation, so the page is written to keep the reader from
+    over-reading it: the finding is stated, the control is shown, and the two reasons it
+    might be backwards are given the same weight as the number.
+    """
+    d = mix_analyse()
+    ss = d["s"]
+    controls = d["controls"]
+
+    def cell(c, k):
+        g = c[k]
+        if not g["enough"]:
+            return f"<td class=n>&mdash; <span class=sub>({g['n']})</span></td>"
+        return f"<td class=n>{g['med']:,} <span class=sub>({g['n']})</span></td>"
+
+    table = (
+        "<table><thead><tr><th>Catalogue size</th><th class=n>Paid only</th>"
+        "<th class=n>Free and paid</th><th class=n>Free only</th>"
+        "<th class=n>Mixed &divide; paid</th></tr></thead><tbody>"
+        + "".join(
+            f"<tr><td>{c['label']}</td>{cell(c, 'paid')}{cell(c, 'mixed')}"
+            f"{cell(c, 'free')}<td class=n>"
+            + (f"{c['ratio']}&times;" if c["ratio"] else "&mdash;")
+            + "</td></tr>" for c in controls)
+        + "</tbody></table>")
+
+    body = f"""
+<h2>The short answer</h2>
+<p>The sellers who carry both are far ahead, and it is the widest gap on this site that
+survives a control &mdash; but this data cannot tell you the free product caused it.
+Among the {ss['mix_multi']:,} sellers in this sample with more than one listing, those
+carrying <strong>both free and paid</strong> products have a median of
+<strong>{ss['mix_mixed_med_ratings']}</strong> ratings against
+<strong>{ss['mix_paid_med_ratings']}</strong> for the paid-only sellers. Read the causation
+section before you act on that.</p>
+
+<h2>Why the raw comparison is not the finding</h2>
+<p>Mixed sellers carry more products: a median of {ss['mix_mixed_med_products']} against
+{ss['mix_paid_med_products']} for paid-only sellers. Since
+<a href="{SELLER_GUIDE}.html">catalogue size tracks demand weakly but positively</a>, part of
+that headline is just bigger storefronts. The table below holds catalogue size roughly fixed;
+the number in brackets is how many sellers are in the cell.</p>
+{table}
+<p>The gap survives in every band, and it is widest where the catalogues are largest. The
+free-only column thins out fast &mdash; there are {ss['mix_free_n']} such sellers in the whole
+multi-product sample &mdash; and a dash means the cell is under {MIX_MIN_N} sellers and its
+median would be noise. It is printed rather than dropped so you can see where the sample
+runs out.</p>
+
+<h2>What the sellers who do this actually do</h2>
+<p>They add <em>one</em> free product, not a free catalogue.
+<strong>{ss['mix_mixed_one_free']} of the {ss['mix_mixed_n']} mixed sellers
+({d['mixed_one_free_pct']}%) carry exactly one</strong>. That is the lead-magnet shape, and it
+is what the comparison above is mostly measuring &mdash; not a free tier, not a freemium
+ladder, one giveaway sitting beside paid work.</p>
+<p>It is also uncommon: only {d['mixed_share_pct']}% of multi-product sellers here do it at all,
+and {ss['mix_solo_free']} of the {ss['solo_sellers']:,} single-product sellers have made their
+one product free, which is a different decision entirely and not measured on this page.</p>
+
+<h2>The two reasons this might be backwards</h2>
+<p><strong>A seller who is already selling has every reason to add a free product.</strong>
+Nothing in a snapshot records the order things happened in. If lead magnets are something
+sellers add once they have an audience worth feeding, this table would look exactly as it
+does. That possibility is not ruled out here and no cut of this data can rule it out.</p>
+<p><strong>Free listings are harder to find in a crawl.</strong> A seller's free product only
+appears in this sample if it ranked in the first three pages of a category search, so some
+sellers filed here as paid-only do carry a free product that was not seen. That error runs one
+way: it moves sellers out of the mixed group, never into it &mdash; which, if anything,
+understates how many sellers do this and pulls the two medians together.</p>
+
+<h2>The one bias that runs in the finding's favour</h2>
+<p>Demand is measured in ratings here, and free products convert to a rating at a
+<strong>lower</strong> rate per unit than paid ones &mdash; {d['free_rating_rate']}% against
+{d['paid_rating_rate']}% on the <a href="{SALES_GUIDE}.html">subsample with real unit
+sales</a>. A mixed seller's rating total therefore understates their units by more than a
+paid-only seller's does. The gap in the table is a floor on the gap in units, not a ceiling.</p>
+<p>The listing-level figures point the same way: {ss['mix_mixed_rated_pct']}% of a mixed
+seller's listings carry at least one rating, against {ss['mix_paid_rated_pct']}% for paid-only
+sellers, and only {ss['mix_mixed_zero_pct']}% of mixed sellers have no ratings anywhere at all
+against {ss['mix_paid_zero_pct']}% of paid-only sellers. Whatever is going on, the mixed
+storefronts are much less likely to be completely silent.</p>
+
+<h2>What to do with this</h2>
+<p><strong>If you have one product and it is paid, this page is not about you.</strong> The
+comparison is only defined for sellers with two or more listings. Adding a free product to get
+into the mixed group is exactly the move this data cannot endorse.</p>
+<p><strong>If you already have several paid products and none free, this is the cheapest thing
+in the sample worth trying.</strong> One giveaway, not a catalogue. It costs a listing, the
+sellers who do it are the least likely group here to be sitting at zero, and the downside is
+bounded in a way almost nothing else on this site is.</p>
+<p><strong>Do not read it as a pricing strategy.</strong>
+<a href="free-vs-paid-digital-products.html">Free versus paid at the product level</a> is a
+different question measured on a different sample, and it says free listings collect ratings
+without telling you anything about money. This page is about what sits <em>beside</em> the
+paid work, not what you charge for it.</p>
+
+<p class=cite><strong>What these figures are a lower bound on.</strong> A seller's product count
+is what this crawl found &mdash; three pages deep per category node &mdash; not their catalogue,
+so every band above is a floor. Demand is ratings, which are a floor on buyers rather than a
+sales count. The free/paid split is taken from observed listings, with the miss direction stated
+above. Nothing here is a revenue figure and no seller's earnings are known.</p>
+
+<h2>Which sample this is, and why it is not the other one</h2>
+<p>This page, <a href="{SELLER_GUIDE}.html">the catalogue-size guide</a> and
+<a href="{BREADTH_GUIDE}.html">the category-breadth guide</a> are the three derived from the
+<a href="../t/index.html">category walk</a> &mdash; {ss['products']:,} products from
+{ss['sellers']:,} sellers, {ss['ratings_total']:,} ratings &mdash; because it is the only sample
+that records who sells what. Every other guide here is measured on a separate sample of
+{s['n']:,} products drawn from {s['cats']} category searches. The two are never averaged; each
+is published as it was measured.</p>
+
+{B.buy_block("This page says a free product beside your paid work is the cheapest thing in "
+             "the sample worth trying. What the paid work should be &mdash; which category is "
+             f"an opening and which is a crowded room &mdash; is the report: all {s['cats']} "
+             "categories read together and each one classified.")}
+
+<h2>Check it yourself</h2>
+<p>Every figure above comes from
+<a href="{B.REPO}/blob/main/data/gumroad-sellers.csv">the seller CSV</a> ({ss['sellers']:,} rows,
+one per seller, with a <code>free_products</code> column) and the
+<a href="{B.REPO}/blob/main/data/gumroad-taxonomy.csv">listing table</a> it derives from, with
+<a href="{B.REPO}/blob/main/scripts/normalize_sellers.py">the derivation</a> alongside them. Both
+are in the <a href="https://doi.org/{B.DOI}">DOI-archived record</a>, CC BY 4.0, no signup.</p>
+"""
+    return page(
+        MIX_GUIDE,
+        f"Should you offer a free Gumroad product? {ss['mix_multi']:,} sellers measured",
+        f"Gumroad sellers carrying both free and paid products have a median of "
+        f"{ss['mix_mixed_med_ratings']} ratings against {ss['mix_paid_med_ratings']} for "
+        f"paid-only sellers, and the gap survives at every catalogue size. Free data, no signup.",
+        "Should you give away a free product alongside your paid ones?",
+        f"{ss['mix_multi']:,} multi-product sellers &middot; {ss['mix_mixed_n']} of them "
+        f"carrying both &middot; measured 5 August 2026",
+        f"Sellers with both free and paid listings carry a median of "
+        f"{ss['mix_mixed_med_ratings']} ratings; paid-only sellers carry "
+        f"{ss['mix_paid_med_ratings']}. The gap holds at every catalogue size, and "
+        f"{ss['mix_mixed_one_free']} of the {ss['mix_mixed_n']} sellers doing it carry exactly "
+        f"one free product. What this page cannot tell you is which came first.",
+        body)
+
+
 BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_free_vs_paid,
-            g_calculator, g_how_many, g_sales_ratio, g_breadth]
+            g_calculator, g_how_many, g_sales_ratio, g_breadth, g_mix]
 
 
 def build(s, rows, outdir):

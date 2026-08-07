@@ -73,6 +73,60 @@ def spearman(xs, ys):
     return round(num / den, 3) if den else 0.0
 
 
+def mix_group(r):
+    """Which of the three storefront shapes a seller has: all paid, all free, or both.
+
+    Defined on the seller's *observed* listings, so a seller whose free product ranks
+    below the crawl's three-page cut is misfiled as paid-only. That error runs one way
+    only — it can move a seller out of `mixed`, never into it — which matters when
+    reading the comparison and is stated on the page.
+    """
+    free, n = r["free_products"], r["products"]
+    return "paid" if free == 0 else ("free" if free == n else "mixed")
+
+
+def mix_stats(rows):
+    """Free/paid mix figures, computed here rather than in the guide so the CSV a visitor
+    downloads and the page they read cannot drift apart.
+
+    THE COMPARISON IS ONLY DEFINED FOR SELLERS WITH TWO OR MORE PRODUCTS. A one-product
+    seller cannot mix, so including them would compare "has a lead magnet" against "has
+    one product", which is a catalogue-size finding wearing a different hat. Catalogue
+    size is then held roughly fixed again inside bands, because mixed sellers carry more
+    products and that alone would produce the headline.
+
+    Demand is ratings, which are a floor on buyers. Free listings convert to a rating at
+    a LOWER rate per unit than paid ones (2.6% against 5.9% on the sales subsample), so
+    a mixed seller's ratings understate their units by more than a paid-only seller's.
+    Every gap reported below is therefore conservative.
+    """
+    multi = [r for r in rows if r["products"] >= 2]
+    groups = collections.defaultdict(list)
+    for r in multi:
+        groups[mix_group(r)].append(r)
+
+    out = {
+        "mix_multi": len(multi),
+        "mix_solo_free": sum(1 for r in rows if r["products"] == 1
+                             and r["free_products"] == 1),
+        "mix_mixed_one_free": sum(1 for r in groups["mixed"] if r["free_products"] == 1),
+    }
+    for k in ("paid", "mixed", "free"):
+        g = groups[k]
+        rat = sorted(r["ratings_total"] for r in g)
+        out[f"mix_{k}_n"] = len(g)
+        out[f"mix_{k}_med_ratings"] = int(st.median(rat)) if rat else 0
+        out[f"mix_{k}_med_products"] = int(st.median([r["products"] for r in g])) if g else 0
+        out[f"mix_{k}_zero_pct"] = (round(100 * sum(1 for x in rat if x == 0) / len(g), 1)
+                                    if g else 0.0)
+        # Share of the group's listings that carry any rating at all. Pooled on purpose:
+        # this one is a property of the listings, not of the seller.
+        prods = sum(r["products"] for r in g)
+        out[f"mix_{k}_rated_pct"] = (round(100 * sum(r["rated_products"] for r in g)
+                                           / prods, 1) if prods else 0.0)
+    return out
+
+
 def load_products():
     """Distinct products, keyed on product URL — the exact identity key the taxonomy
     sample has and the search sample never did. First observation wins; the fields that
@@ -199,6 +253,9 @@ def main():
         "source": "data/gumroad-taxonomy.csv",
         "temporal_coverage": "2026-08-05",
     }
+    # FREE/PAID MIX — additive keys only. `out` already carries the integer columns this
+    # needs, so it reads the same rows the CSV was written from rather than re-parsing.
+    summary.update(mix_stats(out))
     (ROOT / "data" / "sellers-summary.json").write_text(json.dumps(summary, indent=1) + "\n")
 
     print(f"wrote {n:,} sellers / {len(prod):,} products; "

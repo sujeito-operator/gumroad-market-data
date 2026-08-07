@@ -39,5 +39,23 @@
   0.0
  ],
  "source": "data/gumroad-taxonomy.csv",
- "temporal_coverage": "2026-08-05"
+ "temporal_coverage": "2026-08-05",
+ "mix_multi": 1282,
+ "mix_solo_free": 245,
+ "mix_mixed_one_free": 109,
+ "mix_paid_n": 1094,
+ "mix_paid_med_ratings": 5,
+ "mix_paid_med_products": 2,
+ "mix_paid_zero_pct": 25.0,
+ "mix_paid_rated_pct": 54.9,
+ "mix_mixed_n": 143,
+ "mix_mixed_med_ratings": 31,
+ "mix_mixed_med_products": 4,
+ "mix_mixed_zero_pct": 7.7,
+ "mix_mixed_rated_pct": 65.7,
+ "mix_free_n": 45,
+ "mix_free_med_ratings": 25,
+ "mix_free_med_products": 2,
+ "mix_free_zero_pct": 15.6,
+ "mix_free_rated_pct": 78.4
 }
