@@ -1,0 +1,80 @@
+# Gumroad Market Data
+
+> An open dataset of 1,344 Gumroad product listings across 42 categories, collected from public search result pages and normalised to USD. Median price $35.00; 34% of listings have no ratings at all. CC BY 4.0. DOI 10.5281/zenodo.21830103.
+
+## How to read the numbers
+
+- A row is a listing *observation*, not a product: one product can rank for several category searches. 1,509 observations cover 1,344 distinct products (165 duplicates). Per-category figures count a product in each category it ranks for; every market-wide figure counts it once.
+- Prices are converted to USD at European Central Bank reference rates for 2026-08-06. Mixing currencies without converting was a real error in an earlier version of this dataset and it moved the medians.
+- Rating counts are a floor on units sold, not a sales figure. Gumroad does publish a per-product `sales_count` on product pages where the seller opted into showing it, but it is absent on most listings, and absent does not mean zero. The sales-per-rating ratio is not published here because the sample that carries both fields is still too small to state one.
+- 72 listings are free and 458 are unrated. Both distort any average taken across the whole file; the medians above exclude neither, so quote them as medians.
+
+## Data
+
+- [Full CSV, tagged release](https://github.com/sujeito-operator/gumroad-market-data/releases/download/v1.1/gumroad-latest.csv): the exact bytes every figure here was computed from. `main` moves; this tag does not.
+- [50-row sample](https://sujeito-operator.github.io/gumroad-market-data/sample-50-rows.csv): the column shape, no download.
+- [summary.json](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/summary.json): every published figure as JSON.
+- [Repository](https://github.com/sujeito-operator/gumroad-market-data): collection and normalisation scripts.
+- [Zenodo record](https://doi.org/10.5281/zenodo.21830103): citable, versioned archive.
+
+## Guides
+
+- [What to sell](https://sujeito-operator.github.io/gumroad-market-data/g/what-to-sell-on-gumroad.html)
+- [What people make](https://sujeito-operator.github.io/gumroad-market-data/g/how-much-do-people-make-on-gumroad.html)
+- [What to charge](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-pricing.html)
+- [Is it worth it](https://sujeito-operator.github.io/gumroad-market-data/g/is-gumroad-worth-it.html)
+- [Statistics](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-statistics.html)
+- [Free vs paid](https://sujeito-operator.github.io/gumroad-market-data/g/free-vs-paid-digital-products.html)
+- [Price calculator](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-price-calculator.html)
+
+## Category pages
+
+One page per category with the price distribution, rating spread and subscription share. Largest is vrchat avatar (36 listings, median $35.00).
+
+- [vrchat avatar](https://sujeito-operator.github.io/gumroad-market-data/c/vrchat-avatar.html)
+- [unity asset](https://sujeito-operator.github.io/gumroad-market-data/c/unity-asset.html)
+- [blender addon](https://sujeito-operator.github.io/gumroad-market-data/c/blender-addon.html)
+- [procreate brushes](https://sujeito-operator.github.io/gumroad-market-data/c/procreate-brushes.html)
+- [video luts](https://sujeito-operator.github.io/gumroad-market-data/c/video-luts.html)
+- [ai prompts](https://sujeito-operator.github.io/gumroad-market-data/c/ai-prompts.html)
+- [email templates](https://sujeito-operator.github.io/gumroad-market-data/c/email-templates.html)
+- [after effects template](https://sujeito-operator.github.io/gumroad-market-data/c/after-effects-template.html)
+- [social media templates](https://sujeito-operator.github.io/gumroad-market-data/c/social-media-templates.html)
+- [davinci resolve](https://sujeito-operator.github.io/gumroad-market-data/c/davinci-resolve.html)
+- [course trading](https://sujeito-operator.github.io/gumroad-market-data/c/course-trading.html)
+- [language learning](https://sujeito-operator.github.io/gumroad-market-data/c/language-learning.html)
+- [chrome extension](https://sujeito-operator.github.io/gumroad-market-data/c/chrome-extension.html)
+- [lightroom presets](https://sujeito-operator.github.io/gumroad-market-data/c/lightroom-presets.html)
+- [sample pack](https://sujeito-operator.github.io/gumroad-market-data/c/sample-pack.html)
+- [font bundle](https://sujeito-operator.github.io/gumroad-market-data/c/font-bundle.html)
+- [coloring book](https://sujeito-operator.github.io/gumroad-market-data/c/coloring-book.html)
+- [fitness program](https://sujeito-operator.github.io/gumroad-market-data/c/fitness-program.html)
+- [notion template](https://sujeito-operator.github.io/gumroad-market-data/c/notion-template.html)
+- [chatgpt prompts](https://sujeito-operator.github.io/gumroad-market-data/c/chatgpt-prompts.html)
+- [midjourney prompts](https://sujeito-operator.github.io/gumroad-market-data/c/midjourney-prompts.html)
+- [python course](https://sujeito-operator.github.io/gumroad-market-data/c/python-course.html)
+- [ebook business](https://sujeito-operator.github.io/gumroad-market-data/c/ebook-business.html)
+- [meal plan](https://sujeito-operator.github.io/gumroad-market-data/c/meal-plan.html)
+- [ui kit](https://sujeito-operator.github.io/gumroad-market-data/c/ui-kit.html)
+- [stock photos](https://sujeito-operator.github.io/gumroad-market-data/c/stock-photos.html)
+- [yoga program](https://sujeito-operator.github.io/gumroad-market-data/c/yoga-program.html)
+- [game assets pixel](https://sujeito-operator.github.io/gumroad-market-data/c/game-assets-pixel.html)
+- [seo tool](https://sujeito-operator.github.io/gumroad-market-data/c/seo-tool.html)
+- [budget spreadsheet](https://sujeito-operator.github.io/gumroad-market-data/c/budget-spreadsheet.html)
+- [canva template](https://sujeito-operator.github.io/gumroad-market-data/c/canva-template.html)
+- [tarot deck](https://sujeito-operator.github.io/gumroad-market-data/c/tarot-deck.html)
+- [sourdough recipes](https://sujeito-operator.github.io/gumroad-market-data/c/sourdough-recipes.html)
+- [planner printable](https://sujeito-operator.github.io/gumroad-market-data/c/planner-printable.html)
+- [wordpress theme](https://sujeito-operator.github.io/gumroad-market-data/c/wordpress-theme.html)
+- [sewing pattern](https://sujeito-operator.github.io/gumroad-market-data/c/sewing-pattern.html)
+- [legal contract template](https://sujeito-operator.github.io/gumroad-market-data/c/legal-contract-template.html)
+- [pitch deck template](https://sujeito-operator.github.io/gumroad-market-data/c/pitch-deck-template.html)
+- [knitting pattern](https://sujeito-operator.github.io/gumroad-market-data/c/knitting-pattern.html)
+- [resume template](https://sujeito-operator.github.io/gumroad-market-data/c/resume-template.html)
+- [crochet pattern](https://sujeito-operator.github.io/gumroad-market-data/c/crochet-pattern.html)
+- [excel dashboard](https://sujeito-operator.github.io/gumroad-market-data/c/excel-dashboard.html)
+
+## Optional
+
+- [What Actually Sells on Gumroad](https://sujeitooperator.gumroad.com/l/bylafq): paid report, $79. The analysis, not the data — the data above is free and complete.
+- [Free CSV mirror on Gumroad](https://sujeitooperator.gumroad.com/l/gumroad-market-data): the same file, $0.

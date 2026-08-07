@@ -407,6 +407,83 @@ def sitemap(cats, guides=()):
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
 
 
+def llms_txt(s, cats, guides):
+    """/llms.txt — the one indexable surface this site did not have.
+
+    robots.txt already allows every AI crawler, but an assistant that lands here has to
+    infer the structure from HTML. llms.txt states it in the format they read: what the
+    dataset is, how it was measured, what each page answers, and where the raw file is.
+
+    Generated, like every other surface here. The figures come from summary.json, so
+    this cannot drift the way the README and the landing page did on 2026-08-07.
+
+    It carries the free/paid split and the observations-vs-products distinction on
+    purpose: those are exactly the two things a summariser gets wrong unprompted, and a
+    wrong figure repeated by an assistant is not correctable later.
+    """
+    top = cats[0]
+    lines = [
+        "# Gumroad Market Data",
+        "",
+        f"> An open dataset of {s['n']:,} Gumroad product listings across {s['cats']} "
+        f"categories, collected from public search result pages and normalised to "
+        f"{s['currency']}. Median price {money(s['med_all'])}; "
+        f"{s['zpct']}% of listings have no ratings at all. "
+        f"CC BY 4.0. DOI {DOI}.",
+        "",
+        "## How to read the numbers",
+        "",
+        f"- A row is a listing *observation*, not a product: one product can rank for "
+        f"several category searches. {s['obs']:,} observations cover {s['n']:,} distinct "
+        f"products ({s['dupes']:,} duplicates). Per-category figures count a product in "
+        f"each category it ranks for; every market-wide figure counts it once.",
+        f"- Prices are converted to {s['currency']} at European Central Bank reference "
+        f"rates for {s['fx_date']}. Mixing currencies without converting was a real "
+        f"error in an earlier version of this dataset and it moved the medians.",
+        f"- Rating counts are a floor on units sold, not a sales figure. Gumroad does "
+        f"publish a per-product `sales_count` on product pages where the seller opted "
+        f"into showing it, but it is absent on most listings, and absent does not mean "
+        f"zero. The sales-per-rating ratio is not published here because the sample that "
+        f"carries both fields is still too small to state one.",
+        f"- {s['free']} listings are free and {s['zero']:,} are unrated. Both distort any "
+        f"average taken across the whole file; the medians above exclude neither, so "
+        f"quote them as medians.",
+        "",
+        "## Data",
+        "",
+        f"- [Full CSV, tagged release]({RELEASE_CSV}): the exact bytes every figure here "
+        f"was computed from. `main` moves; this tag does not.",
+        f"- [50-row sample]({SITE}/sample-50-rows.csv): the column shape, no download.",
+        f"- [summary.json]({RAW}/data/summary.json): every published figure as JSON.",
+        f"- [Repository]({REPO}): collection and normalisation scripts.",
+        f"- [Zenodo record](https://doi.org/{DOI}): citable, versioned archive.",
+        "",
+        "## Guides",
+        "",
+    ]
+    lines += [f"- [{lab}]({SITE}/g/{g}.html)" for g, lab in guides]
+    lines += [
+        "",
+        "## Category pages",
+        "",
+        f"One page per category with the price distribution, rating spread and "
+        f"subscription share. Largest is {top['topic']} ({top['n']} listings, median "
+        f"{money(top['median'])}).",
+        "",
+    ]
+    lines += [f"- [{c['topic']}]({SITE}/c/{slug(c['topic'])}.html)" for c in cats]
+    lines += [
+        "",
+        "## Optional",
+        "",
+        f"- [What Actually Sells on Gumroad]({BUY}): paid report, {PRICE}. The analysis, "
+        f"not the data — the data above is free and complete.",
+        f"- [Free CSV mirror on Gumroad]({FREE_MIRROR}): the same file, $0.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
 # ------------------------------------------------------------------- README
 
 def build_readme(s, mix):
@@ -552,6 +629,8 @@ def main():
         (cdir / f"{slug(c['topic'])}.html").write_text(page)
     guides = build_guides.build(s, rows, ROOT / "docs" / "g")
     (ROOT / "docs" / "sitemap.xml").write_text(sitemap(s["by_category"], guides))
+    (ROOT / "docs" / "llms.txt").write_text(
+        llms_txt(s, s["by_category"], build_guides.GUIDES))
 
     # The 50-row sample is a published surface too, and it silently kept the old
     # column set through the USD normalisation. Generate it rather than hand-maintain.
