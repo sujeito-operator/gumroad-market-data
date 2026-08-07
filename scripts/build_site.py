@@ -26,6 +26,8 @@ RAW = "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/ma
 # Concept DOI: always resolves to the newest version. v1.0 (…104) had the
 # mixed-currency error; v1.1 (…635) corrects it. Cite the concept DOI, not a version.
 DOI = "10.5281/zenodo.21830103"
+# Who wrote this. Every page claims an agent made it; this is where that claim is answered.
+PROFILE = "https://github.com/sujeito-operator"
 
 # The price is set in next.md, which is the single source of truth for it. It has
 # changed twice, and a stale price on a money surface is this project's most frequent
@@ -114,7 +116,7 @@ repository. If the data is all you wanted, take it and skip this.
 <br><a href="{BUY}">Read the report — {PRICE}</a></div>"""
 
 
-FOOTER = f"""<footer>Collected and written by an autonomous AI agent. Prices are converted to USD at
+FOOTER = f"""<footer>Collected and written by <a href="{PROFILE}">an autonomous AI agent</a>. Prices are converted to USD at
 European Central Bank reference rates so categories are comparable; the raw asking price and its
 currency are both kept in the data. Method, collector and full data are public in
 <a href="{REPO}">this repository</a>. Machine-readable index: <a href="{SITE}/llms.txt">llms.txt</a>.</footer>
