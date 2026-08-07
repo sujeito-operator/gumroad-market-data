@@ -10,7 +10,7 @@
 Highest demand: vrchat avatar (100%), unity asset (97%), blender addon (94%). Lowest: resume template (42%), crochet pattern (39%), excel dashboard (39%).
 
 **Start with a question:**
-[What to sell](https://sujeito-operator.github.io/gumroad-market-data/g/what-to-sell-on-gumroad.html) &middot; [What people make](https://sujeito-operator.github.io/gumroad-market-data/g/how-much-do-people-make-on-gumroad.html) &middot; [What to charge](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-pricing.html) &middot; [Is it worth it](https://sujeito-operator.github.io/gumroad-market-data/g/is-gumroad-worth-it.html) &middot; [Statistics](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-statistics.html) &middot; [Free vs paid](https://sujeito-operator.github.io/gumroad-market-data/g/free-vs-paid-digital-products.html) &middot; [Price calculator](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-price-calculator.html) &middot; [How many products](https://sujeito-operator.github.io/gumroad-market-data/g/how-many-products-to-sell-on-gumroad.html)
+[What to sell](https://sujeito-operator.github.io/gumroad-market-data/g/what-to-sell-on-gumroad.html) &middot; [What people make](https://sujeito-operator.github.io/gumroad-market-data/g/how-much-do-people-make-on-gumroad.html) &middot; [What to charge](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-pricing.html) &middot; [Is it worth it](https://sujeito-operator.github.io/gumroad-market-data/g/is-gumroad-worth-it.html) &middot; [Statistics](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-statistics.html) &middot; [Free vs paid](https://sujeito-operator.github.io/gumroad-market-data/g/free-vs-paid-digital-products.html) &middot; [Price calculator](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-price-calculator.html) &middot; [How many products](https://sujeito-operator.github.io/gumroad-market-data/g/how-many-products-to-sell-on-gumroad.html) &middot; [Sales per rating](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-sales-per-rating.html)
 
 **Or browse a category** for its full price distribution and every listing measured:
 <https://sujeito-operator.github.io/gumroad-market-data/>
@@ -82,6 +82,40 @@ Data: [`data/gumroad-sellers.csv`](data/gumroad-sellers.csv) (one row per seller
 the two can never disagree.
 
 → [**All 4,545 sellers, ranked**](https://sujeito-operator.github.io/gumroad-market-data/s/index.html)
+
+## A fourth view: real unit sales, and what a rating is worth
+
+Every figure above uses **ratings** as a demand proxy, because a search card shows nothing
+else. A minority of sellers switch on a public unit-sales counter, and re-fetching product
+pages one at a time finds them: **202 of 780 products
+(25.9%) publish a real sales count**, covering
+311,164 units. That subset is the only place the proxy can be checked
+against the thing it proxies for.
+
+> **There is no fixed multiplier.** Across the 129 products publishing both, the
+> median paid listing sells **×17.0** its rating count — but the
+> middle half spans ×8.4 to ×35.5, and the ratio
+> **climbs with the size of the listing**: ×10.0 at
+> 1–2 ratings against
+> ×34.2 at 50 or more. Free products run higher still
+> (×38.0, n=24).
+
+- **The proxy holds up for ranking.** Rank correlation between ratings and units sold is
+  **0.851**. Ratings rank demand reliably and measure it badly.
+- **73 of the 202 products with a public sales count have zero
+  ratings** — median 6 units, the largest
+  **1,320 sales with no rating at all**. An unrated listing is weak
+  evidence of no demand, not proof of it.
+- **Two biases, stated rather than corrected.** Displaying the counter is *opt-in*, so this
+  is not a random draw; and the ratio needs at least one rating to exist, which drops the
+  zero-rating listings and makes every median here a **lower bound**.
+
+Data: [`data/gumroad-sales.csv`](data/gumroad-sales.csv) (one row per product fetched,
+including the 578 publishing no sales count, so the opt-in
+rate is re-derivable), [`data/sales-ratio-summary.json`](data/sales-ratio-summary.json),
+derived by [`scripts/normalize_products.py`](scripts/normalize_products.py).
+
+→ [**How many sales is one Gumroad rating?**](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-sales-per-rating.html)
 
 ## The demand table
 

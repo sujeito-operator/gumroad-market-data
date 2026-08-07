@@ -443,7 +443,7 @@ def sitemap(cats, guides=(), taxo=(), sellers=()):
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
 
 
-def llms_txt(s, cats, guides, ts=None):
+def llms_txt(s, cats, guides, ts=None, sr=None):
     """/llms.txt — the one indexable surface this site did not have.
 
     robots.txt already allows every AI crawler, but an assistant that lands here has to
@@ -598,6 +598,50 @@ def llms_txt(s, cats, guides, ts=None):
         ]
         lines += [f"- [{r['seller']}]({SITE}/s/{S.seller_slug(r['seller'])}.html)"
                   for r in srows if int(r["products"]) >= S.MIN_PRODUCTS]
+    if sr:
+        # Fourth unit of observation and the only one measured against REAL UNITS.
+        # Stated separately from the three rating-based views above because an
+        # assistant quoting "×17" beside a rating count from another section would be
+        # mixing a measured multiplier with a proxy it was never fitted to.
+        pr, fr = sr["paid_ratio"], sr["free_ratio"]
+        lines += [
+            "",
+            "## Fourth view: real unit sales, and what one rating is worth",
+            "",
+            f"> A minority of Gumroad sellers publish a unit-sales count on the product "
+            f"page. Re-fetching product pages individually found "
+            f"**{sr['disclosing']} of {sr['fetched']:,} ({sr['disclose_pct']}%) do**, "
+            f"covering {sr['units_observed']:,} units. This is the only sample here "
+            f"measured against actual sales rather than ratings.",
+            "",
+            f"- **There is no single multiplier, and that is the finding.** Median paid "
+            f"listing sells **x{pr['median']}** its rating count, interquartile range "
+            f"x{pr['q1']}-x{pr['q3']} over n={pr['n']}. Free listings: median "
+            f"x{fr['median']}, IQR x{fr['q1']}-x{fr['q3']}, n={fr['n']}. Quote the range, "
+            f"not the median alone.",
+            f"- **The ratio rises with listing size**: x{sr['by_ratings'][0]['median']} "
+            f"for listings with 1-2 ratings against x{sr['by_ratings'][-1]['median']} for "
+            f"50 or more. A fixed 'x30 rule' is wrong at both ends.",
+            f"- **Ratings are a valid ordinal proxy**: rank correlation with units sold is "
+            f"{sr['spearman_all']}. They rank demand reliably and measure it badly.",
+            f"- **{sr['unrated_n']} of {sr['disclosing']} products with a public sales "
+            f"count have zero ratings** (median {sr['unrated_median_sales']} units, max "
+            f"{sr['unrated_max_sales']:,}). An unrated listing is weak evidence of no "
+            f"demand, not proof of it.",
+            f"- **Bias, both directions.** The counter is opt-in, so the sample is not "
+            f"random; and the ratio requires >=1 rating, which excludes the worst "
+            f"under-rating and makes every median a **lower bound**.",
+            f"- Sample: the taxonomy walk's products re-fetched one page at a time. "
+            f"**Never merged with the {s['cats']}-search sample.**",
+            "",
+            f"- [Sales CSV]({RAW}/data/gumroad-sales.csv): one row per product fetched, "
+            f"including the {sr['fetched'] - sr['disclosing']:,} with no public sales "
+            f"count, so the opt-in rate is re-derivable.",
+            f"- [sales-ratio-summary.json]({RAW}/data/sales-ratio-summary.json): every "
+            f"figure above as JSON, with the full banded distributions.",
+            f"- [How many sales is one Gumroad rating?]({SITE}/g/gumroad-sales-per-rating.html)",
+            "",
+        ]
     lines += [
         "",
         "## Optional",
@@ -612,7 +656,7 @@ def llms_txt(s, cats, guides, ts=None):
 
 # ------------------------------------------------------------------- README
 
-def build_readme(s, mix, ts, ss):
+def build_readme(s, mix, ts, ss, sr):
     top, bottom = s["by_category"][0], s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
     tbl = "\n".join(
@@ -705,6 +749,40 @@ Data: [`data/gumroad-sellers.csv`](data/gumroad-sellers.csv) (one row per seller
 the two can never disagree.
 
 → [**All {ss['sellers']:,} sellers, ranked**]({SITE}/s/index.html)
+
+## A fourth view: real unit sales, and what a rating is worth
+
+Every figure above uses **ratings** as a demand proxy, because a search card shows nothing
+else. A minority of sellers switch on a public unit-sales counter, and re-fetching product
+pages one at a time finds them: **{sr['disclosing']} of {sr['fetched']:,} products
+({sr['disclose_pct']}%) publish a real sales count**, covering
+{sr['units_observed']:,} units. That subset is the only place the proxy can be checked
+against the thing it proxies for.
+
+> **There is no fixed multiplier.** Across the {sr['paired']} products publishing both, the
+> median paid listing sells **×{sr['paid_ratio']['median']}** its rating count — but the
+> middle half spans ×{sr['paid_ratio']['q1']} to ×{sr['paid_ratio']['q3']}, and the ratio
+> **climbs with the size of the listing**: ×{sr['by_ratings'][0]['median']} at
+> {sr['by_ratings'][0]['label'].replace(' ratings', '')} ratings against
+> ×{sr['by_ratings'][-1]['median']} at 50 or more. Free products run higher still
+> (×{sr['free_ratio']['median']}, n={sr['free_ratio']['n']}).
+
+- **The proxy holds up for ranking.** Rank correlation between ratings and units sold is
+  **{sr['spearman_all']}**. Ratings rank demand reliably and measure it badly.
+- **{sr['unrated_n']} of the {sr['disclosing']} products with a public sales count have zero
+  ratings** — median {sr['unrated_median_sales']} units, the largest
+  **{sr['unrated_max_sales']:,} sales with no rating at all**. An unrated listing is weak
+  evidence of no demand, not proof of it.
+- **Two biases, stated rather than corrected.** Displaying the counter is *opt-in*, so this
+  is not a random draw; and the ratio needs at least one rating to exist, which drops the
+  zero-rating listings and makes every median here a **lower bound**.
+
+Data: [`data/gumroad-sales.csv`](data/gumroad-sales.csv) (one row per product fetched,
+including the {sr['fetched'] - sr['disclosing']:,} publishing no sales count, so the opt-in
+rate is re-derivable), [`data/sales-ratio-summary.json`](data/sales-ratio-summary.json),
+derived by [`scripts/normalize_products.py`](scripts/normalize_products.py).
+
+→ [**How many sales is one Gumroad rating?**]({SITE}/g/gumroad-sales-per-rating.html)
 
 ## The demand table
 
@@ -823,8 +901,14 @@ def main():
     normalize_sellers.main()
     ss = json.loads((ROOT / "data" / "sellers-summary.json").read_text())
 
+    # Fourth unit of observation, same rule: a pure derivation of data/raw-products.jsonl
+    # with no network, so it is regenerated here rather than run by hand.
+    import normalize_products
+    normalize_products.main()
+    sr = json.loads((ROOT / "data" / "sales-ratio-summary.json").read_text())
+
     mix = currency_mix(rows)
-    (ROOT / "README.md").write_text(build_readme(s, mix, ts, ss))
+    (ROOT / "README.md").write_text(build_readme(s, mix, ts, ss, sr))
     (ROOT / "docs" / "index.html").write_text(build_index(s, mix, ts, ss))
     cdir = ROOT / "docs" / "c"
     cdir.mkdir(exist_ok=True)
@@ -854,7 +938,7 @@ def main():
     (ROOT / "docs" / "sitemap.xml").write_text(
         sitemap(s["by_category"], guides, taxo, sellers))
     (ROOT / "docs" / "llms.txt").write_text(
-        llms_txt(s, s["by_category"], build_guides.GUIDES, ts))
+        llms_txt(s, s["by_category"], build_guides.GUIDES, ts, sr))
 
     # The 50-row sample is a published surface too, and it silently kept the old
     # column set through the USD normalisation. Generate it rather than hand-maintain.

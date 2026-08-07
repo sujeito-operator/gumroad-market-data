@@ -34,6 +34,7 @@ GUIDES = [
     ("free-vs-paid-digital-products", "Free vs paid"),
     ("gumroad-price-calculator", "Price calculator"),
     ("how-many-products-to-sell-on-gumroad", "How many products"),
+    ("gumroad-sales-per-rating", "Sales per rating"),
 ]
 
 # The one guide derived from the seller column, so the seller pages can link it by name
@@ -41,6 +42,12 @@ GUIDES = [
 # always built (it is in GUIDES above), so a link to it can never dangle — unlike the
 # seller -> category links, which have to fall back when a node is below the page cut.
 SELLER_GUIDE = "how-many-products-to-sell-on-gumroad"
+
+# The one guide derived from the per-product crawl — the only sample in this project
+# that carries real unit sales. Referenced by name for the same reason as SELLER_GUIDE:
+# any page that wants to say "ratings are a proxy, here is what one is worth" should
+# link it without a literal slug that would rot in silence.
+SALES_GUIDE = "gumroad-sales-per-rating"
 
 # Catalogue-size bands for the seller guide. Kept coarse on purpose: the tail is thin
 # (20 sellers have 20+ products) and finer bands would report noise as structure.
@@ -211,6 +218,21 @@ def seller_analyse():
                                            for r in five_all])),
         "five_all_n": len(five_all),
     }
+
+
+def sales_analyse():
+    """The sales-per-rating guide's figures, read from the per-product crawl's summary.
+
+    THIS IS A THIRD READING OF THE SAME MARKETPLACE AND IT IS NOT MERGED WITH EITHER
+    OTHER SAMPLE. The input is the taxonomy walk's product URLs re-fetched one page at a
+    time, so it is a *subsample of the taxonomy sample* — never of the 42-search sample
+    every other guide but the seller one is built on. Nothing here is averaged with a
+    figure from `summary.json`; the page says which sample it is on, twice.
+
+    Everything is computed in `normalize_products.py` and only read here, so the CSV a
+    visitor downloads and the page they read cannot disagree.
+    """
+    return json.load(open(B.ROOT / "data" / "sales-ratio-summary.json"))
 
 
 def B_pearson(a, b):
@@ -866,9 +888,12 @@ seen across {s['cats']} category searches on 5 August 2026, with prices converte
 European Central Bank reference rates so a &pound; listing and a $ listing can be compared at all.
 Within a category the calculator counts <em>listings</em> rather than products, because a product
 that genuinely ranks for two searches competes in both.</p>
-<p>What it will not do is tell you what to charge. There is no sales figure on Gumroad to fit a
-price against — the only observable signal is whether a listing has attracted ratings, and that
-signal is weak, lagging and biased toward listings that have been up longer. What the tool can tell
+<p>What it will not do is tell you what to charge. Fitting a price against demand needs a sales
+figure, and most listings do not carry one: a minority of sellers switch on a public unit-sales
+counter, and for everyone else the only observable signal is whether a listing has attracted
+ratings — a signal that is weak, lagging and biased toward listings that have been up longer.
+<a href="{SALES_GUIDE}.html">What one rating is worth in units</a> is measured on the sellers who do
+publish both, and the answer there is a wide range rather than a multiplier. What the tool can tell
 you honestly is where your number sits among the people already competing for the same buyer, and
 whether anyone is testing that price at all.</p>
 
@@ -1058,8 +1083,206 @@ alongside them. Both are in the <a href="https://doi.org/{B.DOI}">DOI-archived r
         body)
 
 
+RATIO_JS = r"""
+var inp=document.getElementById('rat'),pf=document.getElementById('pf'),
+    out=document.getElementById('rout');
+function band(n){for(var i=0;i<BANDS.length;i++){if(n<=BANDS[i].hi)return BANDS[i];}
+  return BANDS[BANDS.length-1];}
+function fmt(x){return x>=100?Math.round(x).toLocaleString():
+  (Math.round(x*10)/10).toLocaleString();}
+function go(){
+  var n=parseFloat((inp.value||'').replace(/[^0-9.]/g,''));
+  if(!(n>0)){out.innerHTML='<p class=warn>Enter a rating count of 1 or more.</p>';return;}
+  var free=pf.value==='free',b=band(n),g=free?FREE:b;
+  var lo=Math.round(n*g.q1),mid=Math.round(n*g.median),hi=Math.round(n*g.q3);
+  out.innerHTML='<p class=big><strong>'+fmt(mid)+'</strong> units is the central estimate.</p>'+
+    '<p>Half of comparable listings fall between <strong>'+fmt(lo)+'</strong> and <strong>'+
+    fmt(hi)+'</strong> &mdash; that is the interquartile range, not a margin of error, and a '+
+    'quarter of listings sit outside it on each side.</p>'+
+    '<p class=warn>Based on '+g.n+' measured '+(free?'free':'paid')+' listings'+
+    (free?'':' with '+g.label.replace(' ratings','')+' ratings')+
+    '. It is a floor: products with sales and no ratings are excluded because the ratio '+
+    'is undefined for them, and that is where under-rating is worst.</p>';
+}
+inp.addEventListener('input',go);pf.addEventListener('change',go);go();
+"""
+
+
+def g_sales_ratio(s, a):
+    """"How many sales is one rating?" — the only page here measured against real units.
+
+    This is the page the whole project has been unable to write. Every other surface
+    uses ratings as a demand proxy and says so; this one checks the proxy against
+    observed unit sales for the minority of sellers who publish them, and publishes the
+    distribution rather than the single multiplier sellers quote at each other.
+
+    THE ONE THING NOT TO DO HERE is print a headline "×N". The spread is the finding:
+    the interquartile range is a factor of four wide, and the multiplier climbs with the
+    size of the listing, so any single number is wrong for most products it is applied to.
+    """
+    d = sales_analyse()
+    paid, free, allr = d["paid_ratio"], d["free_ratio"], d["all_ratio"]
+
+    def rrow(b, extra=""):
+        return (f"<tr><td>{b['label']}{extra}</td><td class=n>{b['n']}</td>"
+                f"<td class=n>&times;{b['median']}</td>"
+                f"<td class=n>&times;{b['q1']} &ndash; &times;{b['q3']}</td>"
+                f"<td class=n>&times;{b['min']} &ndash; &times;{b['max']}</td></tr>")
+
+    head = ("<thead><tr><th>Group</th><th class=n>Products</th><th class=n>Median</th>"
+            "<th class=n>Middle half</th><th class=n>Full range</th></tr></thead>")
+    headline = "".join([
+        rrow({**paid, "label": "Paid products"}),
+        rrow({**free, "label": "Free products"}),
+        rrow({**allr, "label": "Everything together"}),
+    ])
+    by_ratings = "".join(rrow(b) for b in d["by_ratings"])
+    by_sales = "".join(rrow(b) for b in d["by_sales"])
+    by_price = "".join(rrow(b) for b in d["by_price"])
+
+    first, last = d["by_ratings"][0], d["by_ratings"][-1]
+    lo_band, hi_band = d["by_sales"][0], d["by_sales"][-1]
+
+    # The estimator reads the ratings-cut bands, not the sales-cut ones: a visitor
+    # types a rating count, and the sales-cut bands are censored by construction
+    # (ratio <= sales when ratings >= 1), so estimating from them would be circular.
+    bands_js = json.dumps([{"hi": hi, "label": b["label"], "n": b["n"],
+                            "median": b["median"], "q1": b["q1"], "q3": b["q3"]}
+                           for b, (_, hi, _) in zip(d["by_ratings"],
+                                                    [(1, 2, ""), (3, 9, ""), (10, 49, ""),
+                                                     (50, 10 ** 9, "")])],
+                          separators=(",", ":"))
+    free_js = json.dumps({"n": free["n"], "label": "free",
+                          "median": free["median"], "q1": free["q1"], "q3": free["q3"]},
+                         separators=(",", ":"))
+
+    body = CALC_CSS + f"""
+<div class=tool>
+<div class=row>
+<div><label for=rat>Ratings shown on the listing</label>
+<input id=rat type=text inputmode=numeric value="12" autocomplete=off></div>
+<div><label for=pf>Price</label>
+<select id=pf><option value=paid>Paid</option><option value=free>Free</option></select></div>
+</div>
+<div id=rout><p class=nojs>This estimator needs JavaScript. Every band it reads is in the
+tables below and they need none.</p></div>
+</div>
+
+<h2>Why there is no single multiplier</h2>
+<p>The number sellers quote each other is &ldquo;about thirty sales per rating&rdquo;, sometimes a
+hundred. Neither has anything behind it. Here is what {d['paired']} products that publish
+<em>both</em> a unit-sales count and a rating count actually show.</p>
+<table>{head}<tbody>{headline}</tbody></table>
+<p>Read the fourth column before the third. For paid products the middle half of listings sit
+between <strong>&times;{paid['q1']}</strong> and <strong>&times;{paid['q3']}</strong> &mdash; a
+factor of {round(paid['q3'] / paid['q1'], 1)} between the 25th and 75th percentile, before counting
+the quarter of listings above and the quarter below. Applying one multiplier to one listing is
+guessing inside that range and calling it measurement.</p>
+<p>Said the way a seller experiences it: the median paid listing converts about
+<strong>{d['paid_rating_rate']}% of its buyers into raters</strong>. On free products it is
+{d['free_rating_rate']}% &mdash; people who paid nothing say less, which is the opposite of the
+common assumption that free products farm reviews.</p>
+
+<h2>The multiplier is not a constant. It rises with the size of the listing.</h2>
+<p>This is the part that makes a fixed number actively misleading, and it is visible two
+independent ways.</p>
+<p>Cut by how many <em>ratings</em> a listing has:</p>
+<table>{head}<tbody>{by_ratings}</tbody></table>
+<p>A listing with {first['label'].replace(' ratings', '')} ratings is a
+&times;{first['median']} product at the median. One with {last['label'].lower()} is
+&times;{last['median']}. The same &ldquo;&times;30 rule&rdquo; applied to both
+{'over' if first['median'] < 30 else 'under'}states the small one by roughly
+{round(30 / first['median'], 1)}&times; and understates the large one.</p>
+<p>Cut by how many <em>sales</em> a listing has, which points the same way:</p>
+<table>{head}<tbody>{by_sales}</tbody></table>
+<p class=cite><strong>Read that second table with a correction in mind.</strong> When a listing has
+at least one rating, its ratio can never exceed its sales count &mdash; a product with six sales
+cannot show a multiplier above six. So the low bands there are <strong>censored by
+construction</strong> and the rise across that table is partly mechanical. The ratings-cut table
+above it is not censored that way, and it shows the same climb from
+&times;{first['median']} to &times;{last['median']}. That is why both are printed: one of them
+would have been a nicer chart and a worse answer.</p>
+
+<h2>Price barely matters</h2>
+<table>{head}<tbody>{by_price}</tbody></table>
+<p>Across paid listings the ratio does not move with price in any direction worth acting on. Whether
+a buyer leaves a rating appears to be a function of how many buyers there are, not of what they
+paid.</p>
+
+<h2>Does the proxy this whole site runs on actually work?</h2>
+<p>Every other page here uses ratings to compare demand, and every one of them says so. This sample
+is the only place that can test it. Across the {d['disclosing']} products that publish a sales
+count, the rank correlation between ratings and units sold is
+<strong>{d['spearman_all']}</strong> ({d['spearman_paired']} among the ones with at least one
+rating).</p>
+<p>That is a strong relationship, and it licenses exactly one use: <strong>ratings rank demand
+reliably, and measure it badly</strong>. If listing A has four times the ratings of listing B, A
+almost certainly outsells B. If you want to know by how much, the tables above are the honest answer
+and they are wide.</p>
+
+<h2>An unrated listing has not necessarily sold nothing</h2>
+<p><strong>{d['unrated_n']} of the {d['disclosing']} products publishing a sales count have zero
+ratings.</strong> Their median is {d['unrated_median_sales']} units; {d['unrated_over_10']} have ten
+or more, {d['unrated_over_100']} have over a hundred, and the largest has
+<strong>{d['unrated_max_sales']:,} sales and not one rating</strong>.</p>
+<p>They are excluded from every median above, because sales divided by zero ratings is not a number.
+That exclusion is also why those medians are a <strong>lower bound</strong>: the products where
+buyers rate least are precisely the ones the ratio cannot see.</p>
+
+<h2>What this sample is</h2>
+<p>{d['fetched']:,} Gumroad product pages fetched individually from
+{d['sellers']:,} sellers. <strong>{d['disclosing']} of them &mdash; {d['disclose_pct']}% &mdash;
+publish a unit-sales count</strong> ({d['disclose_pct_paid']}% of paid listings,
+{d['disclose_pct_free']}% of free ones), covering {d['units_observed']:,} units sold in total across
+{d['disclosing_sellers']} sellers. The ratio is measured on the
+{d['paired']} of those that also have at least one rating.</p>
+<p class=cite><strong>Two biases, and which way each cuts.</strong> First, displaying a sales counter
+is <em>opt-in</em>, and a seller with nothing to show is likelier to leave it off &mdash; so this is
+not a random draw of Gumroad products, and the listings in it are larger than typical. Second, the
+ratio needs a rating to exist at all, which drops the {d['unrated_n']} zero-rating listings and
+biases the medians <em>down</em>. Neither is fixable from public data; both are stated wherever
+these figures appear.</p>
+<p class=cite><strong>Which sample, and why not the other one.</strong> These products come from the
+<a href="../t/index.html">category walk</a>, re-fetched one page at a time &mdash; the same
+population as the <a href="{SELLER_GUIDE}.html">seller analysis</a>, not the {s['cats']}-search
+sample of {s['n']:,} products every other guide here is built on. The two samples disagree on price
+by a wide margin and are published as measured. Nothing on this page is averaged with anything from
+the other one.</p>
+
+{B.buy_block("This page tells you what a rating is worth. The report tells you where the "
+             f"ratings are: all {s['cats']} categories read together and each classified as an "
+             "opening, a crowded room or thin &mdash; which is the question you hit the moment "
+             "you can convert a competitor's rating count into a plausible unit figure.")}
+
+<h2>Check it yourself</h2>
+<p>Every figure above comes from
+<a href="{B.REPO}/blob/main/data/gumroad-sales.csv">the sales CSV</a> &mdash; one row per product
+fetched, including the {d['fetched'] - d['disclosing']:,} that publish no sales count, so the
+opt-in rate is re-derivable and not just asserted &mdash; with
+<a href="{B.REPO}/blob/main/scripts/normalize_products.py">the derivation</a> and
+<a href="{B.REPO}/blob/main/scripts/collect_products.py">the collector</a> beside it. CC BY 4.0,
+no signup, <a href="https://doi.org/{B.DOI}">DOI-archived</a>.</p>
+""" + "<script>var BANDS=" + bands_js + ",FREE=" + free_js + ";" + RATIO_JS + "</script>"
+
+    return page(
+        SALES_GUIDE,
+        f"How many sales is one Gumroad rating? {d['paired']} products measured",
+        f"Sellers say ×30. Measured on {d['paired']} Gumroad products publishing both unit "
+        f"sales and ratings: paid median ×{paid['median']}, middle half ×{paid['q1']}"
+        f"–×{paid['q3']}, and it rises with listing size. Free data, no signup.",
+        "How many sales is one Gumroad rating?",
+        f"{d['disclosing']} products publishing real unit sales &middot; "
+        f"{d['units_observed']:,} units &middot; {d['paired']} usable pairs",
+        f"There is no fixed multiplier, and that is the finding. Across {d['paired']} Gumroad "
+        f"products that publish both a sales count and a rating count, the median paid listing "
+        f"sells <strong>&times;{paid['median']}</strong> its rating count &mdash; but the middle "
+        f"half spans &times;{paid['q1']} to &times;{paid['q3']}, and the ratio climbs steadily "
+        f"with the size of the listing.",
+        body)
+
+
 BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_free_vs_paid,
-            g_calculator, g_how_many]
+            g_calculator, g_how_many, g_sales_ratio]
 
 
 def build(s, rows, outdir):
