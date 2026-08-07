@@ -105,13 +105,22 @@ def main():
         paid = sorted(r["price_usd"] for r in v if r["price_usd"] > 0)
         node_counts = collections.Counter(n for r in v for n in cats[r["url"]])
         best = max(v, key=lambda r: r["n"])
+        # DO NOT use Counter.most_common here. `cats[url]` is a SET, so the counter's
+        # insertion order is set-iteration order, which varies with PYTHONHASHSEED —
+        # and most ties are exactly 1-vs-1, so ~287 of the 4,545 rows drew a different
+        # top_category on every rebuild with no change to the underlying data. That is
+        # a published column that silently disagrees with itself between downloads.
+        # Deterministic order: most listings, then the most specific node (a seller
+        # tied between "3D" and "3D > VRChat" is better described by the latter), then
+        # alphabetical so nothing is left to chance.
+        top_cat = min(node_counts, key=lambda n: (-node_counts[n], -n.count(">"), n))
         out.append({
             "seller": s,
             "profile_url": f"https://{s}.gumroad.com",
             "products": len(v),
             "observations": obs[s],
             "categories": len(node_counts),
-            "top_category": node_counts.most_common(1)[0][0],
+            "top_category": top_cat,
             "ratings_total": int(ratings[s]),
             "rated_products": sum(1 for r in v if r["n"] > 0),
             "ratings_rank": rank_of[s],
