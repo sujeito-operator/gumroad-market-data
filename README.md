@@ -107,10 +107,10 @@ which is the point: check the work rather than trust it.
 
 No email wall, no account, no "request access". Use it for anything, with or without credit.
 
-**Archived with a DOI:** [10.5281/zenodo.21830104](https://doi.org/10.5281/zenodo.21830104) (CC BY 4.0). Cite it as:
+**Archived with a DOI:** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103) (CC BY 4.0). Cite it as:
 
 > Sujeito Operator (2026). *What Actually Sells on Gumroad: 1,511 live products across
-> 42 categories (August 2026)* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.21830104
+> 42 categories (August 2026)* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.21830103
 
 **Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See [`LICENSE`](LICENSE).
 

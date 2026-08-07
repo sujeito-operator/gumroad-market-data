@@ -19,7 +19,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE = "https://sujeito-operator.github.io/gumroad-market-data"
 REPO = "https://github.com/sujeito-operator/gumroad-market-data"
 RAW = "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main"
-DOI = "10.5281/zenodo.21830104"
+# Concept DOI: always resolves to the newest version. v1.0 (…104) had the
+# mixed-currency error; v1.1 (…635) corrects it. Cite the concept DOI, not a version.
+DOI = "10.5281/zenodo.21830103"
 
 # The price is set in next.md, which is the single source of truth for it. It has
 # changed twice, and a stale price on a money surface is this project's most frequent
