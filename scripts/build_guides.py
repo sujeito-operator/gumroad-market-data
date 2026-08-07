@@ -30,6 +30,7 @@ GUIDES = [
     ("how-much-do-people-make-on-gumroad", "What people make"),
     ("gumroad-pricing", "What to charge"),
     ("is-gumroad-worth-it", "Is it worth it"),
+    ("gumroad-statistics", "Statistics"),
 ]
 
 
@@ -412,7 +413,119 @@ categories has <a href="../">its own measured page</a>. All of it is free.</p>
         body)
 
 
-BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it]
+def g_statistics(s, a):
+    """A citation target, not a persuasion page.
+
+    The other four guides argue something. This one exists to be quoted: every figure
+    numbered, each one traceable to a column of the published CSV, the limitations
+    stated in the same place as the numbers rather than buried. Stats round-ups are the
+    page shape that earns links instead of needing them, and links are the constraint
+    this whole site is up against. It is also the page a journalist can be pointed at.
+
+    Nothing here is new data — it is the same summary.json every other surface renders
+    from. That is deliberate: a stats page that disagreed with the report would be worse
+    than no stats page.
+    """
+    bands = "".join(
+        f"<tr><td>{b['label']}</td><td class=n>{b['n']}</td>"
+        f"<td class=n>{round(100 * b['n'] / sum(x['n'] for x in a['bands']))}%</td>"
+        f"<td class=n>{b['rated']}%</td></tr>" for b in a["bands"])
+
+    subs_pct = 100 * s["subs"] / s["n"]
+    body = f"""
+<h2>Sample and method</h2>
+<p>Every figure below comes from one measurement: {s['obs']:,} listing observations pulled from
+{s['cats']} Gumroad category searches, covering <strong>{s['n']:,} distinct products</strong>. The
+gap is not an error — one product can rank for several searches, and {s['dupes']} of the
+observations were the same product seen again under another query. Per-category figures count a
+product in each category it genuinely ranks for; every platform-wide figure counts it once.</p>
+<p>Prices are converted to USD at European Central Bank reference rates
+({s['fx_date']}); Gumroad localises displayed prices, so {s['mixed_cats']} of the {s['cats']}
+categories returned more than one currency and an unconverted median would be meaningless.
+The raw price and its symbol are kept in the CSV so any conversion here is checkable.</p>
+
+<h2>Market size and price</h2>
+<ol>
+<li><strong>{s['n']:,} distinct products</strong> measured across {s['cats']} categories
+({s['obs']:,} listing observations).</li>
+<li>The median paid listing asks <strong>{B.money(s['med'])}</strong>. Including free listings the
+median is {B.money(s['med_all'])}.</li>
+<li>The 75th percentile is {B.money(s['p75'])} and the 90th is
+<strong>{B.money(s['p90'])}</strong> — the top decile of prices is roughly six times the median.</li>
+<li><strong>{a['free_n']} products ({100 * a['free_n'] / s['n']:.1f}%) are free</strong> or
+pay-what-you-want at zero.</li>
+<li><strong>{s['subs']} products ({subs_pct:.1f}%) bill on a subscription.</strong> Recurring
+revenue exists on Gumroad but is plainly not what most sellers are doing.</li>
+</ol>
+
+<h2>Demand, and how unevenly it is distributed</h2>
+<ol start=6>
+<li><strong>{s['zero']} of {s['n']:,} products ({s['zpct']}%) have never received a rating.</strong></li>
+<li>The {s['n']:,} products carry <strong>{s['ratings_total']:,} ratings</strong> between them.</li>
+<li><strong>The top 1% of products hold {s['top1_share']}% of all ratings.</strong> The top 5% hold
+{s['top5_share']}%, the top 10% hold {s['top10_share']}%, and
+<strong>the bottom half hold {s['bottom50_share']}%.</strong></li>
+<li>The median product has {s['med_ratings_all']} ratings. Among products with any rating at all,
+the median is {s['med_ratings_rated']} and the 90th percentile is {a['p90_ratings']:,}.</li>
+<li>The single most-rated product carries <strong>{s['top_product_ratings']:,} ratings</strong> —
+{100 * s['top_product_ratings'] / s['ratings_total']:.1f}% of every rating in the sample, held by one
+product out of {s['n']:,}.</li>
+<li>Concentration repeats <em>inside</em> categories: at the median category, the top three
+listings hold <strong>{a['med_conc']:.0f}% of that category's ratings.</strong></li>
+</ol>
+
+<h2>Price against demand</h2>
+<p>Across the {s['cats']} categories, the correlation between a category's median price and the
+share of its listings showing any demand is <strong>r = {a['r_price_demand']:.2f}</strong> — no
+usable relationship in either direction. Undercutting does not reliably help either: the cheaper
+half of a category outsold the dearer half in only
+<strong>{a['cheaper_wins']} of {a['cheaper_tot']} categories</strong>.</p>
+<table><thead><tr><th>Asking price</th><th class=n>Products</th><th class=n>Share</th>
+<th class=n>% with any rating</th></tr></thead><tbody>{bands}</tbody></table>
+<p>The one comparison that does separate cleanly is free against paid:
+<strong>{a['free_rated']}% of the {a['free_n']} free products carry ratings, against
+{a['paid_rated']}% of paid ones.</strong> On this platform the friction is willingness to pay, not
+discovery.</p>
+
+<h2>What these numbers are not</h2>
+<p>Ratings are a <em>proxy</em> for sales, not a count of them. This page deliberately publishes no
+revenue estimate, because turning ratings into dollars requires assuming a review rate that nobody
+has measured, and every figure downstream of that assumption inherits it. Everything above is a
+ratio of observed ratings to observed ratings, or of prices to prices.</p>
+<p>It is also a snapshot of what {s['cats']} category searches surfaced in August 2026 — the visible
+front of Gumroad, not its whole catalogue. Products that rank for none of these searches are
+absent, which if anything makes the concentration figures conservative.</p>
+
+<h2>Citing this</h2>
+<p>All of it is CC BY 4.0. Quote any figure with attribution; the underlying row-level CSV is
+<a href="{B.SITE}/">free to download</a> and archived with a DOI, so a claim made here can be
+checked rather than taken on trust.</p>
+<p class=cite>Sujeito Operator (2026). <em>What Actually Sells on Gumroad: {s['n']:,} live products
+across {s['cats']} categories.</em> Zenodo. <a href="https://doi.org/{B.DOI}">https://doi.org/{B.DOI}</a></p>
+<p>Press and researchers: the full per-category breakdown is on
+<a href="../">the demand table</a>, and every category has
+<a href="../">its own measured page</a>.</p>
+
+{B.buy_block("The statistics above are the free layer. The report is the reading of them: each of "
+             f"the {s['cats']} categories classified by whether its demand is reachable or already "
+             "held, and what that changes about what you do next.")}
+"""
+    return page(
+        "gumroad-statistics",
+        f"Gumroad statistics 2026: {s['n']:,} products measured",
+        f"Original Gumroad statistics from {s['n']:,} live products across {s['cats']} categories — "
+        f"median price {B.money(s['med'])}, {s['zpct']}% with no ratings, top 1% holding "
+        f"{s['top1_share']}% of all {s['ratings_total']:,} ratings. Free, CC BY, with a DOI.",
+        "Gumroad statistics, August 2026",
+        f"{s['n']:,} products &middot; {s['cats']} categories &middot; {s['ratings_total']:,} ratings "
+        f"&middot; free and citable",
+        f"Gumroad publishes no market data. These figures come from measuring {s['n']:,} live "
+        f"products directly. Every one is free to quote with attribution, and the rows behind them "
+        f"are downloadable, so nothing here has to be taken on trust.",
+        body)
+
+
+BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics]
 
 
 def build(s, rows, outdir):

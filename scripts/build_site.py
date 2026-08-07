@@ -67,7 +67,8 @@ li{margin-bottom:8px}
 .bar{background:var(--acc);height:11px;display:inline-block;vertical-align:middle}
 nav.sib{font-size:.85rem;color:var(--mut);margin:30px 0 0}
 nav.sib a{color:var(--ink)}
-a.home{font-family:system-ui,sans-serif;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}"""
+a.home{font-family:system-ui,sans-serif;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
+p.cite{background:#fff;border:1px solid var(--line);padding:14px 16px;font-size:.88rem;margin:16px 0}"""
 
 
 def slug(topic):
