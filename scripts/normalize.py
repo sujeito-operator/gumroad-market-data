@@ -52,6 +52,8 @@ published from this file is reproducible from the file itself.
 """
 import csv, json, statistics as st, sys, pathlib
 
+from redact import scrub
+
 # ECB reference rates via frankfurter.app, fetched 2026-08-07 for value date 2026-08-06.
 FX_DATE = "2026-08-06"
 FX_SOURCE = "European Central Bank reference rates via frankfurter.app"
@@ -99,6 +101,7 @@ def distinct_products(rows):
 def load():
     rows = list(csv.DictReader(CSV.open()))
     for r in rows:
+        r["t"] = scrub(r["t"])
         r["price"] = float(r["price"])
         r["n"] = float(r["n"] or 0)
         r["recurring"] = r["recurring"] == "True"

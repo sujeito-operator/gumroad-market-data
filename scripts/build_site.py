@@ -540,6 +540,13 @@ def llms_txt(s, cats, guides, ts=None):
             f"{ts['seller_top10_share']}%. {ts['sellers_one_product']:,} of the "
             f"{ts['sellers']:,} sellers have exactly one product in the sample.",
             "",
+            f"- Product titles are published verbatim with **one exception**: a few "
+            f"sellers put an email address in their own title, and those are replaced "
+            f"with `[email removed]` by "
+            f"[`scripts/redact.py`]({REPO}/blob/main/scripts/redact.py). The addresses "
+            f"are public on Gumroad, but a downloadable CSV is a mailing list and a "
+            f"search page is not. No other field is altered and no count changes.",
+            "",
             f"- [Taxonomy CSV]({RAW}/data/gumroad-taxonomy.csv): "
             f"{ts['obs']:,} rows with category, product URL, seller, price, currency, "
             f"USD price, rating count, star rating, subscription flag, title.",
@@ -661,6 +668,12 @@ crawled up to three pages deep, which caps it at {ts['cap']} listings, and
 count is therefore a **crawl depth, not a category size** — never quote it as the number
 of products in a category. {ts['nodes_empty']} nodes returned nothing and are excluded
 rather than reported as zeroes.
+
+**One field is not verbatim.** A few sellers put an email address in their own product
+title, so it arrived in the crawled card text. Those are replaced with `[email removed]`
+by [`scripts/redact.py`]({REPO}/blob/main/scripts/redact.py) before anything is published
+— the addresses are public on a Gumroad search page, but a downloadable CSV is a mailing
+list. No other field is altered, and no count in any summary changes.
 
 → [**All {ts['nodes']} categories, ranked**]({SITE}/t/index.html)
 

@@ -54,6 +54,8 @@ USAGE
 """
 import collections, csv, json, pathlib, statistics as st, sys
 
+from redact import scrub
+
 # ECB reference rates via frankfurter, value date 2026-08-06 — the SAME date and source
 # as normalize.py, so the two samples' price figures are on one scale. JPY is new here:
 # the first sample contained no yen listing and normalize.py would have exited on one.
@@ -99,7 +101,7 @@ def load():
                 "price_usd": round(r["price"] * TO_USD[r["cur"]], 2),
                 "nrat": r.get("nrat") or "", "n": int(r.get("n") or 0),
                 "stars": r.get("stars") if r.get("stars") is not None else "",
-                "recurring": bool(r.get("recurring")), "t": r["t"].strip(),
+                "recurring": bool(r.get("recurring")), "t": scrub(r["t"].strip()),
             })
     return obs, empty
 

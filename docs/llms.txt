@@ -86,6 +86,8 @@ Read these two samples as two frames on one marketplace, not as one superseding 
 - 98 of the 359 crawled nodes returned no listings and are excluded rather than reported as zeroes.
 - Seller concentration, measurable here for the first time: the top 1% of sellers hold 52.5% of all ratings and the top 10% hold 89.2%. 3,263 of the 4,545 sellers have exactly one product in the sample.
 
+- Product titles are published verbatim with **one exception**: a few sellers put an email address in their own title, and those are replaced with `[email removed]` by [`scripts/redact.py`](https://github.com/sujeito-operator/gumroad-market-data/blob/main/scripts/redact.py). The addresses are public on Gumroad, but a downloadable CSV is a mailing list and a search page is not. No other field is altered and no count changes.
+
 - [Taxonomy CSV](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-taxonomy.csv): 15,077 rows with category, product URL, seller, price, currency, USD price, rating count, star rating, subscription flag, title.
 - [taxonomy-summary.json](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/taxonomy-summary.json): every per-category figure as JSON.
 - [All 261 categories, ranked](https://sujeito-operator.github.io/gumroad-market-data/t/index.html)

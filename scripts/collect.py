@@ -11,6 +11,8 @@ other, never to estimate revenue.
 import json, re, csv, sys, urllib.parse, statistics as st
 from playwright.sync_api import sync_playwright
 
+from redact import scrub
+
 UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
 
@@ -78,7 +80,9 @@ if __name__ == "__main__":
     with open("data/gumroad-latest.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=["q","cur","price","nrat","n","recurring","t"])
         w.writeheader()
-        for r in rows: w.writerow(r)
+        # gumroad-latest.csv is a PUBLISHED file (it is attached to the free
+        # Gumroad product), so titles are scrubbed on the way out. See redact.py.
+        for r in rows: w.writerow({**r, "t": scrub(r["t"])})
     stats = summarise(rows)
     prices = sorted(r["price"] for r in rows if r["price"] > 0)
     zero = sum(1 for r in rows if r["n"] == 0)

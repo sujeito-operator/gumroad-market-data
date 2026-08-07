@@ -46,6 +46,12 @@ count is therefore a **crawl depth, not a category size** — never quote it as 
 of products in a category. 98 nodes returned nothing and are excluded
 rather than reported as zeroes.
 
+**One field is not verbatim.** A few sellers put an email address in their own product
+title, so it arrived in the crawled card text. Those are replaced with `[email removed]`
+by [`scripts/redact.py`](https://github.com/sujeito-operator/gumroad-market-data/blob/main/scripts/redact.py) before anything is published
+— the addresses are public on a Gumroad search page, but a downloadable CSV is a mailing
+list. No other field is altered, and no count in any summary changes.
+
 → [**All 261 categories, ranked**](https://sujeito-operator.github.io/gumroad-market-data/t/index.html)
 
 ## A third view: who is selling
