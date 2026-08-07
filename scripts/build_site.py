@@ -13,7 +13,7 @@ is how the drift starts; edit this file instead and re-run:
 
     python3 scripts/normalize.py && python3 scripts/build_site.py
 """
-import collections, csv, json, pathlib, re
+import collections, csv, json, pathlib, re, urllib.parse
 
 import build_guides
 
@@ -67,6 +67,11 @@ li{margin-bottom:8px}
 .bar{background:var(--acc);height:11px;display:inline-block;vertical-align:middle}
 nav.sib{font-size:.85rem;color:var(--mut);margin:30px 0 0}
 nav.sib a{color:var(--ink)}
+ul.next{list-style:none;padding:0;margin:0}
+ul.next li{border-top:1px solid var(--line);padding:14px 0}
+ul.next li:last-child{border-bottom:1px solid var(--line)}
+ul.next b{display:block;font-size:1.02rem}
+ul.next span{color:var(--mut);font-size:.9rem}
 a.home{font-family:system-ui,sans-serif;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
 p.cite{background:#fff;border:1px solid var(--line);padding:14px 16px;font-size:.88rem;margin:16px 0}"""
 
@@ -303,6 +308,15 @@ def build_category(c, rows, s, siblings):
     }, indent=2)
     extra = f'<script type="application/ld+json">\n{ld}\n</script>\n'
 
+    # 10 of the 42 categories contain no free listing at all and 8 contain exactly one,
+    # so a single f-string here is wrong or ungrammatical on 18 pages. Branch on the count.
+    if c["free"] == 0:
+        free_line = f"Nothing in {esc(topic)} is given away — every one of these {c['n']} listings asks for money. "
+    elif c["free"] == 1:
+        free_line = f"One of the {c['n']} listings here is priced at zero. "
+    else:
+        free_line = f"{c['free']} of the {c['n']} listings here are priced at zero. "
+
     avg = 100 - s["zpct"]
     if c["rated_share"] >= 95:
         verdict = ("Effectively every listing sampled here carries ratings, which is as strong a "
@@ -355,12 +369,32 @@ sales figure — use it to rank listings against each other, not to estimate rev
 <a href="{REPO}/blob/main/scripts/collect.py">the collector</a>, and a
 <a href="https://doi.org/{DOI}">DOI-archived copy</a> under CC BY 4.0. No signup, no email wall.</p>
 
+<h2>Next</h2>
+<ul class=next>
+<li><b><a href="../g/gumroad-price-calculator.html#{urllib.parse.quote(topic)}">Price
+a {esc(topic)} against these {c['n']} listings</a></b>
+<span>Type your number and the calculator opens on this category: which percentile it lands in,
+how many listings sit within &plusmn;30% of it, and whether anyone is testing that price at
+all.</span></li>
+<li><b><a href="../g/gumroad-pricing.html">What to charge on Gumroad</a></b>
+<span>The same question across all {s['cats']} categories, and why price and demand turn out to be
+close to unrelated — the reason this page's median is a starting point rather than an answer.</span></li>
+<li><b><a href="../g/free-vs-paid-digital-products.html">Free versus paid</a></b>
+<span>{free_line}Market-wide, free listings are far better at attracting ratings than paid ones, and
+the page explains why that is not the endorsement of free it looks like.</span></li>
+<li><b><a href="../g/what-to-sell-on-gumroad.html">What to sell</a></b>
+<span>Which of the {s['cats']} categories show demand and which are mostly unsold inventory, ranked
+by the same rated-share figure quoted at the top of this page.</span></li>
+</ul>
+
 {buy_block(f"What is <em>not</em> free is the analysis: a report that reads all {s['cats']} categories "
            f"together — which are openings versus crowded rooms, where price and demand come apart, "
            f"and what the {s['zpct']}%-unrated background rate means if you are choosing what to "
            f"build next.")}
 
 <nav class=sib>More categories: {sib} &middot; <a href="../">all {s['cats']}</a></nav>
+<nav class=sib>Guides: {" &middot; ".join(f'<a href="../g/{g}.html">{lab}</a>'
+    for g, lab in build_guides.GUIDES)}</nav>
 """ + FOOTER
 
 
