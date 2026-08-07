@@ -32,6 +32,7 @@ GUIDES = [
     ("is-gumroad-worth-it", "Is it worth it"),
     ("gumroad-statistics", "Statistics"),
     ("free-vs-paid-digital-products", "Free vs paid"),
+    ("gumroad-price-calculator", "Price calculator"),
 ]
 
 
@@ -97,8 +98,19 @@ def analyse(s, rows):
             free_beats += st.median(f) > st.median(p)
     all_ratings = sum(r["n"] for r in prod) or 1
 
+    # Payload for the client-side price calculator. One [price_usd, ratings] pair per
+    # listing OBSERVATION, keyed by category — the per-category denominator, the same
+    # one every other per-category figure on this site uses. A product ranking in two
+    # categories belongs in both, which is what a visitor comparing *within* a category
+    # wants. Never aggregate this dict across categories: that would count the popular
+    # products twice and is exactly the bug that made every market-wide figure wrong
+    # until 2026-08-07.
+    calc = {c["topic"]: [[round(r["price_usd"], 2), int(r["n"])]
+                         for r in rows if r["q"] == c["topic"]]
+            for c in s["by_category"]}
+
     return {
-        "cats": cats, "bands": bands,
+        "cats": cats, "bands": bands, "calc": calc,
         "avg_rated": 100 - s["zpct"],
         "med_conc": st.median([c["top3"] for c in cats]),
         "r_price_demand": B_pearson([c["median"] for c in cats],
@@ -632,7 +644,183 @@ collector source alongside it. Filter for <code>price_usd == 0</code> and re-der
         body)
 
 
-BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_free_vs_paid]
+CALC_CSS = """<style>
+.tool{border:1px solid var(--acc);background:#fff;padding:1rem 1.1rem;margin:1.4rem 0}
+.tool label{display:block;font-size:.85rem;color:var(--mut);margin:.6rem 0 .2rem}
+.tool select,.tool input{font:inherit;padding:.4rem .5rem;border:1px solid var(--line);
+  background:#fff;color:var(--ink);width:100%;max-width:26rem;box-sizing:border-box}
+.tool .row{display:flex;gap:1rem;flex-wrap:wrap}
+.tool .row>div{flex:1 1 12rem}
+#out{margin-top:1rem;border-top:1px solid var(--line);padding-top:.8rem}
+#out p{margin:.45rem 0}
+#out .big{font-size:1.15rem}
+#out .warn{color:var(--mut);font-size:.85rem}
+.nojs{color:var(--mut);font-size:.85rem}
+</style>"""
+
+CALC_JS = r"""
+var sel=document.getElementById('cat'),inp=document.getElementById('price'),
+    out=document.getElementById('out');
+function med(a){if(!a.length)return null;var b=a.slice().sort(function(x,y){return x-y;});
+  var m=b.length>>1;return b.length%2?b[m]:(b[m-1]+b[m])/2;}
+/* normalize.py publishes med_ratings as int(median), i.e. TRUNCATED. toFixed(0) rounds,
+   which reported 65 where the category page said 64 for the same group. Match the
+   published definition rather than the prettier one. */
+function medi(a){var v=med(a);return v===null?null:Math.floor(v);}
+/* And the category MEDIAN PRICE has a third definition again: normalize.py's pct() is
+   nearest-rank with no interpolation, rounded to 2dp. A textbook interpolated median
+   returns $76.38 for notion template where the category page, the static table below
+   and the CSV all say $97.00 — the same quantity, two surfaces, two answers. Match the
+   published one. Checked against all 42 categories, not one. */
+function pctl(sorted,q){if(!sorted.length)return 0;
+  return Math.round(sorted[Math.min(Math.floor(q*sorted.length),sorted.length-1)]*100)/100;}
+function money(v){return '$'+v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function pl(n,one,many){return n+' '+(n===1?one:many);}
+/* "3th percentile" shipped once in a draft. Ordinals are not a suffix rule. */
+function ord(n){var s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+function run(){
+  var t=sel.value,g=CALC[t];if(!g){return;}
+  var raw=inp.value.replace(/[^0-9.]/g,''),p=parseFloat(raw);
+  var paid=g.filter(function(r){return r[0]>0;}),prices=paid.map(function(r){return r[0];});
+  var sortedP=prices.slice().sort(function(x,y){return x-y;});
+  var free=g.length-paid.length,cmed=pctl(sortedP,0.5);
+  if(isNaN(p)||p<0){out.innerHTML='<p class=warn>Enter a price to see where it sits.</p>';return;}
+  var h='';
+  if(p===0){
+    h+='<p class=big>Free. '+pl(free,'listing is','listings are')+' free in this category, out of '
+      +g.length+'.</p>';
+    h+='<p>Free listings are measurably better at attracting ratings than paid ones across this '
+      +'whole sample &mdash; <a href="free-vs-paid-digital-products.html">that comparison is here</a>, '
+      +'including why it is not the endorsement of free it looks like.</p>';
+    out.innerHTML=h;return;
+  }
+  var below=prices.filter(function(x){return x<p;}).length;
+  var pct=Math.round(100*below/prices.length);
+  h+='<p class=big>'+money(p)+' sits at about the <strong>'+ord(pct)+' percentile</strong> of paid '
+    +'listings in '+t+'.</p>';
+  h+='<p>'+below+' of '+prices.length+' paid listings ask less; '+(prices.length-below)
+    +' ask more. '+(p===cmed?'That is exactly the category median.'
+      :'The category median is '+money(cmed)+', so you are '
+       +(p>cmed?Math.round(100*(p/cmed-1))+'% above it':Math.round(100*(1-p/cmed))+'% below it')
+       +'.')+'</p>';
+  var lo=p*0.7,hi=p*1.3;
+  var band=paid.filter(function(r){return r[0]>=lo&&r[0]<=hi;});
+  if(band.length>=8){
+    /* Both figures use the PUBLISHED definitions: rated share over every listing in the
+       group, median ratings over the rated ones only. Taking the median over all
+       listings instead gives a different number from the category pages' med_ratings,
+       and two surfaces disagreeing about the same quantity is this project's most
+       frequent defect. */
+    var bandRated=band.filter(function(r){return r[1]>0;}).map(function(r){return r[1];});
+    var catRated=g.filter(function(r){return r[1]>0;}).map(function(r){return r[1];});
+    h+='<p>'+band.length+' listings here are priced within &plusmn;30% of that ('+money(lo)+'&ndash;'
+      +money(hi)+'). '+Math.round(100*bandRated.length/band.length)+'% carry at least one rating'
+      +(bandRated.length?', and among those the median has '+medi(bandRated):'')
+      +'. Across the whole category it is '+Math.round(100*catRated.length/g.length)+'%'
+      +(catRated.length?' and '+medi(catRated):'')+'.</p>';
+  }else{
+    h+='<p class=warn>Only '+pl(band.length,'listing sits','listings sit')+' within &plusmn;30% of '
+      +'that price in this category &mdash; too few to say anything about demand at it. That thinness '
+      +'is itself information: nobody is testing this price point here.</p>';
+  }
+  h+='<p class=warn>These are <em>asking</em> prices on live listings, and ratings are a proxy for '
+    +'sales, not a count of them. A price nobody else charges is not automatically wrong; it is '
+    +'untested.</p>';
+  out.innerHTML=h;
+}
+sel.addEventListener('change',run);inp.addEventListener('input',run);
+if(location.hash){var w=decodeURIComponent(location.hash.slice(1));
+  for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===w){sel.selectedIndex=i;}}}
+run();
+"""
+
+
+def g_calculator(s, a):
+    """A tool, not an essay. The six guides all argue something; this one answers a
+    question about the visitor's own number, which is a different search intent
+    ("what should I charge for X") and a different linking behaviour — people link
+    tools. The static table underneath is not decoration: a JS-only page has no text
+    for a crawler to index, and indexing is the entire point of this surface."""
+    cats = sorted(a["cats"], key=lambda c: -c["n"])
+    trows = "".join(
+        f"<tr><td>{cat_link(c)}</td><td class=n>{c['n']}</td>"
+        f"<td class=n>{B.money(c['p25'])}</td><td class=n>{B.money(c['median'])}</td>"
+        f"<td class=n>{B.money(c['p75'])}</td><td class=n>{B.money(c['p90'])}</td>"
+        f"<td class=n>{c['rated_share']}%</td></tr>" for c in cats)
+    opts = "".join(f'<option value="{B.esc(c["topic"])}">{B.esc(c["topic"])}</option>'
+                   for c in sorted(a["cats"], key=lambda c: c["topic"]))
+    payload = json.dumps(a["calc"], separators=(",", ":"))
+
+    body = CALC_CSS + f"""
+<div class=tool>
+<div class=row>
+<div><label for=cat>Category</label>
+<select id=cat>{opts}</select></div>
+<div><label for=price>Your price (USD)</label>
+<input id=price type=text inputmode=decimal value="{s['med']:.0f}" autocomplete=off></div>
+</div>
+<div id=out><p class=nojs>This tool needs JavaScript. The full table of every category is
+below and needs none.</p></div>
+</div>
+
+<h2>What it is doing</h2>
+<p>Every figure comes from the same free CSV as the rest of this site: {s['n']:,} distinct products
+seen across {s['cats']} category searches on 5 August 2026, with prices converted to USD at
+European Central Bank reference rates so a &pound; listing and a $ listing can be compared at all.
+Within a category the calculator counts <em>listings</em> rather than products, because a product
+that genuinely ranks for two searches competes in both.</p>
+<p>What it will not do is tell you what to charge. There is no sales figure on Gumroad to fit a
+price against — the only observable signal is whether a listing has attracted ratings, and that
+signal is weak, lagging and biased toward listings that have been up longer. What the tool can tell
+you honestly is where your number sits among the people already competing for the same buyer, and
+whether anyone is testing that price at all.</p>
+
+<h2>Every category, priced</h2>
+<p>The same data the calculator reads, sorted by how many listings were measured. <strong>The four
+percentile columns are over paid listings only</strong> — a free listing is not a price point, and
+mixing them in drags every percentile toward zero. The Listings column counts all listings in the
+category, free included, and so does Rated. Market-wide, the median across all {s['n']:,} products
+is {B.money(s['med_all'])}; across paid products only it is {B.money(s['med'])}.</p>
+<table><thead><tr><th>Category</th><th class=n>Listings</th><th class=n>25th</th>
+<th class=n>Median</th><th class=n>75th</th><th class=n>90th</th><th class=n>Rated</th></tr></thead>
+<tbody>{trows}</tbody></table>
+
+<h2>The thing pricing cannot fix</h2>
+<p>Before tuning a number, the base rate is worth stating: {s['zero']} of {s['n']:,} products
+&mdash; {s['zpct']}% &mdash; have never received a rating, and across categories the correlation
+between the median price and the share of listings showing demand is
+r&nbsp;=&nbsp;{a['r_price_demand']:.2f}. Charging less does not reliably buy demand; in
+{a['cheaper_wins']} of {a['cheaper_tot']} categories the cheaper half of listings out-rates the
+dearer half, which is close enough to a coin toss to act on as one.</p>
+<p>Which is the honest limit of this page. It positions your price against the market. It cannot
+tell you whether the market is worth entering.</p>
+
+{B.buy_block(f"The report is the part this tool deliberately does not do: it reads all {s['cats']} "
+             "categories together and classifies each as an opening, crowded or thin &mdash; "
+             "whether the demand in it is reachable or already held by three incumbents.")}
+
+<h2>Check it yourself</h2>
+<p>The table above, the calculator's data and the collector that produced them are all public:
+<a href="{B.REPO}/blob/main/data/gumroad-latest.csv">the CSV</a>,
+<a href="https://doi.org/{B.DOI}">the archived version with a DOI</a>. CC BY 4.0 &mdash; re-derive
+any of it, or quote it with attribution.</p>
+""" + "<script>var CALC=" + payload + ";" + CALC_JS + "</script>"
+
+    return page(
+        "gumroad-price-calculator",
+        f"Gumroad price calculator: where your price sits in {s['cats']} categories",
+        f"Enter a category and a price and see the percentile it sits at among live Gumroad "
+        f"listings. Built from {s['n']:,} products, prices normalised to USD. Free, no signup.",
+        "Gumroad price calculator",
+        f"{s['n']:,} products &middot; {s['cats']} categories &middot; prices normalised to USD",
+        "Pick your category, type the price you were thinking of, and see how many people are "
+        "already asking less. It is a positioning check, not a recommendation &mdash; the honest "
+        "reason why is below the tool.",
+        body)
+
+
+BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_free_vs_paid,
+            g_calculator]
 
 
 def build(s, rows, outdir):

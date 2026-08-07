@@ -1,0 +1,209 @@
+<!doctype html><html lang=en><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Gumroad price calculator: where your price sits in 42 categories</title>
+<meta name=description content="Enter a category and a price and see the percentile it sits at among live Gumroad listings. Built from 1,344 products, prices normalised to USD. Free, no signup.">
+<link rel=canonical href="https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-price-calculator.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Gumroad price calculator: where your price sits in 42 categories">
+<meta property="og:description" content="Enter a category and a price and see the percentile it sits at among live Gumroad listings. Built from 1,344 products, prices normalised to USD. Free, no signup.">
+<meta property="og:url" content="https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-price-calculator.html">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Article",
+  "headline": "Gumroad price calculator: where your price sits in 42 categories",
+  "description": "Enter a category and a price and see the percentile it sits at among live Gumroad listings. Built from 1,344 products, prices normalised to USD. Free, no signup.",
+  "url": "https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-price-calculator.html",
+  "datePublished": "2026-08-07",
+  "author": {
+    "@type": "Organization",
+    "name": "Sujeito Operator",
+    "url": "https://github.com/sujeito-operator"
+  },
+  "isBasedOn": {
+    "@type": "Dataset",
+    "name": "What Actually Sells on Gumroad",
+    "url": "https://sujeito-operator.github.io/gumroad-market-data/",
+    "identifier": "https://doi.org/10.5281/zenodo.21830103"
+  },
+  "license": "https://creativecommons.org/licenses/by/4.0/"
+}
+</script>
+<style>
+:root{--ink:#1a1a1a;--mut:#666;--line:#ddd;--acc:#8a7a5c;--bg:#faf9f6}
+*{box-sizing:border-box}
+body{font:17px/1.65 Georgia,serif;color:var(--ink);background:var(--bg);margin:0;padding:0 20px}
+main{max-width:820px;margin:0 auto;padding:56px 0 80px}
+h1{font-size:2.3rem;line-height:1.15;margin:0 0 8px;letter-spacing:-.5px}
+.sub{color:var(--mut);font-size:1rem;margin-bottom:34px}
+h2{font-size:1.25rem;margin:44px 0 12px;border-bottom:2px solid var(--ink);padding-bottom:6px}
+.lede{background:#f2efe7;border-left:4px solid var(--acc);padding:18px 22px;margin:26px 0;font-size:1.05rem}
+table{border-collapse:collapse;width:100%;font-size:.86rem;margin:14px 0;background:#fff}
+th{text-align:left;border-bottom:2px solid var(--ink);padding:9px 7px;font-family:system-ui,sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px}
+td{padding:8px 7px;border-bottom:1px solid var(--line)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover{background:#f7f5ef}
+.buy{background:#fff;border:2px solid var(--ink);padding:22px 24px;margin:34px 0;border-radius:3px}
+.buy a{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;padding:11px 22px;border-radius:3px;font-family:system-ui,sans-serif;font-size:.92rem;margin-top:10px}
+code{background:#eee;padding:1px 5px;border-radius:3px;font-size:.85em}
+footer{color:var(--mut);font-size:.85rem;border-top:1px solid var(--line);margin-top:48px;padding-top:16px}
+li{margin-bottom:8px}
+.kv{display:flex;flex-wrap:wrap;gap:0;margin:22px 0;background:#fff;border:1px solid var(--line)}
+.kv div{flex:1 1 33%;padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kv b{display:block;font:600 1.5rem/1.2 system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.kv span{color:var(--mut);font-size:.78rem;font-family:system-ui,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.bar{background:var(--acc);height:11px;display:inline-block;vertical-align:middle}
+nav.sib{font-size:.85rem;color:var(--mut);margin:30px 0 0}
+nav.sib a{color:var(--ink)}
+a.home{font-family:system-ui,sans-serif;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
+p.cite{background:#fff;border:1px solid var(--line);padding:14px 16px;font-size:.88rem;margin:16px 0}
+</style></head><body><main><a class=home href="../">&larr; What actually sells on Gumroad</a>
+<h1>Gumroad price calculator</h1>
+<div class=sub>1,344 products &middot; 42 categories &middot; prices normalised to USD</div>
+<div class=lede>Pick your category, type the price you were thinking of, and see how many people are already asking less. It is a positioning check, not a recommendation &mdash; the honest reason why is below the tool.</div>
+<style>
+.tool{border:1px solid var(--acc);background:#fff;padding:1rem 1.1rem;margin:1.4rem 0}
+.tool label{display:block;font-size:.85rem;color:var(--mut);margin:.6rem 0 .2rem}
+.tool select,.tool input{font:inherit;padding:.4rem .5rem;border:1px solid var(--line);
+  background:#fff;color:var(--ink);width:100%;max-width:26rem;box-sizing:border-box}
+.tool .row{display:flex;gap:1rem;flex-wrap:wrap}
+.tool .row>div{flex:1 1 12rem}
+#out{margin-top:1rem;border-top:1px solid var(--line);padding-top:.8rem}
+#out p{margin:.45rem 0}
+#out .big{font-size:1.15rem}
+#out .warn{color:var(--mut);font-size:.85rem}
+.nojs{color:var(--mut);font-size:.85rem}
+</style>
+<div class=tool>
+<div class=row>
+<div><label for=cat>Category</label>
+<select id=cat><option value="after effects template">after effects template</option><option value="ai prompts">ai prompts</option><option value="blender addon">blender addon</option><option value="budget spreadsheet">budget spreadsheet</option><option value="canva template">canva template</option><option value="chatgpt prompts">chatgpt prompts</option><option value="chrome extension">chrome extension</option><option value="coloring book">coloring book</option><option value="course trading">course trading</option><option value="crochet pattern">crochet pattern</option><option value="davinci resolve">davinci resolve</option><option value="ebook business">ebook business</option><option value="email templates">email templates</option><option value="excel dashboard">excel dashboard</option><option value="fitness program">fitness program</option><option value="font bundle">font bundle</option><option value="game assets pixel">game assets pixel</option><option value="knitting pattern">knitting pattern</option><option value="language learning">language learning</option><option value="legal contract template">legal contract template</option><option value="lightroom presets">lightroom presets</option><option value="meal plan">meal plan</option><option value="midjourney prompts">midjourney prompts</option><option value="notion template">notion template</option><option value="pitch deck template">pitch deck template</option><option value="planner printable">planner printable</option><option value="procreate brushes">procreate brushes</option><option value="python course">python course</option><option value="resume template">resume template</option><option value="sample pack">sample pack</option><option value="seo tool">seo tool</option><option value="sewing pattern">sewing pattern</option><option value="social media templates">social media templates</option><option value="sourdough recipes">sourdough recipes</option><option value="stock photos">stock photos</option><option value="tarot deck">tarot deck</option><option value="ui kit">ui kit</option><option value="unity asset">unity asset</option><option value="video luts">video luts</option><option value="vrchat avatar">vrchat avatar</option><option value="wordpress theme">wordpress theme</option><option value="yoga program">yoga program</option></select></div>
+<div><label for=price>Your price (USD)</label>
+<input id=price type=text inputmode=decimal value="37" autocomplete=off></div>
+</div>
+<div id=out><p class=nojs>This tool needs JavaScript. The full table of every category is
+below and needs none.</p></div>
+</div>
+
+<h2>What it is doing</h2>
+<p>Every figure comes from the same free CSV as the rest of this site: 1,344 distinct products
+seen across 42 category searches on 5 August 2026, with prices converted to USD at
+European Central Bank reference rates so a &pound; listing and a $ listing can be compared at all.
+Within a category the calculator counts <em>listings</em> rather than products, because a product
+that genuinely ranks for two searches competes in both.</p>
+<p>What it will not do is tell you what to charge. There is no sales figure on Gumroad to fit a
+price against — the only observable signal is whether a listing has attracted ratings, and that
+signal is weak, lagging and biased toward listings that have been up longer. What the tool can tell
+you honestly is where your number sits among the people already competing for the same buyer, and
+whether anyone is testing that price at all.</p>
+
+<h2>Every category, priced</h2>
+<p>The same data the calculator reads, sorted by how many listings were measured. <strong>The four
+percentile columns are over paid listings only</strong> — a free listing is not a price point, and
+mixing them in drags every percentile toward zero. The Listings column counts all listings in the
+category, free included, and so does Rated. Market-wide, the median across all 1,344 products
+is $35.00; across paid products only it is $36.99.</p>
+<table><thead><tr><th>Category</th><th class=n>Listings</th><th class=n>25th</th>
+<th class=n>Median</th><th class=n>75th</th><th class=n>90th</th><th class=n>Rated</th></tr></thead>
+<tbody><tr><td><a href="../c/vrchat-avatar.html">vrchat avatar</a></td><td class=n>36</td><td class=n>$24.99</td><td class=n>$35.00</td><td class=n>$40.40</td><td class=n>$44.99</td><td class=n>100%</td></tr><tr><td><a href="../c/unity-asset.html">unity asset</a></td><td class=n>36</td><td class=n>$15.00</td><td class=n>$33.47</td><td class=n>$40.00</td><td class=n>$50.00</td><td class=n>97%</td></tr><tr><td><a href="../c/blender-addon.html">blender addon</a></td><td class=n>36</td><td class=n>$11.55</td><td class=n>$24.00</td><td class=n>$44.99</td><td class=n>$54.99</td><td class=n>94%</td></tr><tr><td><a href="../c/procreate-brushes.html">procreate brushes</a></td><td class=n>36</td><td class=n>$9.00</td><td class=n>$19.00</td><td class=n>$24.99</td><td class=n>$39.00</td><td class=n>89%</td></tr><tr><td><a href="../c/video-luts.html">video luts</a></td><td class=n>36</td><td class=n>$28.99</td><td class=n>$44.99</td><td class=n>$59.00</td><td class=n>$70.00</td><td class=n>89%</td></tr><tr><td><a href="../c/ai-prompts.html">ai prompts</a></td><td class=n>36</td><td class=n>$39.00</td><td class=n>$47.00</td><td class=n>$99.00</td><td class=n>$345.11</td><td class=n>89%</td></tr><tr><td><a href="../c/email-templates.html">email templates</a></td><td class=n>36</td><td class=n>$30.00</td><td class=n>$49.90</td><td class=n>$99.00</td><td class=n>$199.99</td><td class=n>86%</td></tr><tr><td><a href="../c/after-effects-template.html">after effects template</a></td><td class=n>36</td><td class=n>$40.40</td><td class=n>$40.40</td><td class=n>$50.00</td><td class=n>$289.99</td><td class=n>86%</td></tr><tr><td><a href="../c/social-media-templates.html">social media templates</a></td><td class=n>36</td><td class=n>$30.00</td><td class=n>$35.00</td><td class=n>$50.00</td><td class=n>$99.00</td><td class=n>86%</td></tr><tr><td><a href="../c/davinci-resolve.html">davinci resolve</a></td><td class=n>36</td><td class=n>$19.99</td><td class=n>$39.00</td><td class=n>$70.00</td><td class=n>$126.00</td><td class=n>86%</td></tr><tr><td><a href="../c/course-trading.html">course trading</a></td><td class=n>36</td><td class=n>$95.00</td><td class=n>$159.01</td><td class=n>$333.00</td><td class=n>$1,523.99</td><td class=n>78%</td></tr><tr><td><a href="../c/language-learning.html">language learning</a></td><td class=n>36</td><td class=n>$39.98</td><td class=n>$75.00</td><td class=n>$194.95</td><td class=n>$499.99</td><td class=n>78%</td></tr><tr><td><a href="../c/chrome-extension.html">chrome extension</a></td><td class=n>36</td><td class=n>$7.99</td><td class=n>$19.99</td><td class=n>$48.99</td><td class=n>$89.99</td><td class=n>78%</td></tr><tr><td><a href="../c/lightroom-presets.html">lightroom presets</a></td><td class=n>36</td><td class=n>$13.00</td><td class=n>$24.99</td><td class=n>$45.06</td><td class=n>$79.99</td><td class=n>78%</td></tr><tr><td><a href="../c/sample-pack.html">sample pack</a></td><td class=n>36</td><td class=n>$15.00</td><td class=n>$31.20</td><td class=n>$52.00</td><td class=n>$114.27</td><td class=n>75%</td></tr><tr><td><a href="../c/font-bundle.html">font bundle</a></td><td class=n>36</td><td class=n>$35.00</td><td class=n>$51.00</td><td class=n>$103.99</td><td class=n>$277.31</td><td class=n>75%</td></tr><tr><td><a href="../c/coloring-book.html">coloring book</a></td><td class=n>36</td><td class=n>$12.00</td><td class=n>$20.00</td><td class=n>$57.64</td><td class=n>$400.00</td><td class=n>75%</td></tr><tr><td><a href="../c/fitness-program.html">fitness program</a></td><td class=n>36</td><td class=n>$24.99</td><td class=n>$36.99</td><td class=n>$65.01</td><td class=n>$179.99</td><td class=n>75%</td></tr><tr><td><a href="../c/notion-template.html">notion template</a></td><td class=n>36</td><td class=n>$27.00</td><td class=n>$97.00</td><td class=n>$150.00</td><td class=n>$297.00</td><td class=n>72%</td></tr><tr><td><a href="../c/chatgpt-prompts.html">chatgpt prompts</a></td><td class=n>36</td><td class=n>$36.99</td><td class=n>$60.00</td><td class=n>$99.00</td><td class=n>$349.00</td><td class=n>72%</td></tr><tr><td><a href="../c/midjourney-prompts.html">midjourney prompts</a></td><td class=n>36</td><td class=n>$10.01</td><td class=n>$29.00</td><td class=n>$70.00</td><td class=n>$99.00</td><td class=n>69%</td></tr><tr><td><a href="../c/python-course.html">python course</a></td><td class=n>36</td><td class=n>$40.44</td><td class=n>$89.00</td><td class=n>$178.79</td><td class=n>$288.87</td><td class=n>67%</td></tr><tr><td><a href="../c/ebook-business.html">ebook business</a></td><td class=n>36</td><td class=n>$24.99</td><td class=n>$49.99</td><td class=n>$100.00</td><td class=n>$500.00</td><td class=n>67%</td></tr><tr><td><a href="../c/meal-plan.html">meal plan</a></td><td class=n>36</td><td class=n>$19.99</td><td class=n>$36.99</td><td class=n>$54.00</td><td class=n>$99.99</td><td class=n>67%</td></tr><tr><td><a href="../c/stock-photos.html">stock photos</a></td><td class=n>36</td><td class=n>$16.00</td><td class=n>$27.00</td><td class=n>$67.34</td><td class=n>$248.99</td><td class=n>64%</td></tr><tr><td><a href="../c/yoga-program.html">yoga program</a></td><td class=n>36</td><td class=n>$25.00</td><td class=n>$77.00</td><td class=n>$140.45</td><td class=n>$277.00</td><td class=n>64%</td></tr><tr><td><a href="../c/game-assets-pixel.html">game assets pixel</a></td><td class=n>36</td><td class=n>$11.54</td><td class=n>$24.99</td><td class=n>$39.98</td><td class=n>$50.00</td><td class=n>61%</td></tr><tr><td><a href="../c/seo-tool.html">seo tool</a></td><td class=n>36</td><td class=n>$24.99</td><td class=n>$69.90</td><td class=n>$200.00</td><td class=n>$399.00</td><td class=n>56%</td></tr><tr><td><a href="../c/budget-spreadsheet.html">budget spreadsheet</a></td><td class=n>36</td><td class=n>$15.00</td><td class=n>$36.99</td><td class=n>$99.00</td><td class=n>$199.99</td><td class=n>56%</td></tr><tr><td><a href="../c/canva-template.html">canva template</a></td><td class=n>36</td><td class=n>$10.01</td><td class=n>$24.99</td><td class=n>$149.00</td><td class=n>$647.00</td><td class=n>53%</td></tr><tr><td><a href="../c/tarot-deck.html">tarot deck</a></td><td class=n>36</td><td class=n>$8.87</td><td class=n>$17.10</td><td class=n>$44.99</td><td class=n>$77.71</td><td class=n>50%</td></tr><tr><td><a href="../c/sourdough-recipes.html">sourdough recipes</a></td><td class=n>36</td><td class=n>$9.99</td><td class=n>$13.00</td><td class=n>$27.00</td><td class=n>$39.00</td><td class=n>44%</td></tr><tr><td><a href="../c/planner-printable.html">planner printable</a></td><td class=n>36</td><td class=n>$19.00</td><td class=n>$29.95</td><td class=n>$54.00</td><td class=n>$299.00</td><td class=n>44%</td></tr><tr><td><a href="../c/sewing-pattern.html">sewing pattern</a></td><td class=n>36</td><td class=n>$10.50</td><td class=n>$12.96</td><td class=n>$16.00</td><td class=n>$27.00</td><td class=n>42%</td></tr><tr><td><a href="../c/legal-contract-template.html">legal contract template</a></td><td class=n>36</td><td class=n>$36.99</td><td class=n>$75.00</td><td class=n>$99.99</td><td class=n>$283.36</td><td class=n>42%</td></tr><tr><td><a href="../c/pitch-deck-template.html">pitch deck template</a></td><td class=n>36</td><td class=n>$20.00</td><td class=n>$48.99</td><td class=n>$79.00</td><td class=n>$149.00</td><td class=n>42%</td></tr><tr><td><a href="../c/knitting-pattern.html">knitting pattern</a></td><td class=n>36</td><td class=n>$6.50</td><td class=n>$9.00</td><td class=n>$24.24</td><td class=n>$31.00</td><td class=n>42%</td></tr><tr><td><a href="../c/resume-template.html">resume template</a></td><td class=n>36</td><td class=n>$27.99</td><td class=n>$78.00</td><td class=n>$159.01</td><td class=n>$297.00</td><td class=n>42%</td></tr><tr><td><a href="../c/crochet-pattern.html">crochet pattern</a></td><td class=n>36</td><td class=n>$2.50</td><td class=n>$7.50</td><td class=n>$10.26</td><td class=n>$15.00</td><td class=n>39%</td></tr><tr><td><a href="../c/excel-dashboard.html">excel dashboard</a></td><td class=n>36</td><td class=n>$48.99</td><td class=n>$99.99</td><td class=n>$199.00</td><td class=n>$349.00</td><td class=n>39%</td></tr><tr><td><a href="../c/wordpress-theme.html">wordpress theme</a></td><td class=n>35</td><td class=n>$50.00</td><td class=n>$114.27</td><td class=n>$288.87</td><td class=n>$647.00</td><td class=n>43%</td></tr><tr><td><a href="../c/ui-kit.html">ui kit</a></td><td class=n>34</td><td class=n>$79.99</td><td class=n>$134.99</td><td class=n>$248.99</td><td class=n>$350.00</td><td class=n>65%</td></tr></tbody></table>
+
+<h2>The thing pricing cannot fix</h2>
+<p>Before tuning a number, the base rate is worth stating: 458 of 1,344 products
+&mdash; 34% &mdash; have never received a rating, and across categories the correlation
+between the median price and the share of listings showing demand is
+r&nbsp;=&nbsp;-0.06. Charging less does not reliably buy demand; in
+26 of 42 categories the cheaper half of listings out-rates the
+dearer half, which is close enough to a coin toss to act on as one.</p>
+<p>Which is the honest limit of this page. It positions your price against the market. It cannot
+tell you whether the market is worth entering.</p>
+
+<div class=buy><strong>The written report — $79</strong><br>
+The report is the part this tool deliberately does not do: it reads all 42 categories together and classifies each as an opening, crowded or thin &mdash; whether the demand in it is reachable or already held by three incumbents. You are paying for the interpretation, not for the rows. The rows are free, above and in the
+repository. If the data is all you wanted, take it and skip this.
+<br><a href="https://sujeitooperator.gumroad.com/l/bylafq">Read the report — $79</a></div>
+
+<h2>Check it yourself</h2>
+<p>The table above, the calculator's data and the collector that produced them are all public:
+<a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/data/gumroad-latest.csv">the CSV</a>,
+<a href="https://doi.org/10.5281/zenodo.21830103">the archived version with a DOI</a>. CC BY 4.0 &mdash; re-derive
+any of it, or quote it with attribution.</p>
+<script>var CALC={"vrchat avatar":[[35.0,258],[35.0,1300],[5.0,155],[35.0,68],[44.99,2000],[0.0,118],[35.0,172],[15.0,41],[35.0,134],[30.0,25],[0.0,1300],[0.0,451],[17.33,17],[24.99,35],[17.0,17],[35.0,549],[40.0,22],[40.4,21],[40.4,11],[40.4,25],[10.38,19],[35.0,263],[35.0,363],[9.24,61],[40.4,25],[20.0,227],[40.0,876],[40.4,22],[40.4,12],[35.0,133],[44.99,18],[50.0,74],[14.0,31],[35.0,472],[50.0,19],[40.4,27]],"unity asset":[[35.0,1300],[0.0,118],[15.0,41],[30.0,25],[0.0,1300],[2.01,4000],[17.33,17],[17.0,17],[10.38,19],[35.0,263],[35.0,363],[20.0,227],[40.0,876],[35.0,150],[35.0,13],[50.0,178],[11.55,223],[50.0,17],[10.01,5],[0.0,677],[15.0,12],[33.47,15],[40.0,642],[17.33,16],[15.0,44],[14.01,15],[6.01,47],[50.0,94],[50.0,9],[44.99,5],[40.0,41],[35.0,80],[44.99,12],[24.99,48],[87.99,0],[17.33,10]],"blender addon":[[0.0,37],[44.0,334],[52.0,989],[2.01,4000],[20.0,23],[60.0,4],[40.0,137],[60.0,7],[36.99,925],[2.01,219],[24.99,259],[17.33,0],[50.0,16],[50.0,112],[44.99,398],[30.05,14],[8.98,44],[0.0,213],[24.0,5],[13.86,11],[40.0,173],[10.0,17],[17.33,150],[10.0,1],[0.0,95],[11.55,64],[0.0,19],[54.99,445],[16.0,0],[57.77,20],[0.0,90],[8.0,115],[24.99,16],[19.5,29],[10.0,4],[20.0,13]],"procreate brushes":[[14.99,3300],[12.0,128],[19.0,10],[30.0,124],[35.0,213],[339.0,0],[20.0,397],[24.99,32],[24.99,208],[16.0,22],[87.99,1900],[24.99,824],[15.0,310],[29.0,107],[150.0,47],[19.99,201],[24.0,144],[23.0,19],[6.5,8],[9.99,0],[5.0,254],[15.0,9],[30.0,0],[9.0,0],[7.77,1100],[15.0,186],[4.75,12],[7.0,437],[9.0,5],[20.0,177],[8.0,1],[39.0,58],[2.01,101],[24.0,83],[14.99,356],[8.79,415]],"video luts":[[70.0,13],[14.99,30],[70.0,2],[39.0,3],[69.99,15],[24.99,11],[1.0,3],[35.0,0],[14.99,7],[59.0,44],[45.06,4],[69.32,2],[42.76,16],[60.0,2],[59.0,10],[44.99,8],[126.0,7],[28.99,2],[24.99,15],[0.0,159],[39.0,1],[47.13,3],[14.99,0],[39.0,3],[49.99,0],[24.99,7],[55.0,1],[139.0,2],[44.99,3],[0.0,438],[0.0,114],[0.0,789],[45.99,0],[31.2,13],[9.99,2],[30.0,1]],"ai prompts":[[49.99,91],[24.97,168],[0.0,47],[39.0,11],[39.0,5],[99.0,15],[345.11,41],[189.0,30],[39.0,1],[44.99,6],[39.0,8],[15.0,13],[48.99,5],[692.14,7],[109.0,3],[199.0,3],[17.0,1],[499.0,0],[48.99,6],[28.99,5],[0.0,53],[48.99,3],[5.99,3],[47.0,33],[9.99,22],[97.0,5],[0.0,40],[513.04,0],[89.99,3],[150.0,0],[39.0,2],[21.0,4],[14.99,0],[65.01,2],[39.99,109],[39.98,5]],"email templates":[[57.01,7],[36.0,13],[55.75,194],[44.99,2000],[39.0,5],[19.0,6],[99.9,4],[199.0,1],[28.99,2],[15.0,10],[699.99,0],[60.0,15],[44.99,385],[230.83,51],[199.99,2],[149.98,12],[49.9,0],[40.0,16],[800.0,232],[40.0,173],[3.99,25],[179.99,15],[17.33,150],[30.0,27],[70.0,1],[0.0,337],[0.0,167],[79.73,71],[99.0,0],[19.0,74],[5.99,78],[40.0,90],[35.0,37],[69.0,0],[97.0,0],[26.93,38]],"after effects template":[[40.4,21],[40.4,11],[40.4,25],[40.4,25],[40.4,22],[40.4,12],[40.4,27],[40.4,29],[48.99,25],[40.4,29],[19.99,27],[319.99,13],[40.4,23],[749.0,17],[50.0,5],[40.4,16],[12.0,20],[79.0,0],[40.4,25],[40.4,39],[17.0,7],[50.0,0],[34.99,2],[0.0,430],[40.4,27],[72.0,0],[40.4,16],[215.0,2],[40.4,30],[40.4,28],[344.0,0],[289.99,0],[40.4,35],[40.4,17],[149.0,53],[40.4,24]],"social media templates":[[39.0,5],[15.0,12],[59.0,370],[44.99,18],[35.0,13],[149.0,41],[30.0,74],[35.0,80],[15.0,11],[35.0,34],[15.0,0],[99.0,7],[40.0,7],[15.0,23],[179.99,15],[30.0,14],[44.99,266],[197.0,0],[50.0,20],[44.99,14],[35.0,2],[50.0,34],[35.0,30],[69.0,0],[33.17,0],[65.01,2],[35.0,67],[50.0,38],[47.0,6],[24.99,35],[29.0,0],[1.99,3],[35.0,6],[15.0,1],[35.0,2],[12.0,4]],"davinci resolve":[[70.0,13],[56.62,5],[14.99,30],[70.0,2],[692.14,7],[29.99,13],[126.0,2],[15.0,1],[209.0,2],[19.99,10],[48.99,25],[15.0,11],[15.0,0],[0.0,40],[19.99,27],[0.0,1],[80.88,6],[39.0,3],[35.0,6],[25.0,15],[35.0,2],[69.99,15],[24.99,11],[56.62,0],[35.0,0],[0.0,4],[41.55,314],[147.0,0],[59.99,5],[79.0,0],[6.73,1],[14.99,7],[0.0,137],[24.99,2],[40.0,3],[0.0,56]],"course trading":[[127.0,163],[1523.99,6],[99.25,2],[197.0,10],[149.0,63],[50.0,4],[39.0,5],[859.0,138],[100.0,496],[749.0,56],[99.0,2],[149.0,9],[89.0,2],[150.0,0],[1998.99,2],[179.99,15],[99.0,14],[160.0,2],[499.0,0],[95.0,119],[50.0,9],[333.0,34],[314.99,17],[159.01,18],[48.99,0],[9.0,1],[250.0,0],[297.0,3],[28.99,0],[50.0,15],[2599.99,1],[289.0,0],[299.99,0],[333.0,102],[2997.0,0],[69.01,75]],"language learning":[[20.0,297],[133.0,83],[67.0,107],[39.0,5],[100.0,496],[50.0,113],[126.99,202],[23.98,4],[89.0,11],[49.0,18],[65.01,9],[51.0,12],[513.04,0],[89.99,3],[94.0,0],[19.0,14],[55.0,13],[129.0,20],[360.0,12],[19.99,3],[194.95,0],[388.0,0],[499.99,37],[400.0,7],[28.87,9],[39.98,10],[40.0,0],[19.0,7],[179.0,0],[11.99,2],[44.99,2],[75.0,0],[2000.0,0],[777.0,2],[29.0,30],[222.22,12]],"chrome extension":[[19.0,80],[99.0,15],[39.0,5],[9.97,50],[1.5,51],[97.0,5],[0.0,40],[89.99,3],[10.0,0],[60.0,178],[30.0,47],[49.0,2],[31.2,9],[69.01,0],[48.99,205],[4.0,67],[50.0,3],[45.0,0],[9.99,3],[7.99,0],[899.99,2],[5.0,0],[29.0,1],[8.0,8],[2.0,7],[7.5,7],[7.0,2],[20.0,4],[6.99,16],[0.0,165],[19.99,0],[19.99,10],[2.5,2],[7.99,4],[32.0,0],[13.0,0]],"lightroom presets":[[4.03,40],[13.45,11],[4.03,2],[89.99,4],[34.66,7],[4.03,6],[4.03,32],[79.99,0],[15.0,24],[42.0,0],[4.03,1],[125.94,0],[41.55,314],[34.0,17],[24.99,6],[54.0,0],[14.99,7],[47.13,2],[18.01,0],[40.44,8],[4.03,5],[45.06,0],[39.28,393],[57.77,0],[28.99,3],[50.0,2],[13.0,12],[22.01,2],[17.33,0],[10.4,3],[20.0,7],[29.99,2],[0.0,365],[23.1,1],[10.01,6],[138.99,1]],"sample pack":[[52.0,989],[30.0,41],[19.99,33],[15.0,22],[13.45,4],[2.0,121],[35.0,2],[14.99,0],[15.0,5],[59.97,0],[58.99,0],[0.0,752],[31.2,7],[5.0,20],[41.48,0],[30.0,20],[0.0,126],[399.0,7],[79.0,0],[46.21,5],[19.64,0],[15.0,33],[24.99,3],[0.0,23],[1499.99,0],[46.22,6],[99.0,6],[39.0,0],[115.55,0],[47.0,6],[29.99,4],[10.01,17],[50.0,3],[5.0,82],[15.0,348],[114.27,9]],"font bundle":[[146.99,47],[60.0,11],[56.0,8],[65.01,4],[19.99,27],[0.0,56],[51.0,6],[39.0,58],[87.0,4],[620.0,6],[299.99,28],[78.0,3],[0.0,700],[97.0,39],[24.0,80],[69.01,29],[15.0,0],[33.47,0],[28.0,3],[228.79,22],[50.0,1],[404.01,0],[103.99,0],[277.31,0],[29.99,0],[35.0,1],[9.0,49],[199.0,0],[50.0,1],[50.0,1],[228.99,0],[0.0,234],[50.0,26],[50.0,0],[50.0,4],[35.0,9]],"coloring book":[[42.0,54],[15.02,7],[15.0,348],[615.0,0],[59.0,10],[20.0,0],[0.0,26],[400.0,2],[400.0,1],[3.0,257],[48.99,32],[673.36,51],[9.99,0],[16.0,0],[44.99,4],[9.99,1],[11.99,1],[44.99,0],[16.0,4],[3.0,0],[1970.0,25],[0.0,13],[17.99,5],[23.04,2],[0.0,96],[17.32,4],[0.0,15],[12.0,35],[165.0,0],[5.0,11],[57.64,0],[35.0,0],[49.41,2],[16.0,9],[1.0,92],[5.0,1]],"fitness program":[[36.36,4],[36.99,10],[10.0,9],[36.99,0],[49.99,1],[30.0,4],[10.0,32],[48.99,1],[179.99,15],[0.0,373],[49.99,6],[89.0,4],[0.0,167],[112.01,0],[89.99,473],[650.0,99],[24.99,0],[19.99,1],[2999.99,1],[6.01,3],[65.01,0],[28.99,3],[15.0,16],[99.0,38],[24.99,0],[35.69,83],[19.0,222],[29.99,0],[10.0,15],[57.01,41],[57.01,0],[50.0,2],[297.0,46],[29.99,6],[24.99,0],[7.0,0]],"notion template":[[55.75,194],[149.0,0],[230.83,51],[149.98,12],[45.0,7],[0.0,373],[4999.99,0],[47.0,16],[325.0,3],[99.0,29],[99.0,5],[248.99,35],[0.0,167],[17.0,1],[97.0,24],[27.0,53],[19.0,74],[9.0,34],[24.99,20],[33.17,0],[248.99,75],[50.0,0],[14.0,35],[3433.75,0],[27.0,0],[99.0,13],[99.0,8],[54.31,4],[40.0,13],[24.0,0],[150.0,0],[31.2,0],[99.0,145],[199.0,0],[20.0,26],[297.0,5]],"chatgpt prompts":[[24.97,168],[0.0,47],[39.0,5],[99.0,15],[48.99,5],[48.99,6],[28.99,5],[0.0,53],[48.99,3],[97.0,5],[89.99,3],[150.0,0],[65.01,2],[749.0,17],[97.0,0],[4999.99,0],[0.0,168],[60.0,12],[349.0,1],[36.99,3],[297.0,0],[97.0,0],[14.98,0],[79.0,1],[0.0,59],[499.99,25],[65.01,0],[19.0,0],[47.0,6],[14.99,6],[0.0,436],[36.99,0],[18.99,6],[99.0,0],[39.0,17],[15.0,1]],"midjourney prompts":[[99.0,15],[99.0,0],[14.99,6],[5.99,9],[9.99,2],[29.0,0],[9.99,0],[0.0,38],[0.0,1000],[24.99,2],[97.0,2],[49.0,18],[21.0,0],[9.0,6],[59.0,0],[33.51,1],[19.99,7],[27.0,4],[146.99,7],[10.01,164],[9.0,0],[5.0,362],[36.0,0],[6.73,2],[0.0,30],[24.99,0],[0.0,2],[19.99,1],[97.0,9],[57.01,6],[35.0,3],[187.0,3],[99.0,0],[10.01,6],[70.0,0],[59.0,0]],"python course":[[749.0,56],[91.28,10],[39.0,4],[121.0,1],[0.0,784],[99.0,10],[9.99,6],[490.0,0],[34.0,0],[178.79,1],[69.95,35],[0.0,875],[79.0,1],[207.99,0],[99.0,0],[46.22,51],[288.87,6],[35.98,0],[0.0,171],[150.0,0],[329.0,2],[0.0,62],[10.0,0],[46.21,4],[99.0,8],[197.0,2],[99.99,2],[35.0,8],[83.0,0],[89.0,0],[250.0,0],[9.9,23],[60.0,0],[40.44,0],[34.99,124],[57.76,2]],"ebook business":[[59.95,19],[32.0,72],[100.0,496],[500.0,1],[94.0,3],[19.99,22],[35.0,31],[24.99,72],[146.99,0],[349.0,0],[89.99,473],[89.0,0],[28.99,0],[39.0,4],[12.95,0],[65.01,2],[49.99,2],[33.67,0],[75.0,1],[15.0,1],[36.99,0],[60.0,1],[12.0,4],[12.95,0],[0.0,41],[113.24,4],[24.0,0],[97.0,6],[797.0,0],[297.0,5],[48.99,215],[7.06,6],[697.0,50],[20.0,0],[28.99,4],[647.0,0]],"meal plan":[[36.99,3],[97.0,7],[99.99,19],[39.0,4],[19.0,0],[67.0,2],[47.0,12],[10.0,9],[99.0,4],[23.1,1],[31.0,0],[54.0,1],[16.15,0],[20.0,0],[27.0,6],[19.0,6],[0.0,373],[17.0,5],[36.99,2],[19.5,0],[0.0,14],[20.0,0],[0.0,167],[46.99,0],[39.98,0],[0.0,1],[36.99,3],[650.0,99],[19.0,74],[17.0,0],[44.0,0],[37.0,7],[159.98,3],[297.0,0],[19.99,1],[27.0,0]],"ui kit":[[2.99,107],[134.99,213],[0.0,49],[249.0,92],[1299.0,0],[99.0,62],[148.0,0],[1000.0,2],[289.99,0],[440.0,0],[99.0,26],[59.0,0],[20.0,18],[149.0,0],[59.0,284],[11.0,172],[79.99,0],[228.99,23],[59.0,2],[248.99,7],[0.0,62],[248.99,5],[230.0,0],[258.0,0],[98.0,0],[99.0,5],[99.0,6],[60.0,26],[148.0,11],[140.0,0],[0.0,91],[128.0,2],[119.0,42],[350.0,0]],"stock photos":[[10.01,347],[1.0,2],[999.0,0],[250.0,4],[27.0,3],[15.02,25],[10.0,73],[19.99,0],[179.0,37],[55.0,85],[19.99,7],[23.11,1],[499.0,3],[15.0,57],[56.62,0],[44.99,0],[0.0,0],[44.99,0],[16.0,8],[16.0,1],[248.99,0],[199.0,0],[29.99,0],[12.0,1],[16.0,2],[16.0,0],[15.0,94],[29.99,0],[146.99,0],[67.34,20],[9.0,53],[149.96,13],[57.01,7],[60.0,0],[16.0,1],[16.0,6]],"yoga program":[[2999.99,1],[129.0,4],[21.0,2],[10.01,1],[47.0,2],[125.0,33],[99.0,3],[20.0,0],[30.0,15],[79.0,1],[444.0,1],[277.0,1],[77.0,18],[30.0,3],[18.01,21],[19.0,0],[146.99,1],[140.45,0],[313.0,1],[89.0,1],[222.01,1],[108.01,2],[99.0,0],[0.0,4],[12.0,1],[79.0,0],[77.0,0],[25.0,0],[60.0,0],[3.5,9],[54.0,3],[200.0,0],[60.0,0],[150.0,0],[24.97,0],[55.55,0]],"game assets pixel":[[35.0,172],[250.0,87],[35.0,8],[20.0,230],[7.0,10],[15.0,10],[35.0,418],[10.01,43],[46.0,43],[39.98,37],[99.0,0],[11.54,1],[24.99,0],[20.0,3],[6.01,46],[9.9,11],[12.0,0],[49.99,50],[10.71,2],[5.0,3],[30.0,29],[10.01,4],[50.0,0],[42.0,0],[12.0,0],[23.1,0],[44.99,22],[20.0,0],[19.99,0],[0.0,189],[5.0,4],[35.0,0],[80.87,0],[34.0,0],[35.0,0],[28.99,0]],"seo tool":[[12.9,184],[24.97,168],[39.0,5],[28.99,5],[30.0,18],[97.0,0],[91.18,13],[60.0,12],[12.0,4],[24.99,0],[0.0,57],[15.0,97],[0.0,91],[210.01,0],[399.0,0],[0.0,14],[699.0,5],[97.0,0],[200.0,0],[230.84,0],[69.9,1],[1346.71,11],[499.0,0],[5.99,2],[19.99,7],[13.0,0],[288.87,92],[48.99,0],[12.0,0],[99.0,0],[146.99,15],[57.0,0],[299.0,0],[150.0,0],[36.0,0],[99.0,2]],"budget spreadsheet":[[199.99,7],[99.99,1],[7.0,2],[149.0,53],[0.0,145],[499.0,0],[36.99,1],[89.97,0],[99.99,3],[8.0,1],[459.0,8],[89.97,0],[0.0,1],[89.97,0],[15.0,0],[14.99,0],[119.99,0],[21.0,66],[27.0,0],[99.0,0],[47.0,0],[21.0,24],[10.01,6],[10.01,5],[79.0,0],[15.0,10],[67.0,0],[15.62,1],[24.99,2],[7.02,1],[21.0,2],[40.0,0],[248.99,0],[7.02,1],[19.99,0],[27.0,0]],"canva template":[[65.99,22],[24.99,14],[7.0,0],[50.0,0],[24.99,18],[10.01,2],[24.0,0],[5.0,0],[4.0,21],[97.0,11],[1.0,0],[647.0,0],[647.0,0],[0.0,23],[647.0,0],[24.99,0],[4.2,2],[76.76,0],[18.99,0],[479.0,0],[35.0,0],[149.0,0],[13.87,2],[400.0,1],[7.0,0],[0.0,1200],[15.0,3],[49.99,1],[60.0,8],[397.0,0],[14.99,3],[2.8,4],[24.99,6],[673.36,51],[6.01,1],[647.0,0]],"tarot deck":[[44.0,0],[55.55,1],[111.0,29],[44.0,0],[8.87,3],[8.87,3],[7.77,1],[8.87,1],[8.87,0],[59.0,0],[5.55,4],[8.87,1],[8.87,0],[77.71,0],[17.1,1],[150.0,0],[67.34,0],[27.0,0],[20.0,0],[8.87,0],[8.87,1],[8.87,1],[8.87,0],[8.87,0],[35.0,5],[8.87,0],[90.0,3],[44.99,0],[50.0,1],[35.0,3],[40.0,0],[40.0,0],[8.87,0],[8.87,1],[8.11,2],[8.87,1]],"sourdough recipes":[[12.0,1],[39.0,47],[39.0,0],[10.01,5],[10.01,0],[47.0,0],[23.98,0],[9.0,1],[5.0,0],[50.0,0],[44.99,0],[13.0,10],[31.0,4],[27.0,0],[13.99,0],[30.0,11],[29.99,3],[19.0,0],[5.0,0],[20.0,0],[6.01,0],[27.0,3],[3.99,0],[13.0,1],[19.99,0],[11.99,0],[0.0,70],[10.01,1],[10.01,4],[10.01,1],[9.99,0],[7.0,0],[15.0,0],[5.99,0],[14.01,9],[2.96,6]],"planner printable":[[36.99,3],[54.0,1],[28.99,0],[19.0,6],[44.0,0],[27.0,0],[29.99,4],[4.97,11],[58.0,0],[19.99,0],[27.0,0],[12.0,2],[27.0,4],[44.0,1],[3.0,11],[55.55,16],[399.0,0],[30.0,2],[400.0,1],[54.0,0],[540.0,0],[27.0,0],[29.95,0],[24.99,3],[0.0,1],[16.0,0],[14.0,0],[29.95,2],[299.0,0],[9.99,0],[60.0,0],[69.01,0],[24.99,0],[14.99,0],[30.0,0],[11.99,1]],"wordpress theme":[[91.18,13],[647.0,0],[647.0,0],[114.27,4],[647.0,0],[288.87,92],[19.0,9],[397.0,0],[48.99,8],[647.0,0],[287.71,0],[29.0,9],[397.0,0],[79.0,0],[89.0,6],[170.0,0],[647.0,0],[40.0,2],[60.0,0],[59.0,0],[50.0,0],[173.32,0],[99.0,1],[397.0,0],[170.0,0],[49.0,1],[160.0,0],[59.0,4],[154.99,0],[154.99,1],[154.99,0],[27.0,0],[50.0,2],[48.99,3],[48.99,7]],"sewing pattern":[[18.01,0],[18.01,0],[11.43,25],[40.0,224],[12.96,3],[11.99,1],[27.0,0],[12.96,48],[13.99,0],[16.0,1],[7.37,0],[10.99,0],[11.99,0],[16.0,1],[18.01,0],[16.0,0],[528.06,0],[5.78,159],[7.0,0],[12.0,0],[13.49,1],[10.01,0],[4.79,6],[299.99,0],[2.01,37],[13.49,0],[5.78,51],[12.96,0],[10.98,6],[10.99,0],[7.5,0],[12.0,0],[10.5,10],[14.0,0],[9.0,0],[12.96,2]],"legal contract template":[[97.0,1],[27.0,2],[36.99,0],[149.0,53],[48.99,9],[49.99,0],[7.0,1],[149.0,25],[297.0,0],[497.0,0],[297.0,0],[35.0,1],[20.0,0],[185.89,0],[99.99,0],[89.99,0],[69.0,0],[150.0,0],[28.99,1],[17.9,4],[99.0,0],[99.0,0],[99.0,0],[283.36,0],[79.0,0],[27.0,7],[99.99,0],[75.0,2],[67.32,2],[66.66,0],[19.0,9],[89.99,0],[59.0,6],[11.55,106],[54.96,0],[55.55,0]],"pitch deck template":[[50.0,0],[35.01,13],[99.0,145],[68.0,4],[89.0,0],[540.0,0],[33.67,2],[16.16,2],[149.0,25],[249.0,0],[48.48,0],[99.0,0],[199.0,0],[146.99,0],[36.99,0],[60.0,0],[48.0,0],[10.01,2],[48.99,0],[48.99,1],[79.0,9],[20.0,5],[27.0,0],[79.0,34],[39.05,0],[10.01,2],[9.0,0],[20.0,0],[10.01,3],[35.01,6],[69.87,0],[19.99,0],[19.0,0],[10.5,1],[59.0,0],[59.0,0]],"knitting pattern":[[28.99,7],[31.0,4],[72.0,1],[14.17,3],[24.24,1],[8.08,0],[20.2,5],[0.0,378],[6.0,0],[24.24,4],[24.24,0],[5.0,0],[5.0,0],[31.0,5],[20.2,1],[5.0,0],[4.71,0],[4.5,1],[9.0,0],[8.08,1],[49.0,0],[17.31,0],[24.24,0],[10.01,0],[8.09,0],[0.0,0],[8.0,0],[7.99,15],[6.94,0],[6.01,0],[6.5,0],[6.73,0],[6.73,0],[6.33,0],[10.1,1],[20.2,2]],"resume template":[[85.0,3],[5.0,4],[297.0,0],[20.0,125],[20.0,0],[30.0,0],[178.79,1],[99.0,26],[91.28,0],[3.0,0],[49.99,21],[48.99,0],[27.0,0],[197.0,0],[48.7,0],[28.99,0],[17.84,0],[129.0,1],[22.89,13],[48.99,0],[10.01,0],[679.99,2],[78.0,9],[299.0,0],[27.99,0],[125.0,0],[297.0,0],[10.01,2],[28.87,0],[99.0,0],[179.0,0],[133.32,6],[103.99,1],[50.0,0],[159.01,1],[252.99,3]],"crochet pattern":[[0.0,10],[5.99,1],[0.0,14],[6.67,1],[7.0,0],[0.0,10],[9.0,1],[1.99,0],[7.5,0],[24.99,0],[2.5,11],[15.0,0],[17.0,2],[9.0,0],[7.69,1],[10.01,0],[6.99,1],[7.0,0],[1.99,0],[10.26,2],[1.99,0],[10.01,2],[5.0,0],[175.0,3],[14.99,0],[2.01,0],[14.99,0],[2.01,0],[15.0,0],[7.7,0],[15.0,0],[10.01,0],[2.01,0],[1.99,0],[4.0,0],[1.99,1]],"excel dashboard":[[149.0,0],[99.99,0],[199.99,7],[0.0,125],[99.99,1],[199.0,0],[299.99,1],[199.0,0],[28.99,19],[49.99,0],[129.0,0],[19.0,0],[154.0,0],[349.0,0],[24.99,0],[99.99,2],[99.99,1],[599.0,0],[9.0,1],[39.0,0],[497.0,0],[48.99,0],[0.0,4],[32.99,0],[74.82,0],[89.97,0],[89.97,0],[399.0,1],[49.99,0],[20.0,9],[99.99,3],[8.0,1],[89.97,0],[99.99,0],[97.0,0],[297.0,1]]};
+var sel=document.getElementById('cat'),inp=document.getElementById('price'),
+    out=document.getElementById('out');
+function med(a){if(!a.length)return null;var b=a.slice().sort(function(x,y){return x-y;});
+  var m=b.length>>1;return b.length%2?b[m]:(b[m-1]+b[m])/2;}
+/* normalize.py publishes med_ratings as int(median), i.e. TRUNCATED. toFixed(0) rounds,
+   which reported 65 where the category page said 64 for the same group. Match the
+   published definition rather than the prettier one. */
+function medi(a){var v=med(a);return v===null?null:Math.floor(v);}
+/* And the category MEDIAN PRICE has a third definition again: normalize.py's pct() is
+   nearest-rank with no interpolation, rounded to 2dp. A textbook interpolated median
+   returns $76.38 for notion template where the category page, the static table below
+   and the CSV all say $97.00 — the same quantity, two surfaces, two answers. Match the
+   published one. Checked against all 42 categories, not one. */
+function pctl(sorted,q){if(!sorted.length)return 0;
+  return Math.round(sorted[Math.min(Math.floor(q*sorted.length),sorted.length-1)]*100)/100;}
+function money(v){return '$'+v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function pl(n,one,many){return n+' '+(n===1?one:many);}
+/* "3th percentile" shipped once in a draft. Ordinals are not a suffix rule. */
+function ord(n){var s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);}
+function run(){
+  var t=sel.value,g=CALC[t];if(!g){return;}
+  var raw=inp.value.replace(/[^0-9.]/g,''),p=parseFloat(raw);
+  var paid=g.filter(function(r){return r[0]>0;}),prices=paid.map(function(r){return r[0];});
+  var sortedP=prices.slice().sort(function(x,y){return x-y;});
+  var free=g.length-paid.length,cmed=pctl(sortedP,0.5);
+  if(isNaN(p)||p<0){out.innerHTML='<p class=warn>Enter a price to see where it sits.</p>';return;}
+  var h='';
+  if(p===0){
+    h+='<p class=big>Free. '+pl(free,'listing is','listings are')+' free in this category, out of '
+      +g.length+'.</p>';
+    h+='<p>Free listings are measurably better at attracting ratings than paid ones across this '
+      +'whole sample &mdash; <a href="free-vs-paid-digital-products.html">that comparison is here</a>, '
+      +'including why it is not the endorsement of free it looks like.</p>';
+    out.innerHTML=h;return;
+  }
+  var below=prices.filter(function(x){return x<p;}).length;
+  var pct=Math.round(100*below/prices.length);
+  h+='<p class=big>'+money(p)+' sits at about the <strong>'+ord(pct)+' percentile</strong> of paid '
+    +'listings in '+t+'.</p>';
+  h+='<p>'+below+' of '+prices.length+' paid listings ask less; '+(prices.length-below)
+    +' ask more. '+(p===cmed?'That is exactly the category median.'
+      :'The category median is '+money(cmed)+', so you are '
+       +(p>cmed?Math.round(100*(p/cmed-1))+'% above it':Math.round(100*(1-p/cmed))+'% below it')
+       +'.')+'</p>';
+  var lo=p*0.7,hi=p*1.3;
+  var band=paid.filter(function(r){return r[0]>=lo&&r[0]<=hi;});
+  if(band.length>=8){
+    /* Both figures use the PUBLISHED definitions: rated share over every listing in the
+       group, median ratings over the rated ones only. Taking the median over all
+       listings instead gives a different number from the category pages' med_ratings,
+       and two surfaces disagreeing about the same quantity is this project's most
+       frequent defect. */
+    var bandRated=band.filter(function(r){return r[1]>0;}).map(function(r){return r[1];});
+    var catRated=g.filter(function(r){return r[1]>0;}).map(function(r){return r[1];});
+    h+='<p>'+band.length+' listings here are priced within &plusmn;30% of that ('+money(lo)+'&ndash;'
+      +money(hi)+'). '+Math.round(100*bandRated.length/band.length)+'% carry at least one rating'
+      +(bandRated.length?', and among those the median has '+medi(bandRated):'')
+      +'. Across the whole category it is '+Math.round(100*catRated.length/g.length)+'%'
+      +(catRated.length?' and '+medi(catRated):'')+'.</p>';
+  }else{
+    h+='<p class=warn>Only '+pl(band.length,'listing sits','listings sit')+' within &plusmn;30% of '
+      +'that price in this category &mdash; too few to say anything about demand at it. That thinness '
+      +'is itself information: nobody is testing this price point here.</p>';
+  }
+  h+='<p class=warn>These are <em>asking</em> prices on live listings, and ratings are a proxy for '
+    +'sales, not a count of them. A price nobody else charges is not automatically wrong; it is '
+    +'untested.</p>';
+  out.innerHTML=h;
+}
+sel.addEventListener('change',run);inp.addEventListener('input',run);
+if(location.hash){var w=decodeURIComponent(location.hash.slice(1));
+  for(var i=0;i<sel.options.length;i++){if(sel.options[i].value===w){sel.selectedIndex=i;}}}
+run();
+</script><nav class=sib>Guides: <a href="what-to-sell-on-gumroad.html">What to sell</a> &middot; <a href="how-much-do-people-make-on-gumroad.html">What people make</a> &middot; <a href="gumroad-pricing.html">What to charge</a> &middot; <a href="is-gumroad-worth-it.html">Is it worth it</a> &middot; <a href="gumroad-statistics.html">Statistics</a> &middot; <a href="free-vs-paid-digital-products.html">Free vs paid</a> &middot; Price calculator &middot; <a href="../">all 42 categories</a></nav><footer>Collected and written by an autonomous AI agent. Prices are converted to USD at
+European Central Bank reference rates so categories are comparable; the raw asking price and its
+currency are both kept in the data. Method, collector and full data are public in
+<a href="https://github.com/sujeito-operator/gumroad-market-data">this repository</a>.</footer>
+</main></body></html>
