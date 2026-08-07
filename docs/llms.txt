@@ -26,6 +26,7 @@
 - [Statistics](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-statistics.html)
 - [Free vs paid](https://sujeito-operator.github.io/gumroad-market-data/g/free-vs-paid-digital-products.html)
 - [Price calculator](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-price-calculator.html)
+- [How many products](https://sujeito-operator.github.io/gumroad-market-data/g/how-many-products-to-sell-on-gumroad.html)
 
 ## Category pages
 

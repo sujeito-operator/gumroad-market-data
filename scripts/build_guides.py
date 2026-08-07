@@ -33,7 +33,19 @@ GUIDES = [
     ("gumroad-statistics", "Statistics"),
     ("free-vs-paid-digital-products", "Free vs paid"),
     ("gumroad-price-calculator", "Price calculator"),
+    ("how-many-products-to-sell-on-gumroad", "How many products"),
 ]
+
+# The one guide derived from the seller column, so the seller pages can link it by name
+# rather than by a literal that would rot silently if the slug ever changed. It is
+# always built (it is in GUIDES above), so a link to it can never dangle — unlike the
+# seller -> category links, which have to fall back when a node is below the page cut.
+SELLER_GUIDE = "how-many-products-to-sell-on-gumroad"
+
+# Catalogue-size bands for the seller guide. Kept coarse on purpose: the tail is thin
+# (20 sellers have 20+ products) and finer bands would report noise as structure.
+SELLER_BANDS = [(1, 1, "1 product"), (2, 2, "2"), (3, 4, "3–4"),
+                (5, 9, "5–9"), (10, 19, "10–19"), (20, 10 ** 9, "20 or more")]
 
 
 def analyse(s, rows):
@@ -132,6 +144,72 @@ def analyse(s, rows):
         "top_listing": max(prod, key=lambda r: r["n"]),
         "med_rated_ratings": int(st.median([r["n"] for r in prod if r["n"] > 0])),
         "p90_ratings": int(st.quantiles([r["n"] for r in prod if r["n"] > 0], n=10)[8]),
+    }
+
+
+def seller_analyse():
+    """The seller guide's figures, computed from the TAXONOMY sample only.
+
+    THE TWO SAMPLES ARE NEVER MERGED. Everything else in this file is derived from the
+    42-search sample (`data/gumroad-latest.csv`, 1,344 products, paid median $36.99).
+    This one guide is derived from the category walk (`data/gumroad-sellers.csv`, 4,545
+    sellers, paid median $18.03) because that is the only sample with a seller column.
+    The two disagree, that disagreement is a published finding, and averaging them would
+    produce a third set of numbers matching neither. The page says which sample it is on.
+    """
+    s = json.load(open(B.ROOT / "data" / "sellers-summary.json"))
+    rows = list(csv.DictReader(open(B.ROOT / "data" / "gumroad-sellers.csv")))
+    for r in rows:
+        for k in ("products", "ratings_total", "rated_products", "top_product_ratings",
+                  "ratings_rank"):
+            r[k] = int(r[k] or 0)
+        r["med_price_usd"] = float(r["med_price_usd"] or 0)
+
+    bands = []
+    for lo, hi, label in SELLER_BANDS:
+        g = [r for r in rows if lo <= r["products"] <= hi]
+        rat = [r["ratings_total"] for r in g]
+        prices = [r["med_price_usd"] for r in g if r["med_price_usd"] > 0]
+        bands.append({
+            "label": label, "n": len(g),
+            "med": int(st.median(rat)),
+            "mean": round(sum(rat) / len(g), 1),
+            # Ratings PER PRODUCT, taken per seller and then medianed — not total
+            # ratings over total products, which one 15,000-rating storefront decides.
+            "per_prod": round(st.median([r["ratings_total"] / r["products"] for r in g]), 1),
+            "zero": round(100 * sum(1 for x in rat if x == 0) / len(g), 1),
+            "price": st.median(prices) if prices else 0.0,
+        })
+
+    # How much of a seller's own demand sits on their single best product. Only sellers
+    # with 2+ products and at least one rating can answer this; for everyone else the
+    # question is undefined rather than 100%.
+    multi = [r for r in rows if r["products"] >= 2 and r["ratings_total"] > 0]
+    share = [100 * r["top_product_ratings"] / r["ratings_total"] for r in multi]
+    five = [r for r in rows if r["products"] >= 5 and r["ratings_total"] > 0]
+    share5 = [100 * r["top_product_ratings"] / r["ratings_total"] for r in five]
+
+    top = sorted(rows, key=lambda r: -r["ratings_total"])[:s["top1_count"]]
+    biggest = sorted(rows, key=lambda r: -r["products"])[:6]
+    five_all = [r for r in rows if r["products"] >= 5]
+
+    return {
+        "s": s, "bands": bands,
+        "multi_n": len(multi),
+        "multi_med_share": round(st.median(share), 1),
+        "multi_half": round(100 * sum(1 for x in share if x >= 50) / len(share)),
+        "multi_all": round(100 * sum(1 for x in share if x >= 99.99) / len(share), 1),
+        "five_n": len(five), "five_med_share": round(st.median(share5), 1),
+        "top1_max_products": max(r["products"] for r in top),
+        # The demand rank the top 1% cuts at, and where the biggest catalogues land
+        # against it. Stated as numbers so the claim "none of them is in the top 1%"
+        # cannot survive the data changing under it.
+        "top1_cut": top[-1]["ratings_total"],
+        "big_best_rank": min(r["ratings_rank"] for r in biggest),
+        "biggest": biggest,
+        "five_med_unrated": int(st.median([r["products"] - r["rated_products"]
+                                           for r in five_all])),
+        "five_all_n": len(five_all),
     }
 
 
@@ -829,8 +907,150 @@ any of it, or quote it with attribution.</p>
         body)
 
 
+def g_how_many(s, a):
+    """"Should I list more products?" — answered from the seller column.
+
+    This is the only guide not derived from the 42-search sample, and the only one that
+    can be: catalogue size is a property of a seller, and the search sample never
+    recorded who sold what. See seller_analyse's docstring for why the two samples are
+    reported separately and never averaged.
+    """
+    import build_sellers as S          # imported here: build_site imports this module
+    d = seller_analyse()
+    ss, bands = d["s"], d["bands"]
+    solo, five_plus = bands[0], bands[3]
+    big1 = d["biggest"][0]
+
+    brows = "".join(
+        f"<tr><td>{b['label']}</td><td class=n>{b['n']:,}</td><td class=n>{b['med']:,}</td>"
+        f"<td class=n>{b['per_prod']}</td><td class=n>{b['zero']}%</td>"
+        f"<td class=n>{B.money(b['price'])}</td></tr>" for b in bands)
+
+    def slink(r):
+        sl = S.seller_slug(r["seller"])
+        name = B.esc(r["seller"])
+        return (f'<a href="../s/{sl}.html">{name}</a>'
+                if r["products"] >= S.MIN_PRODUCTS else name)
+
+    crows = "".join(
+        f"<tr><td>{slink(r)}</td><td class=n>{r['products']}</td>"
+        f"<td class=n>{r['ratings_total']:,}</td>"
+        f"<td class=n>{round(r['ratings_total'] / r['products'], 1)}</td>"
+        f"<td class=n>{r['products'] - r['rated_products']}</td>"
+        f"<td class=n>{r['ratings_rank']}</td></tr>"
+        for r in d["biggest"])
+
+    body = f"""
+<h2>The short answer</h2>
+<p>Listing more products does raise a seller's <em>total</em> demand &mdash; slowly. It does not
+raise demand <em>per product</em> at all, and the sellers holding most of this marketplace did not
+get there by publishing a lot. Across {ss['sellers']:,} sellers, the rank correlation between how
+many products a seller lists and how much demand they attract is
+<strong>{ss['spearman_products_ratings']}</strong>. That is a real relationship and a weak one.</p>
+
+<h2>Every seller, banded by catalogue size</h2>
+<p>&ldquo;Ratings each&rdquo; is the median of each seller's own ratings-per-product, not total
+ratings divided by total products &mdash; the latter is decided by whichever storefront happens to
+be biggest, and that is one seller out of {ss['sellers']:,}.</p>
+<table><thead><tr><th>Products listed</th><th class=n>Sellers</th><th class=n>Median ratings</th>
+<th class=n>Ratings each</th><th class=n>No ratings at all</th><th class=n>Median price</th>
+</tr></thead><tbody>{brows}</tbody></table>
+<p>Read the third column down and the case for publishing more looks strong: the median seller goes
+from {solo['med']} rating to {bands[-1]['med']}. Read the fourth and it collapses. Ratings per
+product rises from {solo['per_prod']} to {five_plus['per_prod']} at five to nine products and then
+<strong>falls back</strong>; the sellers with twenty or more products earn {bands[-1]['per_prod']}
+ratings per listing, which is worse than sellers with two. Whatever the larger catalogues are
+buying, it is not attention per item.</p>
+<p>The last column is the part nobody mentions. Median price falls from {B.money(solo['price'])} for
+a one-product seller to {B.money(bands[-1]['price'])} for a twenty-plus seller. Large catalogues on
+this platform are not the same business at a larger size &mdash; they are a cheaper business.</p>
+
+<h2>The sellers who actually hold this market are not the ones with the most products</h2>
+<p>The top {ss['top1_count']} sellers &mdash; the top 1% &mdash; hold
+<strong>{ss['top1_share']}% of all {ss['ratings_total']:,} ratings</strong> in this sample. Their
+median catalogue is <strong>{ss['top1_med_products']} products</strong>.
+<strong>{ss['top1_solo']} of the {ss['top1_count']} have exactly one.</strong> The largest catalogue
+anywhere in that top 1% is {d['top1_max_products']} products.</p>
+<p>Meanwhile the six largest catalogues in the whole sample look like this:</p>
+<table><thead><tr><th>Seller</th><th class=n>Products</th><th class=n>Ratings</th>
+<th class=n>Ratings each</th><th class=n>Products with none</th><th class=n>Demand rank</th>
+</tr></thead><tbody>{crows}</tbody></table>
+<p>Not one of them is in the top 1%: the {ss['top1_count']}th-ranked seller has {d['top1_cut']:,}
+ratings, and the best-placed of these six sits at rank {d['big_best_rank']}. The largest storefront
+measured, {B.esc(big1['seller'])}, lists {big1['products']} products which have attracted
+{big1['ratings_total']} ratings between them &mdash; {big1['products'] - big1['rated_products']} of
+those listings have never been rated at all.</p>
+
+<h2>One product carries almost everything</h2>
+<p>Of the {d['multi_n']:,} sellers here with more than one product and at least one rating, the
+median seller earns <strong>{d['multi_med_share']}% of all their ratings from a single
+product</strong>. {d['multi_half']}% of them get at least half their demand from one listing, and
+for {d['multi_all']}% one product accounts for literally all of it.</p>
+<p>That concentration relaxes with catalogue size but does not go away: across the {d['five_n']}
+sellers with five or more products and any demand at all, the best product still takes a median
+{d['five_med_share']}% of the storefront. And among all {d['five_all_n']} sellers with five or more
+products, the median one is carrying <strong>{d['five_med_unrated']} listings with no ratings
+whatsoever</strong>.</p>
+
+<h2>What this does and does not license you to conclude</h2>
+<p>It does not say publish once and stop. Total demand does rise with catalogue size, the share of
+sellers with nothing at all falls from {solo['zero']}% to {bands[-1]['zero']}%, and a second product
+is the cheapest way to find out that the first one was the wrong product.</p>
+<p>What it does say is that the common advice &mdash; volume is the strategy, keep shipping and the
+catalogue compounds &mdash; is not visible in this data. Nothing compounds here. A tenth product
+performs about as well as a second, the storefront's income stays concentrated in one listing, and
+the price a large catalogue can command is lower. If the aim is one product that works, the
+measurement supports looking for it. If the aim is thirty products that each work a little, no
+seller in this sample is doing that.</p>
+
+<p class=cite><strong>What the product counts are.</strong> A seller's product count here is
+what a category walk found &mdash; three pages deep per category, so it is a <strong>lower bound,
+not a catalogue</strong>, and it is biased down hardest for the sellers whose listings rank deepest.
+Worth being precise about which way that cuts: ratings and products are both counted over the same
+found listings, so undercounting a large seller's catalogue <em>overstates</em> their ratings per
+product. The finding that per-product demand does not rise with catalogue size is therefore
+conservative &mdash; correcting the bias would flatten it further, not reverse it.</p>
+
+<h2>Which sample this is, and why it is not the other one</h2>
+<p>This page is the only one on the site derived from the <a href="../t/index.html">category
+walk</a> &mdash; {ss['products']:,} products from {ss['sellers']:,} sellers across
+{ss['ratings_total']:,} ratings &mdash; because it is the only sample that records who sells what.
+Every other guide here is measured on a separate sample of {s['n']:,} products drawn from
+{s['cats']} category searches. The two disagree on price by a wide margin ({B.money(s['med'])}
+median paid against {B.money(bands[0]['price'])} here) and both are published as they were measured.
+Averaging them would produce a third set of numbers describing neither, so this site never does.</p>
+
+{B.buy_block("This page is about sellers. The report is the other axis: it reads all "
+             f"{s['cats']} categories together and classifies each as an opening, a crowded room "
+             "or thin &mdash; which is the question you hit immediately after deciding that one "
+             "product done properly beats ten.")}
+
+<h2>Check it yourself</h2>
+<p>Every figure above comes from
+<a href="{B.REPO}/blob/main/data/gumroad-sellers.csv">the seller CSV</a> ({ss['sellers']:,} rows,
+one per seller) and the <a href="{B.REPO}/blob/main/data/gumroad-taxonomy.csv">listing table</a> it
+derives from, with <a href="{B.REPO}/blob/main/scripts/normalize_sellers.py">the derivation</a>
+alongside them. Both are in the <a href="https://doi.org/{B.DOI}">DOI-archived record</a>, CC BY
+4.0, no signup. The <a href="../s/index.html">ranked seller index</a> lists every rated seller.</p>
+"""
+    return page(
+        "how-many-products-to-sell-on-gumroad",
+        f"How many products should you sell on Gumroad? {ss['sellers']:,} sellers measured",
+        f"Does listing more products work? Measured across {ss['sellers']:,} Gumroad sellers: the "
+        f"top 1% hold {ss['top1_share']}% of demand on a median of {ss['top1_med_products']} "
+        f"products. Free data, no signup.",
+        "How many products should you sell on Gumroad?",
+        f"{ss['sellers']:,} sellers &middot; {ss['products']:,} products &middot; "
+        f"{ss['ratings_total']:,} ratings &middot; measured 5 August 2026",
+        f"The standard answer is &ldquo;more&rdquo;. Measured across {ss['sellers']:,} live Gumroad "
+        f"storefronts, the top 1% of sellers hold {ss['top1_share']}% of all the demand in this "
+        f"sample on a median of {ss['top1_med_products']} products each &mdash; and "
+        f"{ss['top1_solo']} of those {ss['top1_count']} sellers list exactly one.",
+        body)
+
+
 BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_free_vs_paid,
-            g_calculator]
+            g_calculator, g_how_many]
 
 
 def build(s, rows, outdir):
