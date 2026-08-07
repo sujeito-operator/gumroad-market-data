@@ -370,7 +370,10 @@ def build_readme(s, mix):
 
 Highest demand: {hi}. Lowest: {lo}.
 
-**Browse a category** for its full price distribution and every listing measured:
+**Start with a question:**
+{" &middot; ".join(f"[{lab}]({SITE}/g/{g}.html)" for g, lab in build_guides.GUIDES)}
+
+**Or browse a category** for its full price distribution and every listing measured:
 <{SITE}/>
 
 ## The demand table

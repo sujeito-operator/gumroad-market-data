@@ -9,7 +9,10 @@
 
 Highest demand: vrchat avatar (100%), unity asset (97%), blender addon (94%). Lowest: resume template (42%), crochet pattern (39%), excel dashboard (39%).
 
-**Browse a category** for its full price distribution and every listing measured:
+**Start with a question:**
+[What to sell](https://sujeito-operator.github.io/gumroad-market-data/g/what-to-sell-on-gumroad.html) &middot; [What people make](https://sujeito-operator.github.io/gumroad-market-data/g/how-much-do-people-make-on-gumroad.html) &middot; [What to charge](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-pricing.html) &middot; [Is it worth it](https://sujeito-operator.github.io/gumroad-market-data/g/is-gumroad-worth-it.html)
+
+**Or browse a category** for its full price distribution and every listing measured:
 <https://sujeito-operator.github.io/gumroad-market-data/>
 
 ## The demand table
