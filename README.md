@@ -48,6 +48,35 @@ rather than reported as zeroes.
 
 → [**All 261 categories, ranked**](https://sujeito-operator.github.io/gumroad-market-data/t/index.html)
 
+## A third view: who is selling
+
+Attributing every listing to its storefront gives a third unit of observation and the
+strongest finding in the dataset. Every other public Gumroad dataset is a list of products;
+this one has **4,545 sellers behind 8,325 products**.
+
+> **The top 1% of sellers — 45 of them — hold 52.5% of all
+> 205,250 ratings measured. The median seller inside that 1% has
+> 2 products, and 14 of them have exactly one.**
+
+- **Concentration is not a catalogue effect.** Rank correlation between catalogue size and
+  demand is **0.284** — real, weak, and not the mechanism.
+- **3,263 of 4,545 sellers (71.8%) have a
+  single product**, and as a class hold 31.2% of all ratings.
+- **1,710 sellers (38%)
+  have no ratings at all** across their entire measured catalogue. That is the modal outcome.
+- Top 10% of sellers: 89.2% of ratings. Bottom half: 0.3%.
+
+**The caveat that governs every count here:** a seller's product count is *what this crawl
+found*, three pages deep per category node — a **lower bound**, not a catalogue, biased
+down for the sellers whose listings rank deepest.
+
+Data: [`data/gumroad-sellers.csv`](data/gumroad-sellers.csv) (one row per seller),
+[`data/sellers-summary.json`](data/sellers-summary.json), derived by
+[`scripts/normalize_sellers.py`](scripts/normalize_sellers.py) from the listing table, so
+the two can never disagree.
+
+→ [**All 4,545 sellers, ranked**](https://sujeito-operator.github.io/gumroad-market-data/s/index.html)
+
 ## The demand table
 
 The first column carries most of the information. **% Rated** is the share of listings in a

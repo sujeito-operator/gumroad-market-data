@@ -387,6 +387,16 @@ DOI-archived at <a href="https://doi.org/{B.DOI}">{B.DOI}</a>; it is a different
 sampling frame, not a superseded file, and the two are kept side by side rather than
 silently merged.</p>
 
+<h2>The same data, one row per seller</h2>
+<p>Every listing above carries the storefront that published it, so the same file answers
+a question no other public Gumroad dataset can: <strong>the top 1% of
+{s['sellers']:,} sellers hold {s['seller_top1_share']}% of every rating measured, and the
+median seller in that 1% has two products.</strong> Concentration here is not a catalogue
+effect.</p>
+<p><a href="../s/index.html"><strong>All {s['sellers']:,} sellers, ranked &rarr;</strong></a>
+&nbsp;&middot;&nbsp;
+<a href="{B.REPO}/blob/main/data/gumroad-sellers.csv">the seller CSV</a> (free, CC BY 4.0)</p>
+
 {B.buy_block("What is <em>not</em> free is the analysis: which categories are openings "
              "versus crowded rooms, where price and demand come apart, and what the "
              "background rate of unsold listings means if you are choosing what to "

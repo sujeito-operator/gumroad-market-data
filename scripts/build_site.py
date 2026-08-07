@@ -16,6 +16,7 @@ is how the drift starts; edit this file instead and re-run:
 import collections, csv, json, pathlib, re, urllib.parse
 
 import build_guides
+import build_sellers
 import build_taxonomy
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -181,7 +182,7 @@ def jsonld(s):
     }, indent=2)
 
 
-def build_index(s, mix, ts):
+def build_index(s, mix, ts, ss):
     top = s["by_category"][0]
     bottom = s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
@@ -218,6 +219,19 @@ measured.</strong></p>
 <p><a href="t/index.html"><strong>Browse all {ts['nodes']} Gumroad categories &rarr;</strong></a>
 &nbsp;·&nbsp; <a href="{REPO}/blob/main/data/gumroad-taxonomy.csv">the CSV</a>
 ({ts['obs']:,} rows, free, CC BY 4.0)</p>
+
+<h2>And a third view: who is selling</h2>
+<p>Attributing every listing to its storefront turns the price table into a market
+structure, and the structure is the more interesting object.
+<strong>The top 1% of Gumroad sellers hold {ss['top1_share']}% of all measured demand —
+and the median seller in that 1% has {ss['top1_med_products']} products.</strong>
+{ss['top1_solo']} of those {ss['top1_count']} sellers have exactly one. The rank
+correlation between how much a seller lists and how much demand they attract is only
+{ss['spearman_products_ratings']}, so whatever produces a winner here, listing more of
+them is not it.</p>
+<p><a href="s/index.html"><strong>All {ss['sellers']:,} sellers, ranked &rarr;</strong></a>
+&nbsp;·&nbsp; <a href="{REPO}/blob/main/data/gumroad-sellers.csv">the seller CSV</a>
+(one row per seller, free, CC BY 4.0)</p>
 
 <h2>The demand table</h2>
 <p>The first column carries most of the information. <strong>% Rated</strong> is the share of listings
@@ -416,12 +430,14 @@ by the same rated-share figure quoted at the top of this page.</span></li>
 """ + FOOTER
 
 
-def sitemap(cats, guides=(), taxo=()):
+def sitemap(cats, guides=(), taxo=(), sellers=()):
     urls = ([SITE + "/"]
             + [f"{SITE}/g/{g}.html" for g in guides]
             + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats]
             + [f"{SITE}/t/index.html"]
-            + [f"{SITE}/t/{t}.html" for t in taxo])
+            + [f"{SITE}/t/{t}.html" for t in taxo]
+            + [f"{SITE}/s/index.html"]
+            + [f"{SITE}/s/{x}.html" for x in sellers])
     body = "".join(f"<url><loc>{u}</loc><lastmod>2026-08-07</lastmod></url>\n" for u in urls)
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
@@ -534,6 +550,47 @@ def llms_txt(s, cats, guides, ts=None):
         ]
         lines += [f"- [{x['node']}]({SITE}/t/{T.flat(x['slug'])}.html)"
                   for x in ts["by_node"] if x["n"] >= T.MIN_LISTINGS]
+
+        # Third unit of observation. Kept out of the two product sections above on
+        # purpose: a seller-level figure is not a listing-level figure and must not be
+        # quoted as one.
+        import build_sellers as S
+        ss = json.loads((ROOT / "data" / "sellers-summary.json").read_text())
+        srows = list(csv.DictReader((ROOT / "data" / "gumroad-sellers.csv").open()))
+        lines += [
+            "",
+            "## Third view: who is selling",
+            "",
+            f"> Derived from the same taxonomy file, one row per seller instead of one "
+            f"per listing: **{ss['sellers']:,} distinct Gumroad sellers behind "
+            f"{ss['products']:,} products**. The top 1% ({ss['top1_count']} sellers) hold "
+            f"**{ss['top1_share']}% of all {ss['ratings_total']:,} ratings measured**; the "
+            f"top 10% hold {ss['top10_share']}%.",
+            "",
+            f"- **The concentration is not a catalogue effect.** Rank correlation between "
+            f"catalogue size and demand is only {ss['spearman_products_ratings']}. The "
+            f"median seller inside the top 1% has {ss['top1_med_products']} products and "
+            f"{ss['top1_solo']} of the {ss['top1_count']} have exactly one.",
+            f"- {ss['solo_sellers']:,} of {ss['sellers']:,} sellers "
+            f"({ss['solo_share_pct']}%) have a single product in the sample; as a class "
+            f"they hold {ss['solo_ratings_share']}% of all ratings.",
+            f"- {ss['sellers_zero_ratings']:,} sellers "
+            f"({round(100 * ss['sellers_zero_ratings'] / ss['sellers'])}%) have no ratings "
+            f"at all across their whole measured catalogue.",
+            f"- **A seller's product count is a crawl lower bound, not a catalogue.** The "
+            f"collector took three pages per category node, so sellers whose listings rank "
+            f"deep are under-counted. Never quote it as catalogue size.",
+            "",
+            f"- [Seller CSV]({RAW}/data/gumroad-sellers.csv): all {ss['sellers']:,} "
+            f"sellers with product count, categories, rating total, demand rank, share of "
+            f"all ratings, price median and range, and their most-rated listing.",
+            f"- [sellers-summary.json]({RAW}/data/sellers-summary.json): every figure "
+            f"above as JSON.",
+            f"- [Seller concentration, ranked]({SITE}/s/index.html)",
+            "",
+        ]
+        lines += [f"- [{r['seller']}]({SITE}/s/{S.seller_slug(r['seller'])}.html)"
+                  for r in srows if int(r["products"]) >= S.MIN_PRODUCTS]
     lines += [
         "",
         "## Optional",
@@ -548,7 +605,7 @@ def llms_txt(s, cats, guides, ts=None):
 
 # ------------------------------------------------------------------- README
 
-def build_readme(s, mix, ts):
+def build_readme(s, mix, ts, ss):
     top, bottom = s["by_category"][0], s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
     tbl = "\n".join(
@@ -606,6 +663,35 @@ of products in a category. {ts['nodes_empty']} nodes returned nothing and are ex
 rather than reported as zeroes.
 
 → [**All {ts['nodes']} categories, ranked**]({SITE}/t/index.html)
+
+## A third view: who is selling
+
+Attributing every listing to its storefront gives a third unit of observation and the
+strongest finding in the dataset. Every other public Gumroad dataset is a list of products;
+this one has **{ss['sellers']:,} sellers behind {ss['products']:,} products**.
+
+> **The top 1% of sellers — {ss['top1_count']} of them — hold {ss['top1_share']}% of all
+> {ss['ratings_total']:,} ratings measured. The median seller inside that 1% has
+> {ss['top1_med_products']} products, and {ss['top1_solo']} of them have exactly one.**
+
+- **Concentration is not a catalogue effect.** Rank correlation between catalogue size and
+  demand is **{ss['spearman_products_ratings']}** — real, weak, and not the mechanism.
+- **{ss['solo_sellers']:,} of {ss['sellers']:,} sellers ({ss['solo_share_pct']}%) have a
+  single product**, and as a class hold {ss['solo_ratings_share']}% of all ratings.
+- **{ss['sellers_zero_ratings']:,} sellers ({round(100 * ss['sellers_zero_ratings'] / ss['sellers'])}%)
+  have no ratings at all** across their entire measured catalogue. That is the modal outcome.
+- Top 10% of sellers: {ss['top10_share']}% of ratings. Bottom half: {round(100 - ss['top50_share'], 1)}%.
+
+**The caveat that governs every count here:** a seller's product count is *what this crawl
+found*, three pages deep per category node — a **lower bound**, not a catalogue, biased
+down for the sellers whose listings rank deepest.
+
+Data: [`data/gumroad-sellers.csv`](data/gumroad-sellers.csv) (one row per seller),
+[`data/sellers-summary.json`](data/sellers-summary.json), derived by
+[`scripts/normalize_sellers.py`](scripts/normalize_sellers.py) from the listing table, so
+the two can never disagree.
+
+→ [**All {ss['sellers']:,} sellers, ranked**]({SITE}/s/index.html)
 
 ## The demand table
 
@@ -714,9 +800,19 @@ def main():
 
     ts = json.loads((ROOT / "data" / "taxonomy-summary.json").read_text())
 
+    # The seller table is a PURE derivation of data/gumroad-taxonomy.csv — no network, no
+    # new collection — so it is regenerated here rather than left to be run by hand. A
+    # derived file that only updates when somebody remembers is exactly how a published
+    # figure drifts away from the file it describes, which this whole script exists to
+    # prevent. The collectors and the two listing normalisers are NOT called here: those
+    # do touch the network.
+    import normalize_sellers
+    normalize_sellers.main()
+    ss = json.loads((ROOT / "data" / "sellers-summary.json").read_text())
+
     mix = currency_mix(rows)
-    (ROOT / "README.md").write_text(build_readme(s, mix, ts))
-    (ROOT / "docs" / "index.html").write_text(build_index(s, mix, ts))
+    (ROOT / "README.md").write_text(build_readme(s, mix, ts, ss))
+    (ROOT / "docs" / "index.html").write_text(build_index(s, mix, ts, ss))
     cdir = ROOT / "docs" / "c"
     cdir.mkdir(exist_ok=True)
     topics = [c["topic"] for c in s["by_category"]]
@@ -736,7 +832,14 @@ def main():
         r["n"] = float(r["n"] or 0)
     taxo = build_taxonomy.build(ts, trows, ROOT / "docs" / "t")
 
-    (ROOT / "docs" / "sitemap.xml").write_text(sitemap(s["by_category"], guides, taxo))
+    # Third surface, third unit of observation: one row per SELLER. Same source file as
+    # docs/t/, so it cannot disagree with it; its own directory because a seller-level
+    # figure averaged across listing rows would be weighted by how many categories
+    # Gumroad filed each product under.
+    sellers = build_sellers.build(ts, trows, ROOT / "docs" / "s")
+
+    (ROOT / "docs" / "sitemap.xml").write_text(
+        sitemap(s["by_category"], guides, taxo, sellers))
     (ROOT / "docs" / "llms.txt").write_text(
         llms_txt(s, s["by_category"], build_guides.GUIDES, ts))
 
@@ -747,7 +850,8 @@ def main():
         csv.writer(f).writerows(src[:51])
 
     print(f"README + index + {len(guides)} guides + {len(s['by_category'])} category pages"
-          f" + {len(taxo)} taxonomy pages + taxonomy index + sitemap + sample")
+          f" + {len(taxo)} taxonomy pages + taxonomy index + {len(sellers)} seller pages"
+          f" + seller index + sitemap + sample")
 
 
 if __name__ == "__main__":
