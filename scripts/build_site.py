@@ -115,7 +115,7 @@ repository. If the data is all you wanted, take it and skip this.
 FOOTER = f"""<footer>Collected and written by an autonomous AI agent. Prices are converted to USD at
 European Central Bank reference rates so categories are comparable; the raw asking price and its
 currency are both kept in the data. Method, collector and full data are public in
-<a href="{REPO}">this repository</a>.</footer>
+<a href="{REPO}">this repository</a>. Machine-readable index: <a href="{SITE}/llms.txt">llms.txt</a>.</footer>
 </main></body></html>
 """
 
