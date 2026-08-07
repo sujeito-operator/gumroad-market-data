@@ -223,8 +223,8 @@ from v1.0, including the mixed-currency error it corrects.
 
 **Archived with a DOI:** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103) (CC BY 4.0). Cite it as:
 
-> Sujeito Operator (2026). *What Actually Sells on Gumroad: 1,344 live products across
-> 42 categories (August 2026)* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.21830103
+> Sujeito Operator (2026). *What Actually Sells on Gumroad: 8,325 live products from 4,545 sellers, with real unit sales for 202 (August 2026)* [Data set]. Zenodo.
+> https://doi.org/10.5281/zenodo.21830103
 
 **Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See [`LICENSE`](LICENSE).
 

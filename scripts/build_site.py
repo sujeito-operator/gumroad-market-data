@@ -13,7 +13,7 @@ is how the drift starts; edit this file instead and re-run:
 
     python3 scripts/normalize.py && python3 scripts/build_site.py
 """
-import collections, csv, json, pathlib, re, urllib.parse
+import collections, csv, json, pathlib, re, textwrap, urllib.parse
 
 import build_guides
 import build_sellers
@@ -28,6 +28,19 @@ RAW = "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/ma
 DOI = "10.5281/zenodo.21830103"
 # Who wrote this. Every page claims an agent made it; this is where that claim is answered.
 PROFILE = "https://github.com/sujeito-operator"
+
+
+def zenodo_title(ts, sr):
+    """The Zenodo deposit's title, exactly as `zenodo_v23_sales.py` computes it.
+
+    A citation has to match the record it points at, and ours did not: `LICENSE` and the
+    README both told people to cite "1,511 live products across 42 categories" — a count
+    that was withdrawn — while the deposit is titled after the taxonomy walk. Derive it in
+    one place so a citation string cannot describe a deposit that does not exist.
+    """
+    return (f"What Actually Sells on Gumroad: {ts['n']:,} live products from "
+            f"{ts['sellers']:,} sellers, with real unit sales for {sr['disclosing']} "
+            f"(August 2026)")
 
 # The price is set in next.md, which is the single source of truth for it. It has
 # changed twice, and a stale price on a money surface is this project's most frequent
@@ -892,8 +905,8 @@ from v1.0, including the mixed-currency error it corrects.
 
 **Archived with a DOI:** [{DOI}](https://doi.org/{DOI}) (CC BY 4.0). Cite it as:
 
-> Sujeito Operator (2026). *What Actually Sells on Gumroad: {s['n']:,} live products across
-> {s['cats']} categories (August 2026)* [Data set]. Zenodo. https://doi.org/{DOI}
+> Sujeito Operator (2026). *{zenodo_title(ts, sr)}* [Data set]. Zenodo.
+> https://doi.org/{DOI}
 
 **Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See [`LICENSE`](LICENSE).
 
@@ -924,6 +937,39 @@ def currency_mix(rows):
     return ", ".join(parts[:-1]) + " and " + parts[-1]
 
 
+def sync_license(ts, sr):
+    """Rewrite the attribution block inside LICENSE from the summaries.
+
+    LICENSE is the one published surface that was never generated, and it rotted the way
+    ungenerated surfaces always do here: it told anyone citing the data to use version DOI
+    …21830104 — the withdrawn v1 deposit, the one with the mixed-currency error — and the
+    "1,511 live products" count that went with it. It is the string people copy when they
+    cite us, so it is the last place a stale figure should live. The legal text is
+    untouched; only the three indented citation lines are regenerated.
+    """
+    path = ROOT / "LICENSE"
+    text = path.read_text()
+    head, sep, rest = text.partition("build on it. Attribution:\n")
+    assert sep, "LICENSE no longer has the attribution anchor — check it by hand"
+    _old, sep2, tail = rest.partition("\nThis matches the licence")
+    assert sep2, "LICENSE no longer has the closing anchor — check it by hand"
+    # Wrapped by hand rather than left as one 140-column line: this is a plain text file
+    # read in terminals, and the surrounding paragraphs are all wrapped at 76.
+    citation = (f"Sujeito Operator (2026). {zenodo_title(ts, sr)} [Data set]. Zenodo. "
+                f"https://doi.org/{DOI}")
+    wrapped = textwrap.fill(citation, width=74, initial_indent="  ",
+                            subsequent_indent="  ", break_long_words=False,
+                            break_on_hyphens=False)
+    block = f"\n{wrapped}\n"
+    out = head + sep + block + sep2 + tail
+    assert "21830104" not in out, "the withdrawn v1 version DOI is back in LICENSE"
+    assert "1,511" not in out, "the withdrawn 1,511 count is back in LICENSE"
+    assert DOI in out
+    if out != text:
+        path.write_text(out)
+    return out
+
+
 def main():
     s = json.loads((ROOT / "data" / "summary.json").read_text())
     rows = list(csv.DictReader((ROOT / "data" / "gumroad-latest.csv").open()))
@@ -949,6 +995,8 @@ def main():
     import normalize_products
     normalize_products.main()
     sr = json.loads((ROOT / "data" / "sales-ratio-summary.json").read_text())
+
+    sync_license(ts, sr)
 
     mix = currency_mix(rows)
     (ROOT / "README.md").write_text(build_readme(s, mix, ts, ss, sr))
