@@ -131,7 +131,7 @@ def jsonld(s):
     return json.dumps({
         "@context": "https://schema.org/",
         "@type": "Dataset",
-        "name": "What Actually Sells on Gumroad: 1,511 live products across 42 categories (August 2026)",
+        "name": f"What Actually Sells on Gumroad: {s['n']:,} live products across {s['cats']} categories (August 2026)",
         "description": (
             f"A measured snapshot of {s['n']:,} live Gumroad products across {s['cats']} category "
             "searches, captured 5 August 2026. Each row carries category, asking price, the currency "
@@ -182,7 +182,7 @@ def build_index(s, mix):
     desc = (f"{s['zpct']}% of Gumroad products have zero ratings. Measured data on {s['n']:,} live "
             f"products across {s['cats']} categories: which categories actually transact, real USD "
             f"price anchors, and how rare subscriptions are. Free, CC BY 4.0, DOI {DOI}.")
-    return head("What Actually Sells on Gumroad — 1511 products measured (Aug 2026)", desc,
+    return head(f"What Actually Sells on Gumroad — {s['n']:,} products measured (Aug 2026)", desc,
                 SITE + "/", extra) + f"""
 <h1>What actually sells on Gumroad</h1>
 <div class=sub>{s['n']:,} live products measured across {s['cats']} categories &middot; 5 August 2026</div>

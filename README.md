@@ -1,8 +1,8 @@
 # What actually sells on Gumroad — measured
 
-**1,511 live Gumroad products across 42 categories, collected 5 August 2026.**
+**1,344 live Gumroad products across 42 categories, collected 5 August 2026.**
 
-> **500 of the 1,511 products in this sample — 33% — have no ratings at all.**
+> **458 of the 1,344 products in this sample — 34% — have no ratings at all.**
 > They are listed, priced, and selling nothing. The gap between categories where that happens
 > and ones where it doesn't runs from **100% of listings rated** at the top to
 > **39%** at the bottom.
@@ -47,9 +47,9 @@ sell at all, or simply sit. It is free here in full; nothing is held back from t
 | [python course](https://sujeito-operator.github.io/gumroad-market-data/c/python-course.html) | 67% | 8 | 875 | $89.00 | $288.87 | 3 |
 | [ebook business](https://sujeito-operator.github.io/gumroad-market-data/c/ebook-business.html) | 67% | 5 | 496 | $49.99 | $500.00 | 1 |
 | [meal plan](https://sujeito-operator.github.io/gumroad-market-data/c/meal-plan.html) | 67% | 5 | 373 | $36.99 | $99.99 | 1 |
+| [ui kit](https://sujeito-operator.github.io/gumroad-market-data/c/ui-kit.html) | 65% | 26 | 284 | $134.99 | $350.00 | 1 |
 | [stock photos](https://sujeito-operator.github.io/gumroad-market-data/c/stock-photos.html) | 64% | 7 | 347 | $27.00 | $248.99 | 2 |
 | [yoga program](https://sujeito-operator.github.io/gumroad-market-data/c/yoga-program.html) | 64% | 2 | 33 | $77.00 | $277.00 | 3 |
-| [ui kit](https://sujeito-operator.github.io/gumroad-market-data/c/ui-kit.html) | 61% | 26 | 284 | $134.99 | $440.00 | 1 |
 | [game assets pixel](https://sujeito-operator.github.io/gumroad-market-data/c/game-assets-pixel.html) | 61% | 25 | 418 | $24.99 | $50.00 | 0 |
 | [seo tool](https://sujeito-operator.github.io/gumroad-market-data/c/seo-tool.html) | 56% | 12 | 184 | $69.90 | $399.00 | 7 |
 | [budget spreadsheet](https://sujeito-operator.github.io/gumroad-market-data/c/budget-spreadsheet.html) | 56% | 2 | 145 | $36.99 | $199.99 | 3 |
@@ -68,17 +68,17 @@ sell at all, or simply sit. It is free here in full; nothing is held back from t
 
 ## What the numbers say
 
-- **A third of everything listed has never sold a measurable unit.** 33% with zero ratings is
+- **A third of everything listed has never sold a measurable unit.** 34% with zero ratings is
   the background rate you compete against — and it held steady as the sample grew from 468 to
-  1,511 products, so it is not an artefact of a small sample.
+  1,344 products, so it is not an artefact of a small sample.
 - **Game and 3D assets top the demand table.** vrchat avatar is the only category where every listing
   sampled has ratings.
 - **Document, template and craft-pattern categories look busy and move slowly.** excel dashboard sits
   at 39% rated with a median of 1 rating(s).
 - **Price and demand are close to unrelated.** The highest-demand categories are among the cheapest.
-- **Subscriptions are rare:** 70 of 1,511 products bill recurring.
-- **Price anchors (USD):** median $39.00, 75th percentile $89.99,
-  90th $230.83.
+- **Subscriptions are rare:** 64 of 1,344 products bill recurring.
+- **Price anchors (USD):** median $36.99, 75th percentile $87.99,
+  90th $222.01.
 
 ## Method, and what this cannot tell you
 
@@ -92,7 +92,7 @@ revenue. It is one snapshot rather than a trend, and reflects the visible top of
 rather than its full population.
 
 **On currency.** Gumroad localises displayed prices, so a single search returns a mixture —
-1,239 in GBP, 228 in USD and 44 in EUR, with 40 of the 42 categories containing more than one. Every price here is converted to USD at ECB reference rates for 2026-08-06
+1,237 in GBP, 228 in USD and 44 in EUR, with 40 of the 42 categories containing more than one. Every price here is converted to USD at ECB reference rates for 2026-08-06
 (£1 = $1.3467, €1 = $1.1542). The raw price and its currency are both kept in the CSV,
 so the conversion can be checked or redone. Figures published before 2026-08-07 did not do this and
 were computed across mixed units; they are superseded by these.
@@ -101,7 +101,7 @@ were computed across mixed units; they are superseded by these.
 
 ## The full dataset — free, no signup
 
-All 1,511 rows are in this repo and always will be:
+All 1,344 rows are in this repo and always will be:
 [`data/gumroad-latest.csv`](data/gumroad-latest.csv) — category, price, currency, USD price, rating
 count, subscription flag, product title. The collector that produced it is
 [`scripts/collect.py`](scripts/collect.py), and the USD normalisation is
@@ -121,7 +121,7 @@ from v1.0, including the mixed-currency error it corrects.
 
 **Archived with a DOI:** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103) (CC BY 4.0). Cite it as:
 
-> Sujeito Operator (2026). *What Actually Sells on Gumroad: 1,511 live products across
+> Sujeito Operator (2026). *What Actually Sells on Gumroad: 1,344 live products across
 > 42 categories (August 2026)* [Data set]. Zenodo. https://doi.org/10.5281/zenodo.21830103
 
 **Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See [`LICENSE`](LICENSE).
@@ -130,7 +130,7 @@ from v1.0, including the mixed-currency error it corrects.
 
 What is **not** free is the analysis: a report that reads the table rather than prints it —
 which categories are openings versus crowded rooms, where price and demand come apart, and
-what the 33%-unrated background rate means if you are choosing what to build next.
+what the 34%-unrated background rate means if you are choosing what to build next.
 
 You are paying for the interpretation, not for the rows. The rows are above, free. If the
 data is all you wanted, take it and skip this.

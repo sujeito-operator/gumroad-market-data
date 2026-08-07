@@ -1,12 +1,24 @@
 {
- "n": 1511,
+ "n": 1344,
+ "obs": 1509,
+ "dupes": 165,
  "cats": 42,
- "zero": 500,
- "zpct": 33,
- "med": 39.0,
- "p75": 89.99,
- "p90": 230.83,
- "subs": 70,
+ "zero": 458,
+ "zpct": 34,
+ "med": 36.99,
+ "med_all": 35.0,
+ "p75": 87.99,
+ "p90": 222.01,
+ "free": 72,
+ "ratings_total": 62134,
+ "med_ratings_all": 3,
+ "med_ratings_rated": 9,
+ "top1_share": 33.4,
+ "top5_share": 67.4,
+ "top10_share": 82.6,
+ "bottom50_share": 0.5,
+ "top_product_ratings": 4000,
+ "subs": 64,
  "mixed_cats": 40,
  "currency": "USD",
  "fx_date": "2026-08-06",
@@ -434,6 +446,23 @@
    ]
   },
   {
+   "topic": "ui kit",
+   "n": 34,
+   "median": 134.99,
+   "p25": 79.99,
+   "p75": 248.99,
+   "p90": 350.0,
+   "free": 3,
+   "subs": 1,
+   "rated_share": 65,
+   "med_ratings": 26,
+   "top_n": 284,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
+  },
+  {
    "topic": "stock photos",
    "n": 36,
    "median": 27.0,
@@ -462,23 +491,6 @@
    "rated_share": 64,
    "med_ratings": 2,
    "top_n": 33,
-   "currencies": [
-    "$",
-    "\u00a3"
-   ]
-  },
-  {
-   "topic": "ui kit",
-   "n": 36,
-   "median": 134.99,
-   "p25": 98.0,
-   "p75": 248.99,
-   "p90": 440.0,
-   "free": 3,
-   "subs": 1,
-   "rated_share": 61,
-   "med_ratings": 26,
-   "top_n": 284,
    "currencies": [
     "$",
     "\u00a3"

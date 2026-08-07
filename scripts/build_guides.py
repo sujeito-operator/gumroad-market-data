@@ -37,16 +37,28 @@ def analyse(s, rows):
     """The derived figures the guides quote. Same definitions as the paid report's
     analyse() — if these two ever disagree, the site and the report contradict each
     other on the surface where money changes hands."""
+    # TWO DENOMINATORS, ON PURPOSE. `rows` are listing *observations*: one product can
+    # rank for several category searches, so 1509 rows cover 1344 distinct products.
+    # Per-category figures below use `rows` — a product that genuinely ranks in two
+    # categories belongs in both. Every MARKET-WIDE figure uses `prod`, or popular
+    # products (the ones that match several searches) get counted twice and every
+    # aggregate tilts toward winners. Must match normalize.py's split exactly.
+    seen, prod = set(), []
+    for r in rows:
+        if r["t"].strip() not in seen:
+            seen.add(r["t"].strip())
+            prod.append(r)
+
     # csv.DictReader hands back the literal strings "True"/"False", and "False" is
     # truthy — checking it directly would report every listing as a subscription.
-    rec = [r for r in rows if str(r["recurring"]) == "True"]
+    rec = [r for r in prod if str(r["recurring"]) == "True"]
 
     cats = []
     for c in s["by_category"]:
         g = sorted((r["n"] for r in rows if r["q"] == c["topic"]), reverse=True)
         cats.append({**c, "top3": round(100 * sum(g[:3]) / (sum(g) or 1))})
 
-    paid = [r for r in rows if r["price_usd"] > 0]
+    paid = [r for r in prod if r["price_usd"] > 0]
     bands = []
     for lo, hi, label in [(0, 10, "under $10"), (10, 25, "$10–25"), (25, 50, "$25–50"),
                           (50, 100, "$50–100"), (100, 250, "$100–250"), (250, 1e9, "$250+")]:
@@ -68,7 +80,7 @@ def analyse(s, rows):
             tot += 1
             cheaper_wins += st.median(lo) > st.median(hi)
 
-    free = [r for r in rows if r["price_usd"] == 0]
+    free = [r for r in prod if r["price_usd"] == 0]
     return {
         "cats": cats, "bands": bands,
         "avg_rated": 100 - s["zpct"],
@@ -80,9 +92,9 @@ def analyse(s, rows):
         "free_rated": round(100 * sum(1 for r in free if r["n"] > 0) / len(free)),
         "paid_rated": round(100 * sum(1 for r in paid if r["n"] > 0) / len(paid)),
         "subs_n": len(rec),
-        "top_listing": max(rows, key=lambda r: r["n"]),
-        "med_rated_ratings": int(st.median([r["n"] for r in rows if r["n"] > 0])),
-        "p90_ratings": int(st.quantiles([r["n"] for r in rows if r["n"] > 0], n=10)[8]),
+        "top_listing": max(prod, key=lambda r: r["n"]),
+        "med_rated_ratings": int(st.median([r["n"] for r in prod if r["n"] > 0])),
+        "p90_ratings": int(st.quantiles([r["n"] for r in prod if r["n"] > 0], n=10)[8]),
     }
 
 
@@ -229,6 +241,27 @@ ratings — a real but modest number. And within any given category, three listi
 {a['med_conc']:.0f}% of everything. The most-rated single listing in this sample is
 &ldquo;{B.esc(top['t'][:70]).strip()}&rdquo; at {B.money(top['price_usd'])} with
 {int(top['n']):,} ratings.</p>
+
+<h2>How lopsided is it, across the whole market?</h2>
+<p>The per-category figure above is about crowding inside one niche. This is the same question asked
+across all {s['n']:,} products at once, using the {s['ratings_total']:,} ratings they carry between
+them:</p>
+<table><thead><tr><th>Slice of the market</th><th class=n>Products</th>
+<th class=n>Share of all ratings</th></tr></thead><tbody>
+<tr><td>Top 1%</td><td class=n>{max(1, round(s['n'] * 0.01)):,}</td><td class=n>{s['top1_share']}%</td></tr>
+<tr><td>Top 5%</td><td class=n>{max(1, round(s['n'] * 0.05)):,}</td><td class=n>{s['top5_share']}%</td></tr>
+<tr><td>Top 10%</td><td class=n>{max(1, round(s['n'] * 0.10)):,}</td><td class=n>{s['top10_share']}%</td></tr>
+<tr><td>Bottom 50%</td><td class=n>{s['n'] // 2:,}</td><td class=n>{s['bottom50_share']}%</td></tr>
+</tbody></table>
+<p>The top {max(1, round(s['n'] * 0.01)):,} products out of {s['n']:,} hold
+<strong>{s['top1_share']}% of every rating in the sample</strong>. The bottom half of the market —
+{s['n'] // 2:,} products — holds <strong>{s['bottom50_share']}%</strong> between all of them. That is
+the number worth carrying away from this page, and it is measured rather than modelled: no
+assumption about review rates goes into it, because it is a ratio of ratings to ratings.</p>
+<p>It also means an &ldquo;average&rdquo; is close to meaningless here. The mean product in this
+sample carries {s['ratings_total'] / s['n']:.0f} ratings; the median carries
+{s['med_ratings_all']}. Any Gumroad earnings figure quoted as an average is being dragged upward by
+a handful of listings that nothing else in the market resembles.</p>
 
 <h2>Does charging more mean earning more?</h2>
 <p>Listings grouped by asking price, in USD at ECB reference rates:</p>
