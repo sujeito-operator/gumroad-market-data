@@ -30,6 +30,10 @@ DOI = "10.5281/zenodo.21830103"
 # defect — change it in one place, here, and re-run the build.
 PRICE = "$79"
 BUY = "https://sujeitooperator.gumroad.com/l/bylafq"
+# The same free CSV, mirrored as a $0 Gumroad product. Not a second paywall and not a
+# lead magnet: gumroad.com already ranks where this site does not, so it is a download
+# location that search engines will actually find. Keep it $0 with a $0 minimum.
+FREE_MIRROR = "https://sujeitooperator.gumroad.com/l/gumroad-market-data"
 
 CSS = """:root{--ink:#1a1a1a;--mut:#666;--line:#ddd;--acc:#8a7a5c;--bg:#faf9f6}
 *{box-sizing:border-box}
@@ -153,6 +157,8 @@ def jsonld(s):
              "contentUrl": SITE + "/sample-50-rows.csv"},
             {"@type": "DataDownload", "encodingFormat": "application/json",
              "name": "Per-category summary", "contentUrl": RAW + "/data/summary.json"},
+            {"@type": "DataDownload", "encodingFormat": "text/csv",
+             "name": "Full dataset (Gumroad mirror, free)", "contentUrl": FREE_MIRROR},
         ],
     }, indent=2)
 
@@ -223,6 +229,9 @@ price, currency, USD price, rating count, subscription flag, product title — t
 page is reproducible from those files, which is the point: check the work rather than trust it. No email
 wall, no account, no "request access". Prefer a quick look first?
 <a href="sample-50-rows.csv">Download a 50-row sample</a>.</p>
+<p><strong>Also mirrored on Gumroad</strong> for anyone who would rather click one button than
+clone a repo: <a href="{FREE_MIRROR}">the same CSV, free</a>. It is $0 with a $0 minimum — the
+suggested amount is optional and typing zero is the expected case.</p>
 <p><strong>Archived with a DOI:</strong> <a href="https://doi.org/{DOI}">{DOI}</a> — data
 <strong>CC BY 4.0</strong>, collector code <strong>MIT</strong>.</p>
 
@@ -429,6 +438,10 @@ count, subscription flag, product title. The collector that produced it is
 which is the point: check the work rather than trust it.
 
 No email wall, no account, no "request access". Use it for anything, with or without credit.
+
+**Prefer a one-click download?** The same CSV is mirrored as a free Gumroad product:
+[**Gumroad Market Data 2026 — free CSV**]({FREE_MIRROR}). $0 with a $0 minimum; the suggested
+amount is optional and typing zero is the expected case.
 
 **Archived with a DOI:** [{DOI}](https://doi.org/{DOI}) (CC BY 4.0). Cite it as:
 

@@ -110,6 +110,10 @@ which is the point: check the work rather than trust it.
 
 No email wall, no account, no "request access". Use it for anything, with or without credit.
 
+**Prefer a one-click download?** The same CSV is mirrored as a free Gumroad product:
+[**Gumroad Market Data 2026 — free CSV**](https://sujeitooperator.gumroad.com/l/gumroad-market-data). $0 with a $0 minimum; the suggested
+amount is optional and typing zero is the expected case.
+
 **Archived with a DOI:** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103) (CC BY 4.0). Cite it as:
 
 > Sujeito Operator (2026). *What Actually Sells on Gumroad: 1,511 live products across
