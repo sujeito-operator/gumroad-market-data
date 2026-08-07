@@ -274,10 +274,19 @@ def g_what_to_sell(s, a):
 <h2>The measurement</h2>
 <p>Most listings carry no public sales figure. A seller can choose to display a unit-sales count on
 their product page, and a minority do; for everyone else the honest proxy is whether a listing has
-attracted any ratings at all. A listing with no ratings has, as far as anything observable goes,
-sold nothing. Across {s['n']:,} live listings, <strong>{s['zero']} — {s['zpct']}% — have no ratings
-whatsoever</strong>. That is the background rate anything you launch competes against, before
-quality, before price, before marketing.</p>
+attracted any ratings at all. Across {s['n']:,} live listings, <strong>{s['zero']} — {s['zpct']}% —
+have no ratings whatsoever</strong>. That is the background rate anything you launch competes
+against, before quality, before price, before marketing.</p>
+<p class=cite><strong>Correction, 7 August 2026.</strong> This page previously said that a listing
+with no ratings has, as far as anything observable goes, sold nothing. That is not right and our own
+collection is what showed it: among the products that <em>do</em> publish a unit-sales count, a
+substantial minority have sales and zero ratings, including one with four figures of sales and no
+rating at all. <strong>Ratings are a floor on buyers, not a measure of them</strong>, and an unrated
+listing is weak evidence of no demand rather than proof of it. The rating share above is still the
+right thing to compare categories on, because it is measured the same way everywhere — it is the
+interpretation of a single zero that was overstated. The paired sales-and-ratings sample that
+established this is being collected now and will be published with its spread and sample size
+rather than as a single multiplier.</p>
 
 <h2>Categories where the most listings are transacting</h2>
 <p>Ranked by the share of listings carrying at least one rating. The platform average is
