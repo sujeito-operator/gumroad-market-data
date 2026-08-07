@@ -35,6 +35,7 @@ GUIDES = [
     ("gumroad-price-calculator", "Price calculator"),
     ("how-many-products-to-sell-on-gumroad", "How many products"),
     ("gumroad-sales-per-rating", "Sales per rating"),
+    ("gumroad-multiple-categories", "Multiple categories"),
 ]
 
 # The one guide derived from the seller column, so the seller pages can link it by name
@@ -53,6 +54,28 @@ SALES_GUIDE = "gumroad-sales-per-rating"
 # (20 sellers have 20+ products) and finer bands would report noise as structure.
 SELLER_BANDS = [(1, 1, "1 product"), (2, 2, "2"), (3, 4, "3–4"),
                 (5, 9, "5–9"), (10, 19, "10–19"), (20, 10 ** 9, "20 or more")]
+
+# The second guide off the seller column: how many distinct category searches a seller's
+# listings turned up in. Same sample, same caveats, referenced by name for the same
+# reason as SELLER_GUIDE.
+BREADTH_GUIDE = "gumroad-multiple-categories"
+
+# Breadth bands. Coarse for the same reason as SELLER_BANDS — 75% of sellers sit in the
+# first bucket and the tail past 6 is 37 sellers, so finer cuts would report noise.
+BREADTH_BANDS = [(1, 1, "1 category"), (2, 2, "2"), (3, 3, "3"),
+                 (4, 5, "4–5"), (6, 10 ** 9, "6 or more")]
+
+# Catalogue-size groups the breadth bands are re-cut inside. The whole point of the page
+# is that the headline association survives (or does not) once catalogue size is held
+# roughly fixed, so these are the control, not decoration.
+BREADTH_CONTROLS = [
+    (1, 1, "Sellers with 1 product", [(1, 1, "1 category"), (2, 2, "2"), (3, 3, "3"),
+                                      (4, 10 ** 9, "4 or more")]),
+    (2, 4, "Sellers with 2–4 products", [(1, 1, "1 category"), (2, 2, "2"), (3, 3, "3"),
+                                         (4, 10 ** 9, "4 or more")]),
+    (5, 10 ** 9, "Sellers with 5 or more products",
+     [(1, 2, "1–2 categories"), (3, 4, "3–4"), (5, 10 ** 9, "5 or more")]),
+]
 
 
 def analyse(s, rows):
@@ -217,6 +240,66 @@ def seller_analyse():
         "five_med_unrated": int(st.median([r["products"] - r["rated_products"]
                                            for r in five_all])),
         "five_all_n": len(five_all),
+    }
+
+
+def breadth_analyse():
+    """The breadth guide's figures, from the same seller table as seller_analyse().
+
+    ONE THING GOVERNS EVERY NUMBER HERE AND THE PAGE LEADS WITH IT: `categories` is how
+    many of the walk's category searches returned that seller's listings. It is what the
+    ranking produced, not what the seller declared. Gumroad ranks by demand, so a product
+    that sells appears under more terms — which means breadth is downstream of demand at
+    least in part, and no cut of this table can fully separate the two. The bands are
+    therefore re-cut inside catalogue-size groups (the honest control available) and the
+    page states plainly what that does and does not buy.
+    """
+    s = json.load(open(B.ROOT / "data" / "sellers-summary.json"))
+    rows = list(csv.DictReader(open(B.ROOT / "data" / "gumroad-sellers.csv")))
+    for r in rows:
+        for k in ("products", "categories", "ratings_total", "rated_products"):
+            r[k] = int(r[k] or 0)
+        r["med_price_usd"] = float(r["med_price_usd"] or 0)
+
+    def band(group, spec):
+        out = []
+        for lo, hi, label in spec:
+            g = [r for r in group if lo <= r["categories"] <= hi]
+            if not g:
+                continue
+            rat = [r["ratings_total"] for r in g]
+            prices = [r["med_price_usd"] for r in g if r["med_price_usd"] > 0]
+            out.append({
+                "label": label, "n": len(g),
+                "med": int(st.median(rat)),
+                # Ratings per product taken per seller and then medianed, for the same
+                # reason as the seller guide: the pooled ratio is one storefront's call.
+                "per_prod": round(st.median([r["ratings_total"] / r["products"]
+                                             for r in g]), 1),
+                "zero": round(100 * sum(1 for x in rat if x == 0) / len(g), 1),
+                "price": st.median(prices) if prices else 0.0,
+            })
+        return out
+
+    unrated = [r for r in rows if r["ratings_total"] == 0]
+    rated = [r for r in rows if r["ratings_total"] > 0]
+    return {
+        "s": s,
+        "bands": band(rows, BREADTH_BANDS),
+        "controls": [{"label": label,
+                      "n": len([r for r in rows if lo <= r["products"] <= hi]),
+                      "bands": band([r for r in rows if lo <= r["products"] <= hi], spec)}
+                     for lo, hi, label, spec in BREADTH_CONTROLS],
+        # The reverse-causality evidence, stated as numbers so the claim cannot outlive
+        # the data: sellers with no demand are almost never broad, and the broadest of
+        # them tops out far below the sample maximum.
+        "unrated_n": len(unrated),
+        "unrated_one_cat_pct": round(100 * sum(1 for r in unrated
+                                               if r["categories"] == 1) / len(unrated), 1),
+        "unrated_max_cats": max(r["categories"] for r in unrated),
+        "rated_one_cat_pct": round(100 * sum(1 for r in rated
+                                             if r["categories"] == 1) / len(rated), 1),
+        "top1_one_cat_pct": round(100 * s["top1_one_category"] / s["top1_count"], 1),
     }
 
 
@@ -1281,8 +1364,160 @@ no signup, <a href="https://doi.org/{B.DOI}">DOI-archived</a>.</p>
         body)
 
 
+def g_breadth(s, a):
+    """"Should I list in more categories?" — the second guide off the seller column.
+
+    The one page here whose headline table argues for the opposite of its conclusion.
+    Banded by breadth, median demand runs 1 -> 79 ratings, and every seller-advice site
+    on the internet would publish that as "diversify". It is mostly the ranking
+    algorithm measuring demand and being read backwards. See breadth_analyse().
+    """
+    d = breadth_analyse()
+    ss, bands = d["s"], d["bands"]
+    solo, wide = bands[0], bands[-1]
+
+    def rows_html(bs):
+        return "".join(
+            f"<tr><td>{b['label']}</td><td class=n>{b['n']:,}</td><td class=n>{b['med']:,}</td>"
+            f"<td class=n>{b['per_prod']}</td><td class=n>{b['zero']}%</td>"
+            f"<td class=n>{B.money(b['price'])}</td></tr>" for b in bs)
+
+    head = ("<thead><tr><th>Categories appeared in</th><th class=n>Sellers</th>"
+            "<th class=n>Median ratings</th><th class=n>Ratings each</th>"
+            "<th class=n>No ratings at all</th><th class=n>Median price</th></tr></thead>")
+
+    controls = "".join(
+        f"<h3>{c['label']} <span class=sub>({c['n']:,} sellers)</span></h3>"
+        f"<table>{head}<tbody>{rows_html(c['bands'])}</tbody></table>"
+        for c in d["controls"])
+
+    body = f"""
+<h2>The short answer</h2>
+<p>No &mdash; not as something you can act on. Sellers whose products turn up under more category
+searches do have far more demand: the median goes from <strong>{solo['med']}</strong> rating for the
+{solo['n']:,} sellers found under one category to <strong>{wide['med']}</strong> for the
+{wide['n']} found under {wide['label'].lower()}. That table is on this page
+and it is real. It is also, on the evidence below, mostly <em>demand causing breadth</em> rather
+than the other way round, and the single fact that settles it is that
+<strong>{ss['top1_one_category']} of the {ss['top1_count']} most in-demand sellers in this sample
+appear under exactly one category</strong>.</p>
+
+<h2>What &ldquo;categories&rdquo; means here, before any number</h2>
+<p>This is not how many categories a seller ticked a box for. It is how many of the walk's category
+searches <strong>returned their listings</strong>. Gumroad orders those results by demand, so a
+product that sells surfaces under more terms by construction. Every figure below is an association,
+and the direction is exactly what is in question &mdash; so the page is organised around testing
+it rather than assuming it.</p>
+
+<h2>Every seller, banded by breadth</h2>
+<table>{head}<tbody>{rows_html(bands)}</tbody></table>
+<p>The association is strong to the eye and modest in the data: across all {ss['sellers']:,}
+sellers the rank correlation between breadth and demand is
+<strong>{ss['spearman_categories_ratings']}</strong>. For comparison, the same correlation for
+catalogue size &mdash; the thing <a href="{SELLER_GUIDE}.html">the previous guide</a> measured
+&mdash; is {ss['spearman_products_ratings']}. Breadth beats catalogue size. Both are weak, and
+{ss['sellers_one_category_pct']}% of sellers sit in the first row, so the last row is
+{wide['n']} storefronts and should be read as such.</p>
+
+<h2>Holding catalogue size roughly fixed</h2>
+<p>The obvious objection is that broad sellers are just sellers with more products. They are not:
+the pattern survives inside each catalogue-size group, including among sellers with exactly one
+product, where the number of products cannot vary at all.</p>
+{controls}
+<p>That is the strongest form of the case for breadth, and it is worth stating plainly because the
+rest of this page takes it apart. A single product appearing under four or more searches has a
+median of {d['controls'][0]['bands'][-1]['med']} ratings against
+{d['controls'][0]['bands'][0]['med']} for a single product appearing under one. Same catalogue
+size, {round(d['controls'][0]['bands'][-1]['med'] / max(d['controls'][0]['bands'][0]['med'], 1))}&times;
+the demand.</p>
+
+<h2>Why that is the ranking measuring demand, not breadth creating it</h2>
+<p>If breadth were something a seller supplies, you would expect to find sellers who supplied it and
+got nothing back &mdash; broad listings with no demand. They are almost absent.
+<strong>{d['unrated_one_cat_pct']}% of the {d['unrated_n']:,} sellers with no ratings at all appear
+under exactly one category</strong>, against {d['rated_one_cat_pct']}% of sellers with any demand,
+and the broadest unrated seller in the entire sample reaches
+<strong>{d['unrated_max_cats']} categories</strong> &mdash; in a sample whose maximum is
+{ss['max_categories']:,}. Breadth without demand barely exists here.</p>
+<p>The correlation behaves the same way when the confound is squeezed. Among the
+{ss['solo_sellers']:,} single-product sellers it falls to
+<strong>{ss['spearman_categories_ratings_solo']}</strong>, roughly half the sample-wide
+{ss['spearman_categories_ratings']}. That is the direction you would expect if much of the
+sample-wide figure were breadth and catalogue size both tracking the same underlying thing.</p>
+
+<h2>The fact that settles it</h2>
+<p>The top {ss['top1_count']} sellers &mdash; the 1% holding {ss['top1_share']}% of all
+{ss['ratings_total']:,} ratings in this sample &mdash; have a median breadth of
+<strong>{ss['top1_med_categories']} categories</strong>, and
+<strong>{ss['top1_one_category']} of them ({d['top1_one_cat_pct']}%) appear under exactly
+one</strong>. Whatever produced the demand at the top of this marketplace, it was not spread. It is
+the same shape as the catalogue-size finding: the top of this market is one thing that works, not
+several things placed widely.</p>
+
+<h2>What this does license you to do</h2>
+<p>Two things, both diagnostic rather than strategic.</p>
+<p><strong>Ranking under exactly one search term is where the dead listings are.</strong>
+{solo['zero']}% of one-category sellers have no ratings at all, against {wide['zero']}% of the
+broadest. If your product surfaces under one term and nothing else, you are in the group where most
+of this platform's silence lives. That is a signal to re-examine the product, not a signal to add
+categories.</p>
+<p><strong>The lever adjacent to this one is real.</strong> Which searches return your listing is
+decided by its title and description text, and that is the part you control. This data cannot tell
+you it will work &mdash; nothing here isolates a seller who rewrote a title &mdash; but it is the
+only intervention in the neighbourhood that is not simply relabelling.</p>
+<p>What it does not license: listing the same product under more categories to buy demand. Nothing
+here measures that, the correlation is compatible with it doing nothing, and
+{ss['top1_one_category']} of the {ss['top1_count']} biggest sellers did not do it.</p>
+
+<p class=cite><strong>What breadth is a lower bound on.</strong> The walk went three pages deep per
+category, so a listing that ranks deeply under a term was not recorded as appearing there. Breadth
+is therefore undercounted, and undercounted hardest for low-demand listings &mdash; which
+<em>inflates</em> the gap this page reports between narrow and broad sellers. The finding that
+breadth is not a lever is conservative: correcting the bias would weaken the association further,
+not strengthen it. Prices here are the seller's own median asking price, and demand is measured in
+ratings, which are a floor on buyers rather than a sales count &mdash;
+<a href="{SALES_GUIDE}.html">what one rating is worth in units</a> is measured separately.</p>
+
+<h2>Which sample this is, and why it is not the other one</h2>
+<p>This page and <a href="{SELLER_GUIDE}.html">the catalogue-size guide</a> are the only two
+derived from the <a href="../t/index.html">category walk</a> &mdash; {ss['products']:,} products
+from {ss['sellers']:,} sellers, {ss['ratings_total']:,} ratings &mdash; because it is the only
+sample that records who sells what and under which category. Every other guide here is measured on
+a separate sample of {s['n']:,} products drawn from {s['cats']} category searches. The two are
+never averaged; each is published as it was measured.</p>
+
+{B.buy_block("This page says breadth is not a lever. The question underneath it &mdash; which "
+             f"category is worth being in at all &mdash; is the report: all {s['cats']} categories "
+             "read together and each one classified as an opening, a crowded room or thin.")}
+
+<h2>Check it yourself</h2>
+<p>Every figure above comes from
+<a href="{B.REPO}/blob/main/data/gumroad-sellers.csv">the seller CSV</a> ({ss['sellers']:,} rows,
+one per seller, with a <code>categories</code> column) and the
+<a href="{B.REPO}/blob/main/data/gumroad-taxonomy.csv">listing table</a> it derives from, with
+<a href="{B.REPO}/blob/main/scripts/normalize_sellers.py">the derivation</a> alongside them. Both
+are in the <a href="https://doi.org/{B.DOI}">DOI-archived record</a>, CC BY 4.0, no signup.</p>
+"""
+    return page(
+        BREADTH_GUIDE,
+        f"Do multiple Gumroad categories help? {ss['sellers']:,} sellers measured",
+        f"Sellers found under more Gumroad categories have more demand &mdash; but "
+        f"{ss['top1_one_category']} of the {ss['top1_count']} biggest appear under exactly one. "
+        f"Measured across {ss['sellers']:,} sellers. Free data, no signup.",
+        "Should you list a Gumroad product in more than one category?",
+        f"{ss['sellers']:,} sellers &middot; {ss['products']:,} products &middot; "
+        f"{ss['ratings_total']:,} ratings &middot; measured 5 August 2026",
+        f"Sellers whose products turn up under {wide['label'].lower()} category searches carry a "
+        f"median of {wide['med']} ratings; sellers found under one carry {solo['med']}. That "
+        f"comparison is real, it is on this page, and reading it as advice gets the causation "
+        f"backwards: "
+        f"{ss['top1_one_category']} of the {ss['top1_count']} most in-demand sellers here appear "
+        f"under exactly one category.",
+        body)
+
+
 BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_free_vs_paid,
-            g_calculator, g_how_many, g_sales_ratio]
+            g_calculator, g_how_many, g_sales_ratio, g_breadth]
 
 
 def build(s, rows, outdir):

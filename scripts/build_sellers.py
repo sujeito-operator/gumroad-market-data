@@ -208,7 +208,9 @@ CC BY 4.0, no signup, no email wall.</p>
 
 {nav}
 <nav class=sib>Also: <a href="../g/{__import__("build_guides").SELLER_GUIDE}.html">does listing
-more products work?</a> &middot; <a href="index.html">seller concentration</a> &middot;
+more products work?</a> &middot;
+<a href="../g/{__import__("build_guides").BREADTH_GUIDE}.html">does listing in more categories
+work?</a> &middot; <a href="index.html">seller concentration</a> &middot;
 <a href="../t/index.html">all {ts['nodes']} categories</a> &middot;
 <a href="../">what actually sells on Gumroad</a></nav>
 """ + B.FOOTER

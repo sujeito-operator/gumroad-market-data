@@ -150,6 +150,10 @@ def main():
     top1 = order[:top1_k]
     solo = [s for s in order if len(by_seller[s]) == 1]
     counts = [len(by_seller[s]) for s in order]
+    # Distinct category nodes per seller, in `order`. Same derivation as the CSV's
+    # `categories` column above — kept as one expression so the two cannot diverge.
+    seller_cats = {s: {n for r in by_seller[s] for n in cats[r["url"]]} for s in order}
+    breadth = [len(seller_cats[s]) for s in order]
 
     summary = {
         "sellers": n,
@@ -163,6 +167,20 @@ def main():
         "top1_solo": sum(1 for s in top1 if len(by_seller[s]) == 1),
         "top1_med_products": int(st.median([len(by_seller[s]) for s in top1])),
         "spearman_products_ratings": spearman(counts, [ratings[s] for s in order]),
+        # BREADTH — how many distinct category nodes a seller's listings turned up in.
+        # Computed here rather than in the page so the CSV a visitor downloads and the
+        # guide they read cannot drift apart. Read the next four with care: breadth is
+        # what the SEARCH returned, not what the seller chose, so a product that sells
+        # ranks for more terms. These numbers describe an association and cannot, on
+        # their own, tell you which way it runs. The guide says so at the top.
+        "spearman_categories_ratings": spearman(breadth, [ratings[s] for s in order]),
+        "spearman_categories_ratings_solo": spearman(
+            [len(seller_cats[s]) for s in solo], [ratings[s] for s in solo]),
+        "sellers_one_category": sum(1 for b in breadth if b == 1),
+        "sellers_one_category_pct": round(100 * sum(1 for b in breadth if b == 1) / n, 1),
+        "max_categories": max(breadth) if breadth else 0,
+        "top1_med_categories": int(st.median([len(seller_cats[s]) for s in top1])),
+        "top1_one_category": sum(1 for s in top1 if len(seller_cats[s]) == 1),
         # The floor.
         "sellers_zero_ratings": sum(1 for s in order if ratings[s] == 0),
         "solo_sellers": len(solo),
