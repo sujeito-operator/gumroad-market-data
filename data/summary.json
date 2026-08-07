@@ -3,388 +3,744 @@
  "cats": 42,
  "zero": 500,
  "zpct": 33,
- "med": 29.7,
- "p75": 70.0,
- "p90": 185.64,
+ "med": 39.0,
+ "p75": 89.99,
+ "p90": 230.83,
  "subs": 70,
+ "currency": "USD",
+ "fx_date": "2026-08-06",
+ "fx_source": "European Central Bank reference rates via frankfurter.app",
+ "fx_rates_to_usd": {
+  "$": 1.0,
+  "\u00a3": 1.34671,
+  "\u20ac": 1.1542
+ },
+ "mixed_cats": 40,
  "by_category": [
   {
    "topic": "vrchat avatar",
-   "median": 25.99,
-   "p90": 35.0,
+   "n": 36,
+   "median": 35.0,
+   "p25": 24.99,
+   "p75": 40.4,
+   "p90": 44.99,
+   "free": 3,
    "subs": 0,
    "rated_share": 100,
    "med_ratings": 64,
-   "top_n": 2000
+   "top_n": 2000,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "unity asset",
-   "median": 25.99,
-   "p90": 37.13,
+   "n": 36,
+   "median": 33.47,
+   "p25": 15.0,
+   "p75": 40.0,
+   "p90": 50.0,
+   "free": 3,
    "subs": 0,
    "rated_share": 97,
    "med_ratings": 44,
-   "top_n": 4000
+   "top_n": 4000,
+   "currencies": [
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "blender addon",
-   "median": 17.82,
-   "p90": 40.83,
+   "n": 36,
+   "median": 24.0,
+   "p25": 11.55,
+   "p75": 44.99,
+   "p90": 54.99,
+   "free": 5,
    "subs": 1,
    "rated_share": 94,
    "med_ratings": 54,
-   "top_n": 4000
+   "top_n": 4000,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "procreate brushes",
-   "median": 12.995000000000001,
+   "n": 36,
+   "median": 19.0,
+   "p25": 9.0,
+   "p75": 24.99,
    "p90": 39.0,
+   "free": 0,
    "subs": 0,
    "rated_share": 89,
    "med_ratings": 136,
-   "top_n": 3300
+   "top_n": 3300,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "video luts",
-   "median": 32.58,
-   "p90": 59.0,
+   "n": 36,
+   "median": 44.99,
+   "p25": 28.99,
+   "p75": 59.0,
+   "p90": 70.0,
+   "free": 4,
    "subs": 0,
    "rated_share": 89,
    "med_ratings": 7,
-   "top_n": 789
+   "top_n": 789,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "ai prompts",
-   "median": 36.38,
-   "p90": 299.0,
+   "n": 36,
+   "median": 47.0,
+   "p25": 39.0,
+   "p75": 99.0,
+   "p90": 345.11,
+   "free": 3,
    "subs": 2,
    "rated_share": 89,
    "med_ratings": 6,
-   "top_n": 168
+   "top_n": 168,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "email templates",
-   "median": 38.7,
+   "n": 36,
+   "median": 49.9,
+   "p25": 30.0,
+   "p75": 99.0,
    "p90": 199.99,
+   "free": 2,
    "subs": 3,
    "rated_share": 86,
    "med_ratings": 27,
-   "top_n": 2000
+   "top_n": 2000,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "after effects template",
-   "median": 35.0,
-   "p90": 215.33,
+   "n": 36,
+   "median": 40.4,
+   "p25": 40.4,
+   "p75": 50.0,
+   "p90": 289.99,
+   "free": 1,
    "subs": 0,
    "rated_share": 86,
    "med_ratings": 24,
-   "top_n": 430
+   "top_n": 430,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "social media templates",
-   "median": 25.99,
+   "n": 36,
+   "median": 35.0,
+   "p25": 30.0,
+   "p75": 50.0,
    "p90": 99.0,
+   "free": 0,
    "subs": 2,
    "rated_share": 86,
    "med_ratings": 14,
-   "top_n": 370
+   "top_n": 370,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "davinci resolve",
-   "median": 28.96,
+   "n": 36,
+   "median": 39.0,
+   "p25": 19.99,
+   "p75": 70.0,
    "p90": 126.0,
+   "free": 5,
    "subs": 0,
    "rated_share": 86,
    "med_ratings": 7,
-   "top_n": 314
+   "top_n": 314,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "course trading",
-   "median": 138.0,
-   "p90": 1131.64,
+   "n": 36,
+   "median": 159.01,
+   "p25": 95.0,
+   "p75": 333.0,
+   "p90": 1523.99,
+   "free": 0,
    "subs": 7,
    "rated_share": 78,
    "med_ratings": 12,
-   "top_n": 496
+   "top_n": 496,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "language learning",
-   "median": 52.72,
-   "p90": 380.96,
+   "n": 36,
+   "median": 75.0,
+   "p25": 39.98,
+   "p75": 194.95,
+   "p90": 499.99,
+   "free": 0,
    "subs": 1,
    "rated_share": 78,
    "med_ratings": 12,
-   "top_n": 496
+   "top_n": 496,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "chrome extension",
-   "median": 19.494999999999997,
-   "p90": 72.03,
+   "n": 36,
+   "median": 19.99,
+   "p25": 7.99,
+   "p75": 48.99,
+   "p90": 89.99,
+   "free": 2,
    "subs": 17,
    "rated_share": 78,
    "med_ratings": 7,
-   "top_n": 205
+   "top_n": 205,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "lightroom presets",
-   "median": 18.56,
-   "p90": 59.4,
+   "n": 36,
+   "median": 24.99,
+   "p25": 13.0,
+   "p75": 45.06,
+   "p90": 79.99,
+   "free": 1,
    "subs": 0,
    "rated_share": 78,
    "med_ratings": 6,
-   "top_n": 393
+   "top_n": 393,
+   "currencies": [
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "sample pack",
-   "median": 28.96,
-   "p90": 85.8,
+   "n": 36,
+   "median": 31.2,
+   "p25": 15.0,
+   "p75": 52.0,
+   "p90": 114.27,
+   "free": 3,
    "subs": 1,
    "rated_share": 75,
    "med_ratings": 17,
-   "top_n": 989
+   "top_n": 989,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "font bundle",
-   "median": 50.0,
-   "p90": 205.92,
+   "n": 36,
+   "median": 51.0,
+   "p25": 35.0,
+   "p75": 103.99,
+   "p90": 277.31,
+   "free": 3,
    "subs": 0,
    "rated_share": 75,
    "med_ratings": 11,
-   "top_n": 700
+   "top_n": 700,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "coloring book",
-   "median": 14.105,
+   "n": 36,
+   "median": 20.0,
+   "p25": 12.0,
+   "p75": 57.64,
    "p90": 400.0,
+   "free": 4,
    "subs": 0,
    "rated_share": 75,
    "med_ratings": 10,
-   "top_n": 348
+   "top_n": 348,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "fitness program",
-   "median": 27.235,
+   "n": 36,
+   "median": 36.99,
+   "p25": 24.99,
+   "p75": 65.01,
    "p90": 179.99,
+   "free": 2,
    "subs": 4,
    "rated_share": 75,
    "med_ratings": 10,
-   "top_n": 473
+   "top_n": 473,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "notion template",
-   "median": 61.015,
-   "p90": 220.54,
+   "n": 36,
+   "median": 97.0,
+   "p25": 27.0,
+   "p75": 150.0,
+   "p90": 297.0,
+   "free": 2,
    "subs": 0,
    "rated_share": 72,
    "med_ratings": 25,
-   "top_n": 373
+   "top_n": 373,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "chatgpt prompts",
-   "median": 47.0,
-   "p90": 259.15,
+   "n": 36,
+   "median": 60.0,
+   "p25": 36.99,
+   "p75": 99.0,
+   "p90": 349.0,
+   "free": 5,
    "subs": 1,
    "rated_share": 72,
    "med_ratings": 6,
-   "top_n": 436
+   "top_n": 436,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "midjourney prompts",
-   "median": 22.465,
-   "p90": 73.51,
+   "n": 36,
+   "median": 29.0,
+   "p25": 10.01,
+   "p75": 70.0,
+   "p90": 99.0,
+   "free": 4,
    "subs": 3,
    "rated_share": 69,
    "med_ratings": 6,
-   "top_n": 1000
+   "top_n": 1000,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "python course",
-   "median": 63.86,
-   "p90": 214.5,
+   "n": 36,
+   "median": 89.0,
+   "p25": 40.44,
+   "p75": 178.79,
+   "p90": 288.87,
+   "free": 4,
    "subs": 3,
    "rated_share": 67,
    "med_ratings": 8,
-   "top_n": 875
+   "top_n": 875,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "ebook business",
-   "median": 39.0,
-   "p90": 480.43,
+   "n": 36,
+   "median": 49.99,
+   "p25": 24.99,
+   "p75": 100.0,
+   "p90": 500.0,
+   "free": 1,
    "subs": 1,
    "rated_share": 67,
    "med_ratings": 5,
-   "top_n": 496
+   "top_n": 496,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "meal plan",
-   "median": 27.47,
-   "p90": 74.25,
+   "n": 36,
+   "median": 36.99,
+   "p25": 19.99,
+   "p75": 54.0,
+   "p90": 99.99,
+   "free": 4,
    "subs": 1,
    "rated_share": 67,
    "med_ratings": 5,
-   "top_n": 373
+   "top_n": 373,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "stock photos",
-   "median": 20.05,
-   "p90": 184.89,
+   "n": 36,
+   "median": 27.0,
+   "p25": 16.0,
+   "p75": 67.34,
+   "p90": 248.99,
+   "free": 1,
    "subs": 2,
    "rated_share": 64,
    "med_ratings": 7,
-   "top_n": 347
+   "top_n": 347,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "yoga program",
-   "median": 57.18,
-   "p90": 205.69,
+   "n": 36,
+   "median": 77.0,
+   "p25": 25.0,
+   "p75": 140.45,
+   "p90": 277.0,
+   "free": 1,
    "subs": 3,
    "rated_share": 64,
    "med_ratings": 2,
-   "top_n": 33
+   "top_n": 33,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "ui kit",
-   "median": 100.24,
-   "p90": 326.72,
+   "n": 36,
+   "median": 134.99,
+   "p25": 98.0,
+   "p75": 248.99,
+   "p90": 440.0,
+   "free": 3,
    "subs": 1,
    "rated_share": 61,
    "med_ratings": 26,
-   "top_n": 284
+   "top_n": 284,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "game assets pixel",
-   "median": 18.56,
-   "p90": 37.13,
+   "n": 36,
+   "median": 24.99,
+   "p25": 11.54,
+   "p75": 39.98,
+   "p90": 50.0,
+   "free": 1,
    "subs": 0,
    "rated_share": 61,
    "med_ratings": 25,
-   "top_n": 418
+   "top_n": 418,
+   "currencies": [
+    "\u00a3"
+   ]
   },
   {
    "topic": "seo tool",
+   "n": 36,
    "median": 69.9,
-   "p90": 299.0,
+   "p25": 24.99,
+   "p75": 200.0,
+   "p90": 399.0,
+   "free": 3,
    "subs": 7,
    "rated_share": 56,
    "med_ratings": 12,
-   "top_n": 184
+   "top_n": 184,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "budget spreadsheet",
-   "median": 23.759999999999998,
-   "p90": 148.5,
+   "n": 36,
+   "median": 36.99,
+   "p25": 15.0,
+   "p75": 99.0,
+   "p90": 199.99,
+   "free": 2,
    "subs": 3,
    "rated_share": 56,
    "med_ratings": 2,
-   "top_n": 145
+   "top_n": 145,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "canva template",
-   "median": 18.56,
-   "p90": 480.43,
+   "n": 36,
+   "median": 24.99,
+   "p25": 10.01,
+   "p75": 149.0,
+   "p90": 647.0,
+   "free": 2,
    "subs": 0,
    "rated_share": 53,
    "med_ratings": 6,
-   "top_n": 1200
+   "top_n": 1200,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "tarot deck",
-   "median": 9.645,
-   "p90": 57.7,
+   "n": 36,
+   "median": 17.1,
+   "p25": 8.87,
+   "p75": 44.99,
+   "p90": 77.71,
+   "free": 0,
    "subs": 0,
    "rated_share": 50,
    "med_ratings": 1,
-   "top_n": 29
+   "top_n": 29,
+   "currencies": [
+    "\u00a3"
+   ]
   },
   {
    "topic": "sourdough recipes",
-   "median": 9.65,
-   "p90": 28.96,
+   "n": 36,
+   "median": 13.0,
+   "p25": 9.99,
+   "p75": 27.0,
+   "p90": 39.0,
+   "free": 1,
    "subs": 0,
    "rated_share": 44,
    "med_ratings": 4,
-   "top_n": 70
+   "top_n": 70,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "planner printable",
-   "median": 22.28,
+   "n": 36,
+   "median": 29.95,
+   "p25": 19.0,
+   "p75": 54.0,
    "p90": 299.0,
+   "free": 1,
    "subs": 1,
    "rated_share": 44,
    "med_ratings": 2,
-   "top_n": 16
+   "top_n": 16,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "wordpress theme",
-   "median": 99.0,
-   "p90": 480.43,
+   "n": 35,
+   "median": 114.27,
+   "p25": 50.0,
+   "p75": 288.87,
+   "p90": 647.0,
+   "free": 0,
    "subs": 2,
    "rated_share": 43,
    "med_ratings": 4,
-   "top_n": 92
+   "top_n": 92,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "sewing pattern",
-   "median": 9.62,
-   "p90": 20.05,
+   "n": 36,
+   "median": 12.96,
+   "p25": 10.5,
+   "p75": 16.0,
+   "p90": 27.0,
+   "free": 0,
    "subs": 1,
    "rated_share": 42,
    "med_ratings": 6,
-   "top_n": 224
+   "top_n": 224,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "legal contract template",
-   "median": 57.175,
-   "p90": 210.41,
+   "n": 36,
+   "median": 75.0,
+   "p25": 36.99,
+   "p75": 99.99,
+   "p90": 283.36,
+   "free": 0,
    "subs": 0,
    "rated_share": 42,
    "med_ratings": 4,
-   "top_n": 106
+   "top_n": 106,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "pitch deck template",
-   "median": 36.19,
-   "p90": 110.64,
+   "n": 36,
+   "median": 48.99,
+   "p25": 20.0,
+   "p75": 79.0,
+   "p90": 149.0,
+   "free": 0,
    "subs": 0,
    "rated_share": 42,
    "med_ratings": 4,
-   "top_n": 145
+   "top_n": 145,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "knitting pattern",
-   "median": 7.055,
-   "p90": 23.02,
+   "n": 36,
+   "median": 9.0,
+   "p25": 6.5,
+   "p75": 24.24,
+   "p90": 31.0,
+   "free": 2,
    "subs": 0,
    "rated_share": 42,
    "med_ratings": 3,
-   "top_n": 378
+   "top_n": 378,
+   "currencies": [
+    "$",
+    "\u00a3",
+    "\u20ac"
+   ]
   },
   {
    "topic": "resume template",
-   "median": 53.955,
-   "p90": 222.02,
+   "n": 36,
+   "median": 78.0,
+   "p25": 27.99,
+   "p75": 159.01,
+   "p90": 297.0,
+   "free": 0,
    "subs": 1,
    "rated_share": 42,
    "med_ratings": 3,
-   "top_n": 125
+   "top_n": 125,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "crochet pattern",
-   "median": 5.57,
-   "p90": 11.14,
+   "n": 36,
+   "median": 7.5,
+   "p25": 2.5,
+   "p75": 10.26,
+   "p90": 15.0,
+   "free": 3,
    "subs": 1,
    "rated_share": 39,
    "med_ratings": 2,
-   "top_n": 14
+   "top_n": 14,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   },
   {
    "topic": "excel dashboard",
-   "median": 74.25,
-   "p90": 259.15,
+   "n": 36,
+   "median": 99.99,
+   "p25": 48.99,
+   "p75": 199.0,
+   "p90": 349.0,
+   "free": 2,
    "subs": 1,
    "rated_share": 39,
    "med_ratings": 1,
-   "top_n": 125
+   "top_n": 125,
+   "currencies": [
+    "$",
+    "\u00a3"
+   ]
   }
  ]
 }

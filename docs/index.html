@@ -1,11 +1,11 @@
 <!doctype html><html lang=en><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title>What Actually Sells on Gumroad — 1511 products measured (Aug 2026)</title>
-<meta name=description content="33% of Gumroad products have zero ratings. Measured data on 1511 live products across 42 categories: which categories actually transact, real price anchors, and how rare subscriptions are. Free, CC BY 4.0, DOI 10.5281/zenodo.21830104.">
+<meta name=description content="33% of Gumroad products have zero ratings. Measured data on 1,511 live products across 42 categories: which categories actually transact, real USD price anchors, and how rare subscriptions are. Free, CC BY 4.0, DOI 10.5281/zenodo.21830104.">
 <link rel=canonical href="https://sujeito-operator.github.io/gumroad-market-data/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="What actually sells on Gumroad — 1511 products measured">
-<meta property="og:description" content="33% of listings have zero ratings. Free dataset of 1511 live Gumroad products across 42 categories, CC BY 4.0.">
+<meta property="og:title" content="What Actually Sells on Gumroad — 1511 products measured (Aug 2026)">
+<meta property="og:description" content="33% of Gumroad products have zero ratings. Measured data on 1,511 live products across 42 categories: which categories actually transact, real USD price anchors, and how rare subscriptions are. Free, CC BY 4.0, DOI 10.5281/zenodo.21830104.">
 <meta property="og:url" content="https://sujeito-operator.github.io/gumroad-market-data/">
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">
@@ -13,15 +13,33 @@
   "@context": "https://schema.org/",
   "@type": "Dataset",
   "name": "What Actually Sells on Gumroad: 1,511 live products across 42 categories (August 2026)",
-  "description": "A measured snapshot of 1,511 live Gumroad products across 42 category searches, captured 5 August 2026. Each row carries category, asking price, currency, rating count (a proxy for units sold) and subscription flag. 33% of listings have no ratings at all. Includes per-category aggregates: share of listings rated, median rating count, median and 90th-percentile price, and subscription counts. Collected directly from Gumroad Discover by an autonomous AI agent; the collector script is published alongside the data so every figure is reproducible.",
+  "description": "A measured snapshot of 1,511 live Gumroad products across 42 category searches, captured 5 August 2026. Each row carries category, asking price, the currency it was displayed in, a USD-normalised price, rating count (a proxy for units sold) and a subscription flag. 33% of listings have no ratings at all. Includes per-category aggregates: share of listings rated, median rating count, price quartiles and subscription counts. Collected directly from Gumroad Discover by an autonomous AI agent; the collector script is published alongside the data so every figure is reproducible.",
   "url": "https://sujeito-operator.github.io/gumroad-market-data/",
   "sameAs": "https://github.com/sujeito-operator/gumroad-market-data",
   "identifier": "https://doi.org/10.5281/zenodo.21830104",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "isAccessibleForFree": true,
-  "keywords": ["Gumroad", "digital products", "creator economy", "e-commerce pricing", "marketplace demand", "indie hackers", "product pricing", "market research"],
+  "keywords": [
+    "Gumroad",
+    "digital products",
+    "creator economy",
+    "e-commerce pricing",
+    "marketplace demand",
+    "indie hackers",
+    "product pricing",
+    "market research"
+  ],
   "datePublished": "2026-08-05",
   "temporalCoverage": "2026-08-05",
+  "variableMeasured": [
+    "category",
+    "asking price",
+    "currency",
+    "price in USD",
+    "rating count",
+    "subscription flag",
+    "product title"
+  ],
   "creator": {
     "@type": "Organization",
     "name": "Sujeito Operator",
@@ -66,71 +84,84 @@ h2{font-size:1.25rem;margin:44px 0 12px;border-bottom:2px solid var(--ink);paddi
 table{border-collapse:collapse;width:100%;font-size:.86rem;margin:14px 0;background:#fff}
 th{text-align:left;border-bottom:2px solid var(--ink);padding:9px 7px;font-family:system-ui,sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px}
 td{padding:8px 7px;border-bottom:1px solid var(--line)}
-td.n{text-align:right;font-variant-numeric:tabular-nums}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 tbody tr:hover{background:#f7f5ef}
 .buy{background:#fff;border:2px solid var(--ink);padding:22px 24px;margin:34px 0;border-radius:3px}
 .buy a{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;padding:11px 22px;border-radius:3px;font-family:system-ui,sans-serif;font-size:.92rem;margin-top:10px}
 code{background:#eee;padding:1px 5px;border-radius:3px;font-size:.85em}
 footer{color:var(--mut);font-size:.85rem;border-top:1px solid var(--line);margin-top:48px;padding-top:16px}
 li{margin-bottom:8px}
+.kv{display:flex;flex-wrap:wrap;gap:0;margin:22px 0;background:#fff;border:1px solid var(--line)}
+.kv div{flex:1 1 33%;padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kv b{display:block;font:600 1.5rem/1.2 system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.kv span{color:var(--mut);font-size:.78rem;font-family:system-ui,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.bar{background:var(--acc);height:11px;display:inline-block;vertical-align:middle}
+nav.sib{font-size:.85rem;color:var(--mut);margin:30px 0 0}
+nav.sib a{color:var(--ink)}
+a.home{font-family:system-ui,sans-serif;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
 </style></head><body><main>
 <h1>What actually sells on Gumroad</h1>
-<div class=sub>1511 live products measured across 42 categories &middot; 5 August 2026</div>
+<div class=sub>1,511 live products measured across 42 categories &middot; 5 August 2026</div>
 
-<div class=lede><strong>500 of the 1511 products in this sample — 33% — have no ratings at all.</strong>
-They are listed, priced, and selling nothing. The gap between the categories where that happens and the
-ones where it doesn't runs from <strong>100% of listings rated</strong> at the top to <strong>39%</strong> at the bottom.</div>
+<div class=lede><strong>500 of the 1,511 products in this sample — 33% — have no
+ratings at all.</strong> They are listed, priced, and selling nothing. The gap between the categories
+where that happens and the ones where it doesn't runs from <strong>100% of listings
+rated</strong> at the top to <strong>39%</strong> at the bottom.</div>
 
 <h2>The demand table</h2>
-<p>The first column carries most of the information. <strong>% Rated</strong> is the share of listings in
-a category with at least one rating — the cleanest available signal for whether products there sell at
-all, or simply sit. It is free here in full; nothing is held back from this table.</p>
-<table><thead><tr><th>Category</th><th>% Rated</th><th>Median ratings</th><th>Top product</th><th>Median price</th><th>90th pct</th><th>Subs</th></tr></thead><tbody><tr><td>vrchat avatar</td><td class=n>100%</td><td class=n>64</td><td class=n>2,000</td><td class=n>$25.99</td><td class=n>$35.00</td><td class=n>0</td></tr><tr><td>unity asset</td><td class=n>97%</td><td class=n>44</td><td class=n>4,000</td><td class=n>$25.99</td><td class=n>$37.13</td><td class=n>0</td></tr><tr><td>blender addon</td><td class=n>94%</td><td class=n>54</td><td class=n>4,000</td><td class=n>$17.82</td><td class=n>$40.83</td><td class=n>1</td></tr><tr><td>procreate brushes</td><td class=n>89%</td><td class=n>136</td><td class=n>3,300</td><td class=n>$13.00</td><td class=n>$39.00</td><td class=n>0</td></tr><tr><td>video luts</td><td class=n>89%</td><td class=n>7</td><td class=n>789</td><td class=n>$32.58</td><td class=n>$59.00</td><td class=n>0</td></tr><tr><td>ai prompts</td><td class=n>89%</td><td class=n>6</td><td class=n>168</td><td class=n>$36.38</td><td class=n>$299.00</td><td class=n>2</td></tr><tr><td>email templates</td><td class=n>86%</td><td class=n>27</td><td class=n>2,000</td><td class=n>$38.70</td><td class=n>$199.99</td><td class=n>3</td></tr><tr><td>after effects template</td><td class=n>86%</td><td class=n>24</td><td class=n>430</td><td class=n>$35.00</td><td class=n>$215.33</td><td class=n>0</td></tr><tr><td>social media templates</td><td class=n>86%</td><td class=n>14</td><td class=n>370</td><td class=n>$25.99</td><td class=n>$99.00</td><td class=n>2</td></tr><tr><td>davinci resolve</td><td class=n>86%</td><td class=n>7</td><td class=n>314</td><td class=n>$28.96</td><td class=n>$126.00</td><td class=n>0</td></tr><tr><td>course trading</td><td class=n>78%</td><td class=n>12</td><td class=n>496</td><td class=n>$138.00</td><td class=n>$1131.64</td><td class=n>7</td></tr><tr><td>language learning</td><td class=n>78%</td><td class=n>12</td><td class=n>496</td><td class=n>$52.72</td><td class=n>$380.96</td><td class=n>1</td></tr><tr><td>chrome extension</td><td class=n>78%</td><td class=n>7</td><td class=n>205</td><td class=n>$19.49</td><td class=n>$72.03</td><td class=n>17</td></tr><tr><td>lightroom presets</td><td class=n>78%</td><td class=n>6</td><td class=n>393</td><td class=n>$18.56</td><td class=n>$59.40</td><td class=n>0</td></tr><tr><td>sample pack</td><td class=n>75%</td><td class=n>17</td><td class=n>989</td><td class=n>$28.96</td><td class=n>$85.80</td><td class=n>1</td></tr><tr><td>font bundle</td><td class=n>75%</td><td class=n>11</td><td class=n>700</td><td class=n>$50.00</td><td class=n>$205.92</td><td class=n>0</td></tr><tr><td>coloring book</td><td class=n>75%</td><td class=n>10</td><td class=n>348</td><td class=n>$14.11</td><td class=n>$400.00</td><td class=n>0</td></tr><tr><td>fitness program</td><td class=n>75%</td><td class=n>10</td><td class=n>473</td><td class=n>$27.23</td><td class=n>$179.99</td><td class=n>4</td></tr><tr><td>notion template</td><td class=n>72%</td><td class=n>25</td><td class=n>373</td><td class=n>$61.02</td><td class=n>$220.54</td><td class=n>0</td></tr><tr><td>chatgpt prompts</td><td class=n>72%</td><td class=n>6</td><td class=n>436</td><td class=n>$47.00</td><td class=n>$259.15</td><td class=n>1</td></tr><tr><td>midjourney prompts</td><td class=n>69%</td><td class=n>6</td><td class=n>1,000</td><td class=n>$22.46</td><td class=n>$73.51</td><td class=n>3</td></tr><tr><td>python course</td><td class=n>67%</td><td class=n>8</td><td class=n>875</td><td class=n>$63.86</td><td class=n>$214.50</td><td class=n>3</td></tr><tr><td>ebook business</td><td class=n>67%</td><td class=n>5</td><td class=n>496</td><td class=n>$39.00</td><td class=n>$480.43</td><td class=n>1</td></tr><tr><td>meal plan</td><td class=n>67%</td><td class=n>5</td><td class=n>373</td><td class=n>$27.47</td><td class=n>$74.25</td><td class=n>1</td></tr><tr><td>stock photos</td><td class=n>64%</td><td class=n>7</td><td class=n>347</td><td class=n>$20.05</td><td class=n>$184.89</td><td class=n>2</td></tr><tr><td>yoga program</td><td class=n>64%</td><td class=n>2</td><td class=n>33</td><td class=n>$57.18</td><td class=n>$205.69</td><td class=n>3</td></tr><tr><td>ui kit</td><td class=n>61%</td><td class=n>26</td><td class=n>284</td><td class=n>$100.24</td><td class=n>$326.72</td><td class=n>1</td></tr><tr><td>game assets pixel</td><td class=n>61%</td><td class=n>25</td><td class=n>418</td><td class=n>$18.56</td><td class=n>$37.13</td><td class=n>0</td></tr><tr><td>seo tool</td><td class=n>56%</td><td class=n>12</td><td class=n>184</td><td class=n>$69.90</td><td class=n>$299.00</td><td class=n>7</td></tr><tr><td>budget spreadsheet</td><td class=n>56%</td><td class=n>2</td><td class=n>145</td><td class=n>$23.76</td><td class=n>$148.50</td><td class=n>3</td></tr><tr><td>canva template</td><td class=n>53%</td><td class=n>6</td><td class=n>1,200</td><td class=n>$18.56</td><td class=n>$480.43</td><td class=n>0</td></tr><tr><td>tarot deck</td><td class=n>50%</td><td class=n>1</td><td class=n>29</td><td class=n>$9.64</td><td class=n>$57.70</td><td class=n>0</td></tr><tr><td>sourdough recipes</td><td class=n>44%</td><td class=n>4</td><td class=n>70</td><td class=n>$9.65</td><td class=n>$28.96</td><td class=n>0</td></tr><tr><td>planner printable</td><td class=n>44%</td><td class=n>2</td><td class=n>16</td><td class=n>$22.28</td><td class=n>$299.00</td><td class=n>1</td></tr><tr><td>wordpress theme</td><td class=n>43%</td><td class=n>4</td><td class=n>92</td><td class=n>$99.00</td><td class=n>$480.43</td><td class=n>2</td></tr><tr><td>sewing pattern</td><td class=n>42%</td><td class=n>6</td><td class=n>224</td><td class=n>$9.62</td><td class=n>$20.05</td><td class=n>1</td></tr><tr><td>legal contract template</td><td class=n>42%</td><td class=n>4</td><td class=n>106</td><td class=n>$57.17</td><td class=n>$210.41</td><td class=n>0</td></tr><tr><td>pitch deck template</td><td class=n>42%</td><td class=n>4</td><td class=n>145</td><td class=n>$36.19</td><td class=n>$110.64</td><td class=n>0</td></tr><tr><td>knitting pattern</td><td class=n>42%</td><td class=n>3</td><td class=n>378</td><td class=n>$7.05</td><td class=n>$23.02</td><td class=n>0</td></tr><tr><td>resume template</td><td class=n>42%</td><td class=n>3</td><td class=n>125</td><td class=n>$53.95</td><td class=n>$222.02</td><td class=n>1</td></tr><tr><td>crochet pattern</td><td class=n>39%</td><td class=n>2</td><td class=n>14</td><td class=n>$5.57</td><td class=n>$11.14</td><td class=n>1</td></tr><tr><td>excel dashboard</td><td class=n>39%</td><td class=n>1</td><td class=n>125</td><td class=n>$74.25</td><td class=n>$259.15</td><td class=n>1</td></tr></tbody></table>
+<p>The first column carries most of the information. <strong>% Rated</strong> is the share of listings
+in a category with at least one rating — the cleanest available signal for whether products there sell
+at all, or simply sit. It is free here in full; nothing is held back from this table. Every category
+name links to a page with its full price distribution and every listing measured.</p>
+<table><thead><tr><th>Category</th><th class=n>% Rated</th><th class=n>Median ratings</th>
+<th class=n>Top product</th><th class=n>Median price</th><th class=n>90th pct</th><th class=n>Subs</th>
+</tr></thead><tbody><tr><td><a href="c/vrchat-avatar.html">vrchat avatar</a></td><td class=n>100%</td><td class=n>64</td><td class=n>2,000</td><td class=n>$35.00</td><td class=n>$44.99</td><td class=n>0</td></tr><tr><td><a href="c/unity-asset.html">unity asset</a></td><td class=n>97%</td><td class=n>44</td><td class=n>4,000</td><td class=n>$33.47</td><td class=n>$50.00</td><td class=n>0</td></tr><tr><td><a href="c/blender-addon.html">blender addon</a></td><td class=n>94%</td><td class=n>54</td><td class=n>4,000</td><td class=n>$24.00</td><td class=n>$54.99</td><td class=n>1</td></tr><tr><td><a href="c/procreate-brushes.html">procreate brushes</a></td><td class=n>89%</td><td class=n>136</td><td class=n>3,300</td><td class=n>$19.00</td><td class=n>$39.00</td><td class=n>0</td></tr><tr><td><a href="c/video-luts.html">video luts</a></td><td class=n>89%</td><td class=n>7</td><td class=n>789</td><td class=n>$44.99</td><td class=n>$70.00</td><td class=n>0</td></tr><tr><td><a href="c/ai-prompts.html">ai prompts</a></td><td class=n>89%</td><td class=n>6</td><td class=n>168</td><td class=n>$47.00</td><td class=n>$345.11</td><td class=n>2</td></tr><tr><td><a href="c/email-templates.html">email templates</a></td><td class=n>86%</td><td class=n>27</td><td class=n>2,000</td><td class=n>$49.90</td><td class=n>$199.99</td><td class=n>3</td></tr><tr><td><a href="c/after-effects-template.html">after effects template</a></td><td class=n>86%</td><td class=n>24</td><td class=n>430</td><td class=n>$40.40</td><td class=n>$289.99</td><td class=n>0</td></tr><tr><td><a href="c/social-media-templates.html">social media templates</a></td><td class=n>86%</td><td class=n>14</td><td class=n>370</td><td class=n>$35.00</td><td class=n>$99.00</td><td class=n>2</td></tr><tr><td><a href="c/davinci-resolve.html">davinci resolve</a></td><td class=n>86%</td><td class=n>7</td><td class=n>314</td><td class=n>$39.00</td><td class=n>$126.00</td><td class=n>0</td></tr><tr><td><a href="c/course-trading.html">course trading</a></td><td class=n>78%</td><td class=n>12</td><td class=n>496</td><td class=n>$159.01</td><td class=n>$1,523.99</td><td class=n>7</td></tr><tr><td><a href="c/language-learning.html">language learning</a></td><td class=n>78%</td><td class=n>12</td><td class=n>496</td><td class=n>$75.00</td><td class=n>$499.99</td><td class=n>1</td></tr><tr><td><a href="c/chrome-extension.html">chrome extension</a></td><td class=n>78%</td><td class=n>7</td><td class=n>205</td><td class=n>$19.99</td><td class=n>$89.99</td><td class=n>17</td></tr><tr><td><a href="c/lightroom-presets.html">lightroom presets</a></td><td class=n>78%</td><td class=n>6</td><td class=n>393</td><td class=n>$24.99</td><td class=n>$79.99</td><td class=n>0</td></tr><tr><td><a href="c/sample-pack.html">sample pack</a></td><td class=n>75%</td><td class=n>17</td><td class=n>989</td><td class=n>$31.20</td><td class=n>$114.27</td><td class=n>1</td></tr><tr><td><a href="c/font-bundle.html">font bundle</a></td><td class=n>75%</td><td class=n>11</td><td class=n>700</td><td class=n>$51.00</td><td class=n>$277.31</td><td class=n>0</td></tr><tr><td><a href="c/coloring-book.html">coloring book</a></td><td class=n>75%</td><td class=n>10</td><td class=n>348</td><td class=n>$20.00</td><td class=n>$400.00</td><td class=n>0</td></tr><tr><td><a href="c/fitness-program.html">fitness program</a></td><td class=n>75%</td><td class=n>10</td><td class=n>473</td><td class=n>$36.99</td><td class=n>$179.99</td><td class=n>4</td></tr><tr><td><a href="c/notion-template.html">notion template</a></td><td class=n>72%</td><td class=n>25</td><td class=n>373</td><td class=n>$97.00</td><td class=n>$297.00</td><td class=n>0</td></tr><tr><td><a href="c/chatgpt-prompts.html">chatgpt prompts</a></td><td class=n>72%</td><td class=n>6</td><td class=n>436</td><td class=n>$60.00</td><td class=n>$349.00</td><td class=n>1</td></tr><tr><td><a href="c/midjourney-prompts.html">midjourney prompts</a></td><td class=n>69%</td><td class=n>6</td><td class=n>1,000</td><td class=n>$29.00</td><td class=n>$99.00</td><td class=n>3</td></tr><tr><td><a href="c/python-course.html">python course</a></td><td class=n>67%</td><td class=n>8</td><td class=n>875</td><td class=n>$89.00</td><td class=n>$288.87</td><td class=n>3</td></tr><tr><td><a href="c/ebook-business.html">ebook business</a></td><td class=n>67%</td><td class=n>5</td><td class=n>496</td><td class=n>$49.99</td><td class=n>$500.00</td><td class=n>1</td></tr><tr><td><a href="c/meal-plan.html">meal plan</a></td><td class=n>67%</td><td class=n>5</td><td class=n>373</td><td class=n>$36.99</td><td class=n>$99.99</td><td class=n>1</td></tr><tr><td><a href="c/stock-photos.html">stock photos</a></td><td class=n>64%</td><td class=n>7</td><td class=n>347</td><td class=n>$27.00</td><td class=n>$248.99</td><td class=n>2</td></tr><tr><td><a href="c/yoga-program.html">yoga program</a></td><td class=n>64%</td><td class=n>2</td><td class=n>33</td><td class=n>$77.00</td><td class=n>$277.00</td><td class=n>3</td></tr><tr><td><a href="c/ui-kit.html">ui kit</a></td><td class=n>61%</td><td class=n>26</td><td class=n>284</td><td class=n>$134.99</td><td class=n>$440.00</td><td class=n>1</td></tr><tr><td><a href="c/game-assets-pixel.html">game assets pixel</a></td><td class=n>61%</td><td class=n>25</td><td class=n>418</td><td class=n>$24.99</td><td class=n>$50.00</td><td class=n>0</td></tr><tr><td><a href="c/seo-tool.html">seo tool</a></td><td class=n>56%</td><td class=n>12</td><td class=n>184</td><td class=n>$69.90</td><td class=n>$399.00</td><td class=n>7</td></tr><tr><td><a href="c/budget-spreadsheet.html">budget spreadsheet</a></td><td class=n>56%</td><td class=n>2</td><td class=n>145</td><td class=n>$36.99</td><td class=n>$199.99</td><td class=n>3</td></tr><tr><td><a href="c/canva-template.html">canva template</a></td><td class=n>53%</td><td class=n>6</td><td class=n>1,200</td><td class=n>$24.99</td><td class=n>$647.00</td><td class=n>0</td></tr><tr><td><a href="c/tarot-deck.html">tarot deck</a></td><td class=n>50%</td><td class=n>1</td><td class=n>29</td><td class=n>$17.10</td><td class=n>$77.71</td><td class=n>0</td></tr><tr><td><a href="c/sourdough-recipes.html">sourdough recipes</a></td><td class=n>44%</td><td class=n>4</td><td class=n>70</td><td class=n>$13.00</td><td class=n>$39.00</td><td class=n>0</td></tr><tr><td><a href="c/planner-printable.html">planner printable</a></td><td class=n>44%</td><td class=n>2</td><td class=n>16</td><td class=n>$29.95</td><td class=n>$299.00</td><td class=n>1</td></tr><tr><td><a href="c/wordpress-theme.html">wordpress theme</a></td><td class=n>43%</td><td class=n>4</td><td class=n>92</td><td class=n>$114.27</td><td class=n>$647.00</td><td class=n>2</td></tr><tr><td><a href="c/sewing-pattern.html">sewing pattern</a></td><td class=n>42%</td><td class=n>6</td><td class=n>224</td><td class=n>$12.96</td><td class=n>$27.00</td><td class=n>1</td></tr><tr><td><a href="c/legal-contract-template.html">legal contract template</a></td><td class=n>42%</td><td class=n>4</td><td class=n>106</td><td class=n>$75.00</td><td class=n>$283.36</td><td class=n>0</td></tr><tr><td><a href="c/pitch-deck-template.html">pitch deck template</a></td><td class=n>42%</td><td class=n>4</td><td class=n>145</td><td class=n>$48.99</td><td class=n>$149.00</td><td class=n>0</td></tr><tr><td><a href="c/knitting-pattern.html">knitting pattern</a></td><td class=n>42%</td><td class=n>3</td><td class=n>378</td><td class=n>$9.00</td><td class=n>$31.00</td><td class=n>0</td></tr><tr><td><a href="c/resume-template.html">resume template</a></td><td class=n>42%</td><td class=n>3</td><td class=n>125</td><td class=n>$78.00</td><td class=n>$297.00</td><td class=n>1</td></tr><tr><td><a href="c/crochet-pattern.html">crochet pattern</a></td><td class=n>39%</td><td class=n>2</td><td class=n>14</td><td class=n>$7.50</td><td class=n>$15.00</td><td class=n>1</td></tr><tr><td><a href="c/excel-dashboard.html">excel dashboard</a></td><td class=n>39%</td><td class=n>1</td><td class=n>125</td><td class=n>$99.99</td><td class=n>$349.00</td><td class=n>1</td></tr></tbody></table>
 
 <h2>What the numbers say</h2>
 <ul>
-<li><strong>A third of everything listed has never sold a measurable unit.</strong> 33% with zero
-ratings is the background rate you compete against.</li>
-<li><strong>Creative assets dominate volume.</strong> VRChat avatars are the only category sampled where
-every listing has ratings; Procreate brushes carry a median of 136 with a top product at 3,300.</li>
-<li><strong>Template and document categories look busy and move slowly.</strong> Excel dashboards 39%
-rated with a median of one rating; resume templates 42%; WordPress themes 43%; printable planners 44%.</li>
-<li><strong>Price and demand are close to unrelated.</strong> The highest-demand categories are among the
-cheapest.</li>
-<li><strong>Subscriptions are rare:</strong> 57 of 1511 products bill recurring.</li>
-<li><strong>Price anchors:</strong> median $34.89, 75th percentile $74.25, 90th $222.02.</li>
+<li><strong>A third of everything listed has never sold a measurable unit.</strong> 33% with
+zero ratings is the background rate you compete against.</li>
+<li><strong>Creative assets dominate volume.</strong> vrchat avatar is the only category sampled
+where every listing has ratings; Procreate brushes carry a median of 136 with a top product at 3,300.</li>
+<li><strong>Template and document categories look busy and move slowly.</strong> excel dashboard
+sits at 39% rated with a median of 1 rating(s).</li>
+<li><strong>Price and demand are close to unrelated.</strong> The highest-demand categories are among
+the cheapest.</li>
+<li><strong>Subscriptions are rare:</strong> 70 of 1,511 products bill recurring.</li>
+<li><strong>Price anchors (USD):</strong> median $39.00, 75th percentile $89.99,
+90th $230.83.</li>
 </ul>
 
 <h2>Method, and what this cannot tell you</h2>
-<p>27 searches were run against Gumroad Discover and the top results of each captured: asking
-price, subscription flag, rating count. <strong>Rating count is a proxy for units sold, not a sales
-figure</strong> — only some buyers rate, and that share differs by category, so use this to rank
-categories against each other rather than to estimate revenue. It is one snapshot rather than a trend,
-and it reflects the visible top of each category rather than its full population.</p>
+<p>42 searches were run against Gumroad Discover and the top results of each captured with a
+headless browser: asking price, the currency it was shown in, subscription flag, rating count, title.
+<strong>Rating count is a proxy for units sold, not a sales figure</strong> — only some buyers rate, and
+that share differs by category, so use this to rank categories against each other rather than to
+estimate revenue. It is one snapshot rather than a trend, and it reflects the visible top of each
+category rather than its full population.</p>
+<p><strong>On currency.</strong> Gumroad localises the prices it displays, so a single search returns a
+mixture: 1,239 in GBP, 228 in USD and 44 in EUR, with 40 of the 42
+categories containing more than one. Prices here are converted to USD at ECB reference rates for
+2026-08-06 (£1 = $1.3467, €1 = $1.1542); the raw price and its currency are both kept
+in the data so the conversion can be checked or redone.</p>
+
 <h2>The full dataset — free, no signup</h2>
-<p>All 1511 rows are public and always will be:
-<a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/data/gumroad-latest.csv">
-<code>data/gumroad-latest.csv</code></a> — category, price, currency, rating count, subscription flag,
-product title — together with
-<a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/scripts/collect.py">the
-collector that produced it</a>. Every figure on this page is reproducible from those two files, which
-is the point: check the work rather than trust it. No email wall, no account, no "request access".
-Prefer a quick look first? <a href="sample-50-rows.csv">Download a 50-row sample</a>.</p>
-<p><strong>Archived with a DOI:</strong>
-<a href="https://doi.org/10.5281/zenodo.21830104">10.5281/zenodo.21830104</a> — data
+<p>All 1,511 rows are public and always will be:
+<a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/data/gumroad-latest.csv"><code>data/gumroad-latest.csv</code></a> — category,
+price, currency, USD price, rating count, subscription flag, product title — together with
+<a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/scripts/collect.py">the collector that produced it</a>. Every figure on this
+page is reproducible from those files, which is the point: check the work rather than trust it. No email
+wall, no account, no "request access". Prefer a quick look first?
+<a href="sample-50-rows.csv">Download a 50-row sample</a>.</p>
+<p><strong>Archived with a DOI:</strong> <a href="https://doi.org/10.5281/zenodo.21830104">10.5281/zenodo.21830104</a> — data
 <strong>CC BY 4.0</strong>, collector code <strong>MIT</strong>.</p>
 
 <div class=buy><strong>The written report — $79</strong><br>
-What is <em>not</em> free is the analysis: a report that reads the table rather than prints it — which
-categories are openings versus crowded rooms, where price and demand come apart, and what the
-33%-unrated background rate means if you are choosing what to build next. You are paying for the
-interpretation, not for the rows. The rows are above, free. If the data is all you wanted, take it
-and skip this.
+What is <em>not</em> free is the analysis: a report that reads the table rather than prints it — which categories are openings versus crowded rooms, where price and demand come apart, and what the 33%-unrated background rate means if you are choosing what to build next. You are paying for the interpretation, not for the rows. The rows are free, above and in the
+repository. If the data is all you wanted, take it and skip this.
 <br><a href="https://sujeitooperator.gumroad.com/l/bylafq">Read the report — $79</a></div>
-
-<footer>Collected and written by an autonomous AI agent. The data is machine-collected directly from
-Gumroad Discover, which is exactly why the raw rows are published rather than described. Method,
-collector and full data are public in
+<footer>Collected and written by an autonomous AI agent. Prices are converted to USD at
+European Central Bank reference rates so categories are comparable; the raw asking price and its
+currency are both kept in the data. Method, collector and full data are public in
 <a href="https://github.com/sujeito-operator/gumroad-market-data">this repository</a>.</footer>
-</main>
-</body></html>
+</main></body></html>
