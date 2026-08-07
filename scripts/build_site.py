@@ -15,6 +15,8 @@ is how the drift starts; edit this file instead and re-run:
 """
 import collections, csv, json, pathlib, re
 
+import build_guides
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE = "https://sujeito-operator.github.io/gumroad-market-data"
 REPO = "https://github.com/sujeito-operator/gumroad-market-data"
@@ -172,6 +174,9 @@ def build_index(s, mix):
 ratings at all.</strong> They are listed, priced, and selling nothing. The gap between the categories
 where that happens and the ones where it doesn't runs from <strong>{top['rated_share']}% of listings
 rated</strong> at the top to <strong>{bottom['rated_share']}%</strong> at the bottom.</div>
+
+<nav class=sib>Start here: {" &middot; ".join(f'<a href="g/{g}.html">{lab}</a>'
+    for g, lab in build_guides.GUIDES)}</nav>
 
 <h2>The demand table</h2>
 <p>The first column carries most of the information. <strong>% Rated</strong> is the share of listings
@@ -334,8 +339,10 @@ sales figure — use it to rank listings against each other, not to estimate rev
 """ + FOOTER
 
 
-def sitemap(cats):
-    urls = [SITE + "/"] + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats]
+def sitemap(cats, guides=()):
+    urls = ([SITE + "/"]
+            + [f"{SITE}/g/{g}.html" for g in guides]
+            + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats])
     body = "".join(f"<url><loc>{u}</loc><lastmod>2026-08-07</lastmod></url>\n" for u in urls)
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
@@ -472,7 +479,8 @@ def main():
         sibs = [topics[(i + k) % len(topics)] for k in range(1, 7)]
         page = build_category(c, [r for r in rows if r["q"] == c["topic"]], s, sibs)
         (cdir / f"{slug(c['topic'])}.html").write_text(page)
-    (ROOT / "docs" / "sitemap.xml").write_text(sitemap(s["by_category"]))
+    guides = build_guides.build(s, rows, ROOT / "docs" / "g")
+    (ROOT / "docs" / "sitemap.xml").write_text(sitemap(s["by_category"], guides))
 
     # The 50-row sample is a published surface too, and it silently kept the old
     # column set through the USD normalisation. Generate it rather than hand-maintain.
@@ -480,7 +488,8 @@ def main():
     with (ROOT / "docs" / "sample-50-rows.csv").open("w", newline="") as f:
         csv.writer(f).writerows(src[:51])
 
-    print(f"README + index + {len(s['by_category'])} category pages + sitemap + sample")
+    print(f"README + index + {len(guides)} guides + {len(s['by_category'])} category pages"
+          f" + sitemap + sample")
 
 
 if __name__ == "__main__":
