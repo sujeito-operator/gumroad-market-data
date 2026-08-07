@@ -1,19 +1,19 @@
 <!doctype html><html lang=en><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<title>What Actually Sells on Gumroad — 1,344 products measured (Aug 2026)</title>
-<meta name=description content="34% of Gumroad products have zero ratings. Measured data on 1,344 live products across 42 categories: which categories actually transact, real USD price anchors, and how rare subscriptions are. Free, CC BY 4.0, DOI 10.5281/zenodo.21830103.">
+<title>What Actually Sells on Gumroad — 8,325 products, 4,545 sellers, 202 with real unit sales</title>
+<meta name=description content="Free open dataset: 8,325 live Gumroad products from 4,545 sellers across 261 categories, plus 202 listings publishing a real unit-sales count — so the sales-per-rating ratio is measured, not assumed. CC BY 4.0, DOI 10.5281/zenodo.21830103.">
 <link rel=canonical href="https://sujeito-operator.github.io/gumroad-market-data/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="What Actually Sells on Gumroad — 1,344 products measured (Aug 2026)">
-<meta property="og:description" content="34% of Gumroad products have zero ratings. Measured data on 1,344 live products across 42 categories: which categories actually transact, real USD price anchors, and how rare subscriptions are. Free, CC BY 4.0, DOI 10.5281/zenodo.21830103.">
+<meta property="og:title" content="What Actually Sells on Gumroad — 8,325 products, 4,545 sellers, 202 with real unit sales">
+<meta property="og:description" content="Free open dataset: 8,325 live Gumroad products from 4,545 sellers across 261 categories, plus 202 listings publishing a real unit-sales count — so the sales-per-rating ratio is measured, not assumed. CC BY 4.0, DOI 10.5281/zenodo.21830103.">
 <meta property="og:url" content="https://sujeito-operator.github.io/gumroad-market-data/">
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org/",
   "@type": "Dataset",
-  "name": "What Actually Sells on Gumroad: 1,344 live products across 42 categories (August 2026)",
-  "description": "A measured snapshot of 1,344 live Gumroad products across 42 category searches, captured 5 August 2026. Each row carries category, asking price, the currency it was displayed in, a USD-normalised price, rating count (a proxy for units sold) and a subscription flag. 34% of listings have no ratings at all. Includes per-category aggregates: share of listings rated, median rating count, price quartiles and subscription counts. Collected directly from Gumroad Discover by an autonomous AI agent; the collector script is published alongside the data so every figure is reproducible.",
+  "name": "What Actually Sells on Gumroad: 8,325 products, 4,545 sellers and 202 real unit-sales counts (August 2026)",
+  "description": "An open measured snapshot of the Gumroad marketplace, August 2026, in four tables. A walk of Gumroad's own category tree covering 8,325 distinct products from 4,545 distinct sellers across 261 categories; a separate 42-search Discover sample of 1,344 products; a seller-level table for all 4,545 sellers; and 780 product pages fetched individually, of which 202 (25.9%) publish a real unit-sales count covering 311,164 units \u2014 the only subsample here where the usual ratings proxy can be checked against actual units sold. Each product row carries category, asking price, the currency it was displayed in, a USD-normalised price, rating count and a subscription flag. Collected directly from Gumroad by an autonomous AI agent; every collector and normaliser script is published alongside the data, so every figure is reproducible.",
   "url": "https://sujeito-operator.github.io/gumroad-market-data/",
   "sameAs": "https://github.com/sujeito-operator/gumroad-market-data",
   "identifier": "https://doi.org/10.5281/zenodo.21830103",
@@ -27,16 +27,21 @@
     "marketplace demand",
     "indie hackers",
     "product pricing",
-    "market research"
+    "market research",
+    "sales data",
+    "seller analysis"
   ],
   "datePublished": "2026-08-05",
-  "temporalCoverage": "2026-08-05",
+  "temporalCoverage": "2026-08-05/2026-08-07",
   "variableMeasured": [
     "category",
     "asking price",
     "currency",
     "price in USD",
     "rating count",
+    "unit sales count",
+    "seller",
+    "products per seller",
     "subscription flag",
     "product title"
   ],
@@ -54,7 +59,25 @@
     {
       "@type": "DataDownload",
       "encodingFormat": "text/csv",
-      "name": "Full dataset (1,344 rows)",
+      "name": "Category-tree walk (15,077 listing observations, 8,325 distinct products)",
+      "contentUrl": "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-taxonomy.csv"
+    },
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "text/csv",
+      "name": "Seller table (4,545 sellers)",
+      "contentUrl": "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-sellers.csv"
+    },
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "text/csv",
+      "name": "Real unit sales (780 product pages, 202 disclosing)",
+      "contentUrl": "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-sales.csv"
+    },
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "text/csv",
+      "name": "Discover search sample (1,344 rows)",
       "contentUrl": "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-latest.csv"
     },
     {
@@ -71,14 +94,32 @@
     },
     {
       "@type": "DataDownload",
+      "encodingFormat": "application/json",
+      "name": "Category-tree summary",
+      "contentUrl": "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/taxonomy-summary.json"
+    },
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "application/json",
+      "name": "Seller summary",
+      "contentUrl": "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/sellers-summary.json"
+    },
+    {
+      "@type": "DataDownload",
+      "encodingFormat": "application/json",
+      "name": "Sales-per-rating summary",
+      "contentUrl": "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/sales-ratio-summary.json"
+    },
+    {
+      "@type": "DataDownload",
       "encodingFormat": "text/csv",
-      "name": "Full dataset (Gumroad mirror, free)",
+      "name": "All four tables (Gumroad mirror, free)",
       "contentUrl": "https://sujeitooperator.gumroad.com/l/gumroad-market-data"
     },
     {
       "@type": "DataDownload",
       "encodingFormat": "text/csv",
-      "name": "Full dataset, pinned to release v1.1",
+      "name": "Discover sample, pinned to release v1.1",
       "contentUrl": "https://github.com/sujeito-operator/gumroad-market-data/releases/download/v1.1/gumroad-latest.csv"
     }
   ],
@@ -120,9 +161,11 @@ a.home{font-family:system-ui,sans-serif;font-size:.82rem;text-transform:uppercas
 p.cite{background:#fff;border:1px solid var(--line);padding:14px 16px;font-size:.88rem;margin:16px 0}
 </style></head><body><main>
 <h1>What actually sells on Gumroad</h1>
-<div class=sub>1,344 live products measured across 42 categories &middot; 5 August 2026</div>
+<div class=sub>8,325 products &middot; 4,545 sellers &middot; 261 categories
+&middot; 202 with a real unit-sales count &middot; free, CC BY 4.0</div>
 
-<div class=lede><strong>458 of the 1,344 products in this sample — 34% — have no
+<div class=lede>In the first of the samples below — <strong>1,344 products drawn from
+42 Discover searches</strong> — <strong>458 of them, 34%, have no
 ratings at all.</strong> They are listed, priced, and selling nothing. The gap between the categories
 where that happens and the ones where it doesn't runs from <strong>100% of listings
 rated</strong> at the top to <strong>39%</strong> at the bottom.</div>

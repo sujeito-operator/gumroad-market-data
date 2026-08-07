@@ -135,67 +135,108 @@ def demand_rows(cats):
     return "".join(out)
 
 
-def jsonld(s):
+def jsonld(s, ts, sr):
+    """The schema.org record Google Dataset Search reads.
+
+    Until 2026-08-07 this described the 42-search sample and listed ONE csv, because it
+    was written the day that was the whole dataset and never revisited. The taxonomy,
+    seller and unit-sales tables — three of the four things a searcher would actually
+    want — were invisible to every machine reading this page. Everything here is derived
+    from the summaries, so it now grows when the data does.
+    """
     return json.dumps({
         "@context": "https://schema.org/",
         "@type": "Dataset",
-        "name": f"What Actually Sells on Gumroad: {s['n']:,} live products across {s['cats']} categories (August 2026)",
+        "name": (f"What Actually Sells on Gumroad: {ts['n']:,} products, {ts['sellers']:,} sellers "
+                 f"and {sr['disclosing']} real unit-sales counts (August 2026)"),
         "description": (
-            f"A measured snapshot of {s['n']:,} live Gumroad products across {s['cats']} category "
-            "searches, captured 5 August 2026. Each row carries category, asking price, the currency "
-            "it was displayed in, a USD-normalised price, rating count (a proxy for units sold) and a "
-            f"subscription flag. {s['zpct']}% of listings have no ratings at all. Includes "
-            "per-category aggregates: share of listings rated, median rating count, price quartiles "
-            "and subscription counts. Collected directly from Gumroad Discover by an autonomous AI "
-            "agent; the collector script is published alongside the data so every figure is "
-            "reproducible."),
+            f"An open measured snapshot of the Gumroad marketplace, August 2026, in four tables. "
+            f"A walk of Gumroad's own category tree covering {ts['n']:,} distinct products from "
+            f"{ts['sellers']:,} distinct sellers across {ts['nodes']} categories; a separate "
+            f"{s['cats']}-search Discover sample of {s['n']:,} products; a seller-level table for "
+            f"all {ts['sellers']:,} sellers; and {sr['fetched']:,} product pages fetched "
+            f"individually, of which {sr['disclosing']} ({sr['disclose_pct']}%) publish a real "
+            f"unit-sales count covering {sr['units_observed']:,} units — the only subsample here "
+            "where the usual ratings proxy can be checked against actual units sold. Each product "
+            "row carries category, asking price, the currency it was displayed in, a USD-normalised "
+            "price, rating count and a subscription flag. Collected directly from Gumroad by an "
+            "autonomous AI agent; every collector and normaliser script is published alongside the "
+            "data, so every figure is reproducible."),
         "url": SITE + "/",
         "sameAs": REPO,
         "identifier": "https://doi.org/" + DOI,
         "license": "https://creativecommons.org/licenses/by/4.0/",
         "isAccessibleForFree": True,
         "keywords": ["Gumroad", "digital products", "creator economy", "e-commerce pricing",
-                     "marketplace demand", "indie hackers", "product pricing", "market research"],
+                     "marketplace demand", "indie hackers", "product pricing", "market research",
+                     "sales data", "seller analysis"],
         "datePublished": "2026-08-05",
-        "temporalCoverage": "2026-08-05",
+        "temporalCoverage": "2026-08-05/2026-08-07",
         "variableMeasured": ["category", "asking price", "currency", "price in USD",
-                             "rating count", "subscription flag", "product title"],
+                             "rating count", "unit sales count", "seller", "products per seller",
+                             "subscription flag", "product title"],
         "creator": {"@type": "Organization", "name": "Sujeito Operator",
                     "url": "https://github.com/sujeito-operator"},
         "includedInDataCatalog": {"@type": "DataCatalog", "name": "Zenodo",
                                   "url": "https://zenodo.org/"},
         "distribution": [
             {"@type": "DataDownload", "encodingFormat": "text/csv",
-             "name": f"Full dataset ({s['n']:,} rows)",
+             "name": f"Category-tree walk ({ts['obs']:,} listing observations, "
+                     f"{ts['n']:,} distinct products)",
+             "contentUrl": RAW + "/data/gumroad-taxonomy.csv"},
+            {"@type": "DataDownload", "encodingFormat": "text/csv",
+             "name": f"Seller table ({ts['sellers']:,} sellers)",
+             "contentUrl": RAW + "/data/gumroad-sellers.csv"},
+            {"@type": "DataDownload", "encodingFormat": "text/csv",
+             "name": f"Real unit sales ({sr['fetched']:,} product pages, "
+                     f"{sr['disclosing']} disclosing)",
+             "contentUrl": RAW + "/data/gumroad-sales.csv"},
+            {"@type": "DataDownload", "encodingFormat": "text/csv",
+             "name": f"Discover search sample ({s['n']:,} rows)",
              "contentUrl": RAW + "/data/gumroad-latest.csv"},
             {"@type": "DataDownload", "encodingFormat": "text/csv", "name": "50-row sample",
              "contentUrl": SITE + "/sample-50-rows.csv"},
             {"@type": "DataDownload", "encodingFormat": "application/json",
              "name": "Per-category summary", "contentUrl": RAW + "/data/summary.json"},
+            {"@type": "DataDownload", "encodingFormat": "application/json",
+             "name": "Category-tree summary", "contentUrl": RAW + "/data/taxonomy-summary.json"},
+            {"@type": "DataDownload", "encodingFormat": "application/json",
+             "name": "Seller summary", "contentUrl": RAW + "/data/sellers-summary.json"},
+            {"@type": "DataDownload", "encodingFormat": "application/json",
+             "name": "Sales-per-rating summary",
+             "contentUrl": RAW + "/data/sales-ratio-summary.json"},
             {"@type": "DataDownload", "encodingFormat": "text/csv",
-             "name": "Full dataset (Gumroad mirror, free)", "contentUrl": FREE_MIRROR},
+             "name": "All four tables (Gumroad mirror, free)", "contentUrl": FREE_MIRROR},
             {"@type": "DataDownload", "encodingFormat": "text/csv",
-             "name": f"Full dataset, pinned to release v{VERSION}",
+             "name": f"Discover sample, pinned to release v{VERSION}",
              "contentUrl": RELEASE_CSV},
         ],
         "version": VERSION,
     }, indent=2)
 
 
-def build_index(s, mix, ts, ss):
+def build_index(s, mix, ts, ss, sr):
     top = s["by_category"][0]
     bottom = s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
-    extra = f'<script type="application/ld+json">\n{jsonld(s)}\n</script>\n'
-    desc = (f"{s['zpct']}% of Gumroad products have zero ratings. Measured data on {s['n']:,} live "
-            f"products across {s['cats']} categories: which categories actually transact, real USD "
-            f"price anchors, and how rare subscriptions are. Free, CC BY 4.0, DOI {DOI}.")
-    return head(f"What Actually Sells on Gumroad — {s['n']:,} products measured (Aug 2026)", desc,
+    extra = f'<script type="application/ld+json">\n{jsonld(s, ts, sr)}\n</script>\n'
+    # The <title> and the share card are the only part of this site most people will ever
+    # read. Until 2026-08-07 they described the FIRST sample only — {s['n']} products, the
+    # same words as the paid report's own title — while the site had grown to hold four
+    # times as much and the one thing no competitor publishes. Lead with the whole corpus.
+    desc = (f"Free open dataset: {ts['n']:,} live Gumroad products from {ts['sellers']:,} sellers "
+            f"across {ts['nodes']} categories, plus {sr['disclosing']} listings publishing a real "
+            f"unit-sales count — so the sales-per-rating ratio is measured, not assumed. "
+            f"CC BY 4.0, DOI {DOI}.")
+    return head(f"What Actually Sells on Gumroad — {ts['n']:,} products, {ts['sellers']:,} sellers, "
+                f"{sr['disclosing']} with real unit sales", desc,
                 SITE + "/", extra) + f"""
 <h1>What actually sells on Gumroad</h1>
-<div class=sub>{s['n']:,} live products measured across {s['cats']} categories &middot; 5 August 2026</div>
+<div class=sub>{ts['n']:,} products &middot; {ts['sellers']:,} sellers &middot; {ts['nodes']} categories
+&middot; {sr['disclosing']} with a real unit-sales count &middot; free, CC BY 4.0</div>
 
-<div class=lede><strong>{s['zero']} of the {s['n']:,} products in this sample — {s['zpct']}% — have no
+<div class=lede>In the first of the samples below — <strong>{s['n']:,} products drawn from
+{s['cats']} Discover searches</strong> — <strong>{s['zero']} of them, {s['zpct']}%, have no
 ratings at all.</strong> They are listed, priced, and selling nothing. The gap between the categories
 where that happens and the ones where it doesn't runs from <strong>{top['rated_share']}% of listings
 rated</strong> at the top to <strong>{bottom['rated_share']}%</strong> at the bottom.</div>
@@ -909,7 +950,7 @@ def main():
 
     mix = currency_mix(rows)
     (ROOT / "README.md").write_text(build_readme(s, mix, ts, ss, sr))
-    (ROOT / "docs" / "index.html").write_text(build_index(s, mix, ts, ss))
+    (ROOT / "docs" / "index.html").write_text(build_index(s, mix, ts, ss, sr))
     cdir = ROOT / "docs" / "c"
     cdir.mkdir(exist_ok=True)
     topics = [c["topic"] for c in s["by_category"]]
