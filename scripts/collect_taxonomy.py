@@ -185,7 +185,13 @@ def main():
         pg = b.new_page(user_agent=UA, viewport={"width": 1500, "height": 1400})
         for i, node in enumerate(todo, 1):
             slug = slugify(node)
-            url = "https://gumroad.com/" + slug
+            # Use the ?taxonomy= form, NOT the path form. `/3d/3d-assets/3ds-max`
+            # returns 404 while `?taxonomy=3d%2F3d-assets%2F3ds-max` returns 48 cards;
+            # some deep nodes have no path route at all. The path form silently
+            # produced ok=True with ZERO rows, which reads as "empty category" rather
+            # than "wrong URL" -- checked against both forms before switching.
+            url = ("https://gumroad.com/discover?taxonomy="
+                   + urllib.parse.quote(slug, safe=""))
             rec = {"node": node, "slug": slug, "ok": False, "rows": [],
                    "reported": [], "clicks": 0}
             try:

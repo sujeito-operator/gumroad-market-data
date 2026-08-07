@@ -194,7 +194,8 @@ def g_what_to_sell(s, a):
         for c in bottom)
     body = f"""
 <h2>The measurement</h2>
-<p>There is no public sales figure on Gumroad, so the honest proxy is whether a listing has
+<p>Most listings carry no public sales figure. A seller can choose to display a unit-sales count on
+their product page, and a minority do; for everyone else the honest proxy is whether a listing has
 attracted any ratings at all. A listing with no ratings has, as far as anything observable goes,
 sold nothing. Across {s['n']:,} live listings, <strong>{s['zero']} — {s['zpct']}% — have no ratings
 whatsoever</strong>. That is the background rate anything you launch competes against, before
@@ -259,11 +260,20 @@ def g_earnings(s, a):
                     for b in a["bands"])
     body = f"""
 <h2>What can and cannot be measured</h2>
-<p>Gumroad does not publish sales counts. It publishes rating counts, and a rating requires a
-purchase. So rating count is a floor on units sold, not an estimate of it — most buyers never rate
-anything. Everything below uses ratings as a <em>relative</em> signal: it tells you which listings
-outsell which, and it does not tell you anyone's revenue. Anybody quoting you precise Gumroad
-earnings from public data is guessing.</p>
+<p>Gumroad publishes a unit-sales count only where the seller has opted into showing one, which is a
+minority of listings. For the rest it publishes rating counts, and a rating requires a purchase. So
+rating count is a floor on units sold, not an estimate of it — most buyers never rate anything.
+Everything below uses ratings as a <em>relative</em> signal: it tells you which listings outsell
+which, and it does not tell you anyone's revenue.</p>
+
+<p class=warn><strong>Correction, 7 August 2026.</strong> This page previously said Gumroad does not
+publish sales counts at all. That was wrong: the product page carries a <code>sales_count</code>
+field, populated wherever the seller displays it. The figures on this site are unaffected — they
+have always been rating-derived and are labelled as such — but the stated reason for using a proxy
+was overstated. We are now collecting that field across the sample, because the listings that
+publish both a sales count and a rating count let the sales-per-rating ratio be measured instead of
+assumed. Sellers routinely repeat multipliers like &times;30 or &times;100 with nothing behind them.
+The measured ratio will be published here with its spread and its sample size.</p>
 
 <h2>The distribution is the answer</h2>
 <div class=kv>

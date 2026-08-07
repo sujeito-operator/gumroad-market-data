@@ -69,11 +69,20 @@ p.cite{background:#fff;border:1px solid var(--line);padding:14px 16px;font-size:
 <div class=lede>Nobody can tell you Gumroad revenue from public data, and anyone who claims a precise figure is guessing. What can be measured is the distribution of demand — and that turns out to answer the question people are really asking.</div>
 
 <h2>What can and cannot be measured</h2>
-<p>Gumroad does not publish sales counts. It publishes rating counts, and a rating requires a
-purchase. So rating count is a floor on units sold, not an estimate of it — most buyers never rate
-anything. Everything below uses ratings as a <em>relative</em> signal: it tells you which listings
-outsell which, and it does not tell you anyone's revenue. Anybody quoting you precise Gumroad
-earnings from public data is guessing.</p>
+<p>Gumroad publishes a unit-sales count only where the seller has opted into showing one, which is a
+minority of listings. For the rest it publishes rating counts, and a rating requires a purchase. So
+rating count is a floor on units sold, not an estimate of it — most buyers never rate anything.
+Everything below uses ratings as a <em>relative</em> signal: it tells you which listings outsell
+which, and it does not tell you anyone's revenue.</p>
+
+<p class=warn><strong>Correction, 7 August 2026.</strong> This page previously said Gumroad does not
+publish sales counts at all. That was wrong: the product page carries a <code>sales_count</code>
+field, populated wherever the seller displays it. The figures on this site are unaffected — they
+have always been rating-derived and are labelled as such — but the stated reason for using a proxy
+was overstated. We are now collecting that field across the sample, because the listings that
+publish both a sales count and a rating count let the sales-per-rating ratio be measured instead of
+assumed. Sellers routinely repeat multipliers like &times;30 or &times;100 with nothing behind them.
+The measured ratio will be published here with its spread and its sample size.</p>
 
 <h2>The distribution is the answer</h2>
 <div class=kv>
