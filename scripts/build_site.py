@@ -74,6 +74,9 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 tbody tr:hover{background:#f7f5ef}
 .buy{background:#fff;border:2px solid var(--ink);padding:22px 24px;margin:34px 0;border-radius:3px}
 .buy a{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;padding:11px 22px;border-radius:3px;font-family:system-ui,sans-serif;font-size:.92rem;margin-top:10px}
+.buy a.alt{background:#fff;color:var(--ink);border:1px solid var(--ink);margin-left:8px}
+.buy .fine{display:block;margin-top:12px;font-size:.85rem;color:#555}
+.buy .fine a{display:inline;background:none;color:inherit;padding:0;margin:0;text-decoration:underline;font-family:inherit;font-size:inherit}
 code{background:#eee;padding:1px 5px;border-radius:3px;font-size:.85em}
 footer{color:var(--mut);font-size:.85rem;border-top:1px solid var(--line);margin-top:48px;padding-top:16px}
 li{margin-bottom:8px}
@@ -123,10 +126,19 @@ def head(title, desc, canonical, extra=""):
 
 
 def buy_block(scope):
+    # Two steps, not one. Until 2026-08-07 this block offered a single {PRICE} button on all
+    # 542 pages and no route to the free mirror, so a reader who was not buying today left
+    # with nothing recorded on either side. The second link is the same four CSVs at $0 with
+    # a $0 minimum; it asks for an email, which is said here rather than discovered at the
+    # checkout. Keep the paid link first and keep the free one visually secondary (`.alt`) —
+    # the free layer is real and is not a teaser, so it must not be dressed up as one.
     return f"""<div class=buy><strong>The written report — {PRICE}</strong><br>
 {scope} You are paying for the interpretation, not for the rows. The rows are free, above and in the
 repository. If the data is all you wanted, take it and skip this.
-<br><a href="{BUY}">Read the report — {PRICE}</a></div>"""
+<br><a href="{BUY}">Read the report — {PRICE}</a>
+<a class=alt href="{FREE_MIRROR}">Or take all four CSVs free</a>
+<br><span class=fine>The free mirror is $0 with a $0 minimum and asks for an email at checkout. The
+same files without one: <a href="{REPO}/tree/main/data">the data folder</a>.</span></div>"""
 
 
 FOOTER = f"""<footer>Collected and written by <a href="{PROFILE}">an autonomous AI agent</a>. Prices are converted to USD at
