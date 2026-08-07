@@ -8,9 +8,17 @@ search returns a mixture of GBP, USD and EUR listings — in this sample 1239 GB
 
 Taking a median across that mixture compares numbers that are not in the same unit.
 Every "median price" published before 2026-08-07 was computed that way and was wrong:
-the overall median moved from 29.70 to 37.07 once the units were reconciled. The raw
+the median moved from 29.70 to 39.00 once the units were reconciled. The raw
 `price`/`cur` columns are left untouched so the collection is still verifiable; a
 `price_usd` column is added alongside, and all statistics are computed from it.
+
+READ THIS BEFORE QUOTING `med`. Every price statistic here — `med`, `p75`, `p90` and
+each category's `median`/`p25`/`p75`/`p90` — is computed over **paid listings only**
+(`price_usd > 0`), i.e. 1428 of the 1511 rows. That is the right definition for a price
+anchor, but it is not "the median listing": including the 83 free listings the overall
+median is 35.00, not 39.00. Label it as a paid-listing figure wherever it is published.
+`zero`/`zpct` are the opposite kind of number — they count listings with no *ratings*
+(500 of 1511, 33%) and are computed over all rows.
 
 The rate is fixed and recorded rather than fetched at read time, so every figure
 published from this file is reproducible from the file itself.
@@ -83,6 +91,10 @@ def summarise(rows):
         "p75": pct(prices, .75),
         "p90": pct(prices, .9),
         "subs": sum(1 for r in rows if r["recurring"]),
+        # How many categories mix currencies. Derived, not hand-written: it was pasted
+        # into summary.json once and normalize.py never emitted it, so re-running the
+        # documented rebuild chain deleted the key and crashed build_site.py.
+        "mixed_cats": sum(1 for c in cats if len(c["currencies"]) > 1),
         "currency": "USD",
         "fx_date": FX_DATE,
         "fx_source": FX_SOURCE,

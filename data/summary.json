@@ -7,6 +7,7 @@
  "p75": 89.99,
  "p90": 230.83,
  "subs": 70,
+ "mixed_cats": 40,
  "currency": "USD",
  "fx_date": "2026-08-06",
  "fx_source": "European Central Bank reference rates via frankfurter.app",
@@ -15,7 +16,6 @@
   "\u00a3": 1.34671,
   "\u20ac": 1.1542
  },
- "mixed_cats": 40,
  "by_category": [
   {
    "topic": "vrchat avatar",

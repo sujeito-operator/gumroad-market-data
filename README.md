@@ -114,6 +114,11 @@ No email wall, no account, no "request access". Use it for anything, with or wit
 [**Gumroad Market Data 2026 — free CSV**](https://sujeitooperator.gumroad.com/l/gumroad-market-data). $0 with a $0 minimum; the suggested
 amount is optional and typing zero is the expected case.
 
+**Citing this?** `main` moves as the data is corrected. Pin to
+[**release v1.1**](https://github.com/sujeito-operator/gumroad-market-data/releases/tag/v1.1) instead — the exact bytes every figure above was computed from,
+at [a download URL that will not change](https://github.com/sujeito-operator/gumroad-market-data/releases/download/v1.1/gumroad-latest.csv). The release notes record what changed
+from v1.0, including the mixed-currency error it corrects.
+
 **Archived with a DOI:** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103) (CC BY 4.0). Cite it as:
 
 > Sujeito Operator (2026). *What Actually Sells on Gumroad: 1,511 live products across

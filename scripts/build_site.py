@@ -35,6 +35,13 @@ BUY = "https://sujeitooperator.gumroad.com/l/bylafq"
 # location that search engines will actually find. Keep it $0 with a $0 minimum.
 FREE_MIRROR = "https://sujeitooperator.gumroad.com/l/gumroad-market-data"
 
+# Tagged release. `main` moves; a release tag does not, so this is the URL to cite or to
+# link from anywhere that needs the exact bytes a claim was computed from. It is also an
+# indexable page on github.com, which is worth more than one on this domain.
+VERSION = "1.1"
+RELEASE = f"{REPO}/releases/tag/v{VERSION}"
+RELEASE_CSV = f"{REPO}/releases/download/v{VERSION}/gumroad-latest.csv"
+
 CSS = """:root{--ink:#1a1a1a;--mut:#666;--line:#ddd;--acc:#8a7a5c;--bg:#faf9f6}
 *{box-sizing:border-box}
 body{font:17px/1.65 Georgia,serif;color:var(--ink);background:var(--bg);margin:0;padding:0 20px}
@@ -159,7 +166,11 @@ def jsonld(s):
              "name": "Per-category summary", "contentUrl": RAW + "/data/summary.json"},
             {"@type": "DataDownload", "encodingFormat": "text/csv",
              "name": "Full dataset (Gumroad mirror, free)", "contentUrl": FREE_MIRROR},
+            {"@type": "DataDownload", "encodingFormat": "text/csv",
+             "name": f"Full dataset, pinned to release v{VERSION}",
+             "contentUrl": RELEASE_CSV},
         ],
+        "version": VERSION,
     }, indent=2)
 
 
@@ -232,6 +243,10 @@ wall, no account, no "request access". Prefer a quick look first?
 <p><strong>Also mirrored on Gumroad</strong> for anyone who would rather click one button than
 clone a repo: <a href="{FREE_MIRROR}">the same CSV, free</a>. It is $0 with a $0 minimum — the
 suggested amount is optional and typing zero is the expected case.</p>
+<p><strong>Citing a fixed version?</strong> <code>main</code> moves as the data is corrected, so pin to
+<a href="{RELEASE}">release v{VERSION}</a> — the exact bytes every figure on this page was computed
+from, downloadable at <a href="{RELEASE_CSV}">a URL that will not change</a>. The release notes also
+record what changed from v1.0, including the currency error it corrects.</p>
 <p><strong>Archived with a DOI:</strong> <a href="https://doi.org/{DOI}">{DOI}</a> — data
 <strong>CC BY 4.0</strong>, collector code <strong>MIT</strong>.</p>
 
@@ -442,6 +457,11 @@ No email wall, no account, no "request access". Use it for anything, with or wit
 **Prefer a one-click download?** The same CSV is mirrored as a free Gumroad product:
 [**Gumroad Market Data 2026 — free CSV**]({FREE_MIRROR}). $0 with a $0 minimum; the suggested
 amount is optional and typing zero is the expected case.
+
+**Citing this?** `main` moves as the data is corrected. Pin to
+[**release v{VERSION}**]({RELEASE}) instead — the exact bytes every figure above was computed from,
+at [a download URL that will not change]({RELEASE_CSV}). The release notes record what changed
+from v1.0, including the mixed-currency error it corrects.
 
 **Archived with a DOI:** [{DOI}](https://doi.org/{DOI}) (CC BY 4.0). Cite it as:
 
