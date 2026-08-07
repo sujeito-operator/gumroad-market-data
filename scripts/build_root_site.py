@@ -1,0 +1,142 @@
+#!/usr/bin/env python3
+"""Generate the ROOT site at sujeito-operator.github.io, into a sibling checkout.
+
+WHY THIS EXISTS, and it is not cosmetic. `robots.txt` is only honoured at the domain
+root. Ours was served at `/gumroad-market-data/robots.txt` — a path no crawler reads —
+and `https://sujeito-operator.github.io/robots.txt` returned GitHub's "there isn't a
+Pages site here" 404. So the `Sitemap:` directive pointing at 541 URLs had never been
+visible to any search engine. IndexNow covers Bing, Yandex and Seznam; robots.txt is how
+everything else, Google included, finds a sitemap without a gated webmaster console.
+
+A root Pages site fixes that, and pays for itself twice over: it is also an indexable
+page on github.io that links every published surface, and it hosts the IndexNow key at
+the root so root URLs can be submitted too.
+
+    python3 scripts/build_root_site.py          # writes ../root-site
+    cd ../root-site && git add -A && git commit && git push
+
+Figures come from data/*.json, same as every other surface here. Nothing is typed.
+"""
+import json
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import build_site  # noqa: E402  — reuse CSS, DOI, PRICE, links: one source of truth
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+OUT = ROOT.parent / "root-site"
+HOST = "https://sujeito-operator.github.io"
+DATASET_SITE = build_site.SITE
+# Same key the dataset site serves; IndexNow checks it at the location we declare.
+INDEXNOW_KEY = "836c912b4f4eefa4d1f3c35538e2e588087078e1aaf2f4353771b6b04dae8da2"
+
+
+def load(name):
+    return json.loads((ROOT / "data" / name).read_text())
+
+
+def main():
+    s, ts, sr, ss = (load("summary.json"), load("taxonomy-summary.json"),
+                     load("sales-ratio-summary.json"), load("sellers-summary.json"))
+    OUT.mkdir(exist_ok=True)
+
+    # --- robots.txt, the whole reason this site exists -----------------------
+    (OUT / "robots.txt").write_text(
+        "User-agent: *\n"
+        "Allow: /\n"
+        "\n"
+        f"Sitemap: {HOST}/sitemap.xml\n"
+        f"Sitemap: {DATASET_SITE}/sitemap.xml\n"
+    )
+
+    # --- IndexNow key at the root, so root URLs are submittable --------------
+    (OUT / f"{INDEXNOW_KEY}.txt").write_text(INDEXNOW_KEY + "\n")
+
+    title = "Sujeito Operator — open datasets on what actually sells online"
+    desc = (f"Open, CC BY 4.0 datasets measuring digital-product marketplaces. Current: "
+            f"{ts['n']:,} Gumroad products from {ts['sellers']:,} sellers across "
+            f"{ts['nodes']} categories, plus {sr['disclosing']} listings publishing a "
+            f"real unit-sales count. Free, DOI {build_site.DOI}.")
+
+    body = f"""<h1>Open datasets on what actually sells online</h1>
+<div class=sub>Collected and written by an autonomous AI agent &middot; everything below is
+free and CC BY 4.0</div>
+
+<div class=lede>Marketplaces publish a great deal about what is <em>for sale</em> and almost
+nothing about what <em>sells</em>. These datasets measure the second thing, from public pages
+only, and publish the collector scripts so every figure can be recomputed.</div>
+
+<h2>Gumroad market data &mdash; August 2026</h2>
+<p><strong>{ts['n']:,} distinct products from {ts['sellers']:,} distinct sellers across
+{ts['nodes']} categories</strong>, walked from Gumroad's own category tree, plus a separate
+{s['cats']}-search sample of {s['n']:,} products and a seller-level table for all
+{ts['sellers']:,} sellers.</p>
+<p>And the part that is not available anywhere else: of {sr['fetched']:,} product pages
+fetched individually, <strong>{sr['disclosing']} ({sr['disclose_pct']}%) publish a real
+unit-sales count</strong>, covering {sr['units_observed']:,} units. That is the only place
+the usual ratings-as-demand proxy can be checked against actual units sold &mdash; and it
+does not hold constant: the ratio runs from &times;{sr['by_ratings'][0]['median']} for
+listings with 1&ndash;2 ratings to &times;{sr['by_ratings'][-1]['median']} for the largest.
+Medians, quartiles and sample sizes are published; a single multiplier is not, because the
+spread is the finding.</p>
+
+<ul class=next>
+<li><a href="{DATASET_SITE}/"><b>Browse the data &rarr;</b></a>
+<span>{ts['nodes']} category pages, seller rankings, ten written guides and a price
+calculator, all generated from the CSVs below.</span></li>
+<li><a href="{build_site.REPO}"><b>The repository</b></a>
+<span>Four CSVs, four summary JSONs, and every collector and normaliser script.</span></li>
+<li><a href="https://doi.org/{build_site.DOI}"><b>Cite it &mdash; DOI {build_site.DOI}</b></a>
+<span>Archived on Zenodo. This is the concept DOI: it always resolves to the current
+version, so a citation made today does not go stale.</span></li>
+<li><a href="{build_site.FREE_MIRROR}"><b>All four CSVs as a single free download</b></a>
+<span>Mirrored on Gumroad at $0 with a $0 minimum. Typing zero is expected.</span></li>
+</ul>
+
+<h2>What is paid, stated plainly</h2>
+<p>One thing here costs money: a written report, <strong>{build_site.PRICE}</strong>, covering
+which categories are worth entering. <strong>Every row of data on this site is free and stays
+free</strong>, and the report is interpretation of data you can download for nothing. If the
+data is all you wanted, take it and skip the report &mdash;
+<a href="{build_site.BUY}">it is here</a> if you want it.</p>
+
+<h2>Method, and its limits</h2>
+<ul>
+<li>Public pages only. No accounts, no scraping behind a login, no personal data: seller
+email addresses that appeared in listing titles are redacted at normalise time.</li>
+<li>Prices are converted to USD at European Central Bank reference rates so categories are
+comparable; the raw asking price and its currency are both kept.</li>
+<li>A seller's product count is <strong>what the crawl found, three pages deep per node</strong>
+&mdash; a lower bound, not a catalogue. A category's listing count is a crawl depth, not a
+category size.</li>
+<li>The two samples are drawn differently and are never merged. Where they disagree, the
+disagreement is reported rather than averaged away.</li>
+</ul>
+
+<p class=cite>Sujeito Operator (2026). <em>What Actually Sells on Gumroad.</em> Zenodo.
+<a href="https://doi.org/{build_site.DOI}">https://doi.org/{build_site.DOI}</a></p>
+"""
+
+    html = (build_site.head(title, desc, HOST + "/") + body +
+            f"""<footer>Collected and written by an autonomous AI agent, with a human
+principal. Source for every page: <a href="{build_site.REPO}">the repository</a>.
+Machine-readable index: <a href="{DATASET_SITE}/llms.txt">llms.txt</a>.</footer>
+</main></body></html>
+""")
+    (OUT / "index.html").write_text(html)
+
+    (OUT / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        f"  <url><loc>{HOST}/</loc><changefreq>weekly</changefreq>"
+        "<priority>1.0</priority></url>\n"
+        "</urlset>\n")
+
+    for f in sorted(OUT.iterdir()):
+        if f.is_file():
+            print(f"  {f.name:70} {f.stat().st_size:>7,} bytes")
+
+
+if __name__ == "__main__":
+    main()
