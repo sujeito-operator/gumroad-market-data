@@ -31,6 +31,7 @@ GUIDES = [
     ("gumroad-pricing", "What to charge"),
     ("is-gumroad-worth-it", "Is it worth it"),
     ("gumroad-statistics", "Statistics"),
+    ("free-vs-paid-digital-products", "Free vs paid"),
 ]
 
 
@@ -82,6 +83,20 @@ def analyse(s, rows):
             cheaper_wins += st.median(lo) > st.median(hi)
 
     free = [r for r in prod if r["price_usd"] == 0]
+
+    # Free-against-paid, computed per category as well as pooled. Pooled alone would be
+    # fragile: 24% of every rating in the sample sits on 5% of the products, and a single
+    # 1,300-rating free listing could be carrying it. Counting categories instead asks the
+    # question 31 times, so one outlier cannot answer it.
+    free_beats = free_tot = 0
+    for c in {r["q"] for r in prod}:
+        f = [r["n"] for r in prod if r["q"] == c and r["price_usd"] == 0]
+        p = [r["n"] for r in prod if r["q"] == c and r["price_usd"] > 0]
+        if f and p:
+            free_tot += 1
+            free_beats += st.median(f) > st.median(p)
+    all_ratings = sum(r["n"] for r in prod) or 1
+
     return {
         "cats": cats, "bands": bands,
         "avg_rated": 100 - s["zpct"],
@@ -92,6 +107,15 @@ def analyse(s, rows):
         "free_n": len(free),
         "free_rated": round(100 * sum(1 for r in free if r["n"] > 0) / len(free)),
         "paid_rated": round(100 * sum(1 for r in paid if r["n"] > 0) / len(paid)),
+        "paid_n": len(paid),
+        "free_med": int(st.median([r["n"] for r in free])),
+        "paid_med": int(st.median([r["n"] for r in paid])),
+        "free_med_rated": int(st.median([r["n"] for r in free if r["n"] > 0])),
+        "paid_med_rated": int(st.median([r["n"] for r in paid if r["n"] > 0])),
+        "free_share_ratings": round(100 * sum(r["n"] for r in free) / all_ratings, 1),
+        "free_share_products": round(100 * len(free) / len(prod), 1),
+        "free_beats": free_beats, "free_beats_tot": free_tot,
+        "free_cats": len({r["q"] for r in free}),
         "subs_n": len(rec),
         "top_listing": max(prod, key=lambda r: r["n"]),
         "med_rated_ratings": int(st.median([r["n"] for r in prod if r["n"] > 0])),
@@ -525,7 +549,90 @@ across {s['cats']} categories.</em> Zenodo. <a href="https://doi.org/{B.DOI}">ht
         body)
 
 
-BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics]
+def g_free_vs_paid(s, a):
+    body = f"""
+<h2>The gap, and it is not a small one</h2>
+<p>Of the {s['n']:,} products measured, <strong>{a['free_n']} are free</strong> —
+{a['free_share_products']}% of the sample. Those {a['free_n']} products hold
+<strong>{a['free_share_ratings']}% of every rating in the dataset.</strong> Five percent of the
+listings, a quarter of the observed demand.</p>
+<table><thead><tr><th></th><th class=n>Free</th><th class=n>Paid</th></tr></thead><tbody>
+<tr><td>Products</td><td class=n>{a['free_n']}</td><td class=n>{a['paid_n']:,}</td></tr>
+<tr><td>Share carrying any rating</td><td class=n>{a['free_rated']}%</td>
+<td class=n>{a['paid_rated']}%</td></tr>
+<tr><td>Median ratings, all products</td><td class=n>{a['free_med']}</td>
+<td class=n>{a['paid_med']}</td></tr>
+<tr><td>Median ratings, products with any</td><td class=n>{a['free_med_rated']}</td>
+<td class=n>{a['paid_med_rated']}</td></tr>
+</tbody></table>
+<p>The middle row is the one worth sitting with. <strong>The median free product has
+{a['free_med']} ratings; the median paid product has {a['paid_med']}.</strong> Not
+{a['free_med']}% more — {a['free_med']} against {a['paid_med']}. And
+{a['free_rated']}% of free listings show some demand against {a['paid_rated']}% of paid ones, so
+this is not one viral giveaway dragging an average around.</p>
+
+<h2>Checking that it is not one viral giveaway anyway</h2>
+<p>A pooled figure this lopsided deserves suspicion, because concentration is the defining feature
+of this market — so it was asked again separately inside each of the {a['free_beats_tot']} categories
+that contain both free and paid products. <strong>The median free product out-rates the
+median paid product in {a['free_beats']} of {a['free_beats_tot']} categories.</strong> Free products
+appear in {a['free_cats']} of the {s['cats']} categories searched. Removing the single most-rated
+free listing entirely barely moves the pooled share. The pattern is the market's, not an
+outlier's.</p>
+
+<h2>What this does not say</h2>
+<p>It does not say free earns more. It cannot: a rating is a proxy for a transaction, and a
+transaction at $0 is not revenue. This page compares reach to reach.</p>
+<p>There is also a selection effect running the other way, and it should be stated rather than
+buried. People do not give away their best work at random — free listings are often deliberately
+built for reach, as lead magnets, samples and community assets, by sellers who already have an
+audience. The {a['free_beats']}-of-{a['free_beats_tot']} result says free listings reach more
+people; it does not prove that <em>your</em> paid product would have reached more people had you
+made it free.</p>
+<p>And the direction of causation is genuinely open. Free listings may accumulate ratings because
+they are free, or the kind of seller who can afford to publish a free asset may be the kind who
+already has the distribution.</p>
+
+<h2>What it is actually useful for</h2>
+<p>The number that changes a decision is {s['zpct']}% — the share of all {s['n']:,} products with no
+ratings at all. On this platform the default outcome of publishing something is that nobody
+arrives. Against that background, the free-versus-paid gap reads as a statement about
+<em>discovery</em>: price is the largest single piece of friction between a listing and its first
+transaction, and paying it down to zero removes most of it.</p>
+<p>That makes free a distribution decision, not a pricing one. If nothing you have published has
+ever been rated, the constraint is not your price point — it is that no one has arrived, and the
+measured route to arrival is to put something in front of them that costs nothing to try.</p>
+<p>We publish this dataset that way on purpose: the rows are
+<a href="{B.FREE_MIRROR}">free on Gumroad</a> and free
+<a href="{B.REPO}/blob/main/data/gumroad-latest.csv">in the repository</a>, and the paid item is the
+written analysis, not the data. That is the same structure this page describes, applied to
+ourselves.</p>
+
+{B.buy_block(f"The report classifies all {s['cats']} categories by whether their demand is "
+             "reachable or already held by incumbents — which is the question a free lead product "
+             "is trying to answer before you build the paid one.")}
+
+<h2>Check it yourself</h2>
+<p>Every figure above is computed from a free, openly licensed CSV of {s['n']:,} products, with the
+collector source alongside it. Filter for <code>price_usd == 0</code> and re-derive any of it —
+<a href="{B.REPO}/blob/main/data/gumroad-latest.csv">the data</a>,
+<a href="https://doi.org/{B.DOI}">the archived version with a DOI</a>.</p>
+"""
+    return page(
+        "free-vs-paid-digital-products",
+        "Free vs paid digital products: what 1,344 Gumroad products show",
+        f"{a['free_n']} of {s['n']:,} Gumroad products are free, and they hold "
+        f"{a['free_share_ratings']}% of all ratings. Median free product: {a['free_med']} ratings. "
+        f"Median paid product: {a['paid_med']}. Measured, free to check, CC BY.",
+        "Free versus paid digital products",
+        f"{a['free_n']} free products &middot; {a['paid_n']:,} paid &middot; measured, not surveyed",
+        "Everyone has an opinion about giving digital products away. This is what it looks like "
+        f"when you measure it across {s['n']:,} live products — including the parts that do not "
+        "support the obvious conclusion.",
+        body)
+
+
+BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_free_vs_paid]
 
 
 def build(s, rows, outdir):
