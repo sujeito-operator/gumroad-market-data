@@ -242,11 +242,48 @@ def jsonld(s, ts, sr):
     }, indent=2)
 
 
+def product_jsonld():
+    """The paid report, marked up as a Product with an Offer.
+
+    The Dataset block above tells a machine everything about the free layer and nothing
+    about the one thing that is for sale. This is the only price on the site that is ours
+    rather than an observation, so it is derived from PRICE and cannot drift from it.
+
+    Deliberately absent: `aggregateRating` and `review`. Nobody has bought this and nobody
+    has reviewed it; inventing either is the fastest way to lose a rich result and it would
+    be a lie besides. Declared once, here, on the page that describes the report — not on
+    all 542 pages that link it.
+    """
+    return json.dumps({
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": "What Actually Sells on Gumroad",
+        "description": (
+            "A written report over the open Gumroad snapshot: all "
+            "categories read together and each classified as an opening, a crowded room or "
+            "thin, with the price bands demand actually sits in. The underlying rows are "
+            "free; this is the interpretation."),
+        "url": BUY,
+        "isAccessibleForFree": False,
+        "brand": {"@type": "Organization", "name": "Sujeito Operator",
+                  "url": "https://github.com/sujeito-operator"},
+        "offers": {
+            "@type": "Offer",
+            "price": PRICE.lstrip("$"),
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock",
+            "url": BUY,
+            "seller": {"@type": "Organization", "name": "Sujeito Operator"},
+        },
+    }, indent=2)
+
+
 def build_index(s, mix, ts, ss, sr):
     top = s["by_category"][0]
     bottom = s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
-    extra = f'<script type="application/ld+json">\n{jsonld(s, ts, sr)}\n</script>\n'
+    extra = (f'<script type="application/ld+json">\n{jsonld(s, ts, sr)}\n</script>\n'
+             f'<script type="application/ld+json">\n{product_jsonld()}\n</script>\n')
     # The <title> and the share card are the only part of this site most people will ever
     # read. Until 2026-08-07 they described the FIRST sample only — {s['n']} products, the
     # same words as the paid report's own title — while the site had grown to hold four
