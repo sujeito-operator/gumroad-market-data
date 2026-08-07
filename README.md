@@ -15,6 +15,39 @@ Highest demand: vrchat avatar (100%), unity asset (97%), blender addon (94%). Lo
 **Or browse a category** for its full price distribution and every listing measured:
 <https://sujeito-operator.github.io/gumroad-market-data/>
 
+## Two samples, published side by side
+
+This repository now holds **two independently collected samples of the same
+marketplace**, and they are kept apart on purpose rather than merged into a third set of
+numbers matching neither.
+
+| | Discover searches | Gumroad's category tree |
+|---|---:|---:|
+| Sampling frame | 42 chosen search terms | 359 published categories |
+| Distinct products | 1,344 | **8,325** |
+| Listing observations | 1,509 | 15,077 |
+| Distinct sellers | not recorded | **4,545** |
+| Identity key | card text | **product URL** |
+| Median paid asking price | $36.99 | $18.03 |
+| Products with no ratings | 34% | 43% |
+| Data | [`gumroad-latest.csv`](data/gumroad-latest.csv) | [`gumroad-taxonomy.csv`](data/gumroad-taxonomy.csv) |
+
+**Where they disagree, the disagreement is the finding.** The taxonomy walk reaches parts
+of the catalogue that popular search terms never surface, and those parts are cheaper and
+sell less. It is also the first version of this dataset that records **who** is selling:
+3,263 of the 4,545 sellers have exactly one product in
+the sample, while the top 10% of sellers hold **89.2% of every
+rating measured**.
+
+**One caveat governs every per-category figure in the taxonomy sample.** Each node was
+crawled up to three pages deep, which caps it at 71 listings, and
+166 of the 261 categories hit that cap. A category's listing
+count is therefore a **crawl depth, not a category size** — never quote it as the number
+of products in a category. 98 nodes returned nothing and are excluded
+rather than reported as zeroes.
+
+→ [**All 261 categories, ranked**](https://sujeito-operator.github.io/gumroad-market-data/t/index.html)
+
 ## The demand table
 
 The first column carries most of the information. **% Rated** is the share of listings in a

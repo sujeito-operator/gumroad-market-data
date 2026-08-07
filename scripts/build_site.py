@@ -16,6 +16,7 @@ is how the drift starts; edit this file instead and re-run:
 import collections, csv, json, pathlib, re, urllib.parse
 
 import build_guides
+import build_taxonomy
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE = "https://sujeito-operator.github.io/gumroad-market-data"
@@ -180,7 +181,7 @@ def jsonld(s):
     }, indent=2)
 
 
-def build_index(s, mix):
+def build_index(s, mix, ts):
     top = s["by_category"][0]
     bottom = s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
@@ -200,6 +201,23 @@ rated</strong> at the top to <strong>{bottom['rated_share']}%</strong> at the bo
 
 <nav class=sib>Start here: {" &middot; ".join(f'<a href="g/{g}.html">{lab}</a>'
     for g, lab in build_guides.GUIDES)}</nav>
+
+<h2>A second, larger sample — {ts['n']:,} products and {ts['sellers']:,} sellers</h2>
+<p>Everything below this section comes from {s['cats']} Discover searches. Since then the
+whole of <strong>Gumroad's own category tree</strong> has been walked as a separate
+sample — {ts['nodes']} categories, <strong>{ts['n']:,} distinct products from
+{ts['sellers']:,} distinct sellers</strong> — and it is published in full beside this one.
+It is not a replacement: it is a different sampling frame, and where the two disagree the
+disagreement is the finding. This one puts the median paid asking price at
+{money(s['med'])}; walking the taxonomy puts it at {money(ts['med'])}, because popular
+search terms never surface the cheaper depths of the catalogue.</p>
+<p>It also records <em>who is selling</em>, which this sample never did.
+<strong>{ts['sellers_one_product']:,} of the {ts['sellers']:,} sellers have exactly one
+product, and the top tenth of sellers hold {ts['seller_top10_share']}% of every rating
+measured.</strong></p>
+<p><a href="t/index.html"><strong>Browse all {ts['nodes']} Gumroad categories &rarr;</strong></a>
+&nbsp;·&nbsp; <a href="{REPO}/blob/main/data/gumroad-taxonomy.csv">the CSV</a>
+({ts['obs']:,} rows, free, CC BY 4.0)</p>
 
 <h2>The demand table</h2>
 <p>The first column carries most of the information. <strong>% Rated</strong> is the share of listings
@@ -398,16 +416,18 @@ by the same rated-share figure quoted at the top of this page.</span></li>
 """ + FOOTER
 
 
-def sitemap(cats, guides=()):
+def sitemap(cats, guides=(), taxo=()):
     urls = ([SITE + "/"]
             + [f"{SITE}/g/{g}.html" for g in guides]
-            + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats])
+            + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats]
+            + [f"{SITE}/t/index.html"]
+            + [f"{SITE}/t/{t}.html" for t in taxo])
     body = "".join(f"<url><loc>{u}</loc><lastmod>2026-08-07</lastmod></url>\n" for u in urls)
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
 
 
-def llms_txt(s, cats, guides):
+def llms_txt(s, cats, guides, ts=None):
     """/llms.txt — the one indexable surface this site did not have.
 
     robots.txt already allows every AI crawler, but an assistant that lands here has to
@@ -472,6 +492,48 @@ def llms_txt(s, cats, guides):
         "",
     ]
     lines += [f"- [{c['topic']}]({SITE}/c/{slug(c['topic'])}.html)" for c in cats]
+    if ts:
+        import build_taxonomy as T
+        lines += [
+            "",
+            "## Second sample: Gumroad's own category taxonomy",
+            "",
+            f"> A larger, independently collected sample whose frame is Gumroad's "
+            f"published category tree rather than 42 chosen search terms: "
+            f"**{ts['n']:,} distinct products from {ts['sellers']:,} distinct sellers "
+            f"across {ts['nodes']} categories**, in {ts['obs']:,} listing observations. "
+            f"Median paid asking price {money(ts['med'])}; {ts['zpct']}% of products "
+            f"carry no ratings.",
+            "",
+            "Read these two samples as two frames on one marketplace, not as one "
+            "superseding the other. They disagree, and the disagreement is the finding: "
+            f"the search-term sample puts the median paid price at {money(s['med'])} and "
+            f"the taxonomy walk at {money(ts['med'])}, because popular search terms never "
+            "surface the cheaper depths of the catalogue.",
+            "",
+            f"- Products are keyed on product URL, an exact identity key. "
+            f"{ts['multi']:,} products are filed by Gumroad under more than one category.",
+            f"- **A category's listing count is a crawl depth, not a category size.** "
+            f"Each node was taken up to three pages deep, capping it at {ts['cap']} "
+            f"listings; {ts['nodes_at_cap']} of {ts['nodes']} nodes hit that cap. Never "
+            f"quote it as the number of products in a category.",
+            f"- {ts['nodes_empty']} of the {ts['nodes_crawled']} crawled nodes returned no "
+            f"listings and are excluded rather than reported as zeroes.",
+            f"- Seller concentration, measurable here for the first time: the top 1% of "
+            f"sellers hold {ts['seller_top1_share']}% of all ratings and the top 10% hold "
+            f"{ts['seller_top10_share']}%. {ts['sellers_one_product']:,} of the "
+            f"{ts['sellers']:,} sellers have exactly one product in the sample.",
+            "",
+            f"- [Taxonomy CSV]({RAW}/data/gumroad-taxonomy.csv): "
+            f"{ts['obs']:,} rows with category, product URL, seller, price, currency, "
+            f"USD price, rating count, star rating, subscription flag, title.",
+            f"- [taxonomy-summary.json]({RAW}/data/taxonomy-summary.json): every "
+            f"per-category figure as JSON.",
+            f"- [All {ts['nodes']} categories, ranked]({SITE}/t/index.html)",
+            "",
+        ]
+        lines += [f"- [{x['node']}]({SITE}/t/{T.flat(x['slug'])}.html)"
+                  for x in ts["by_node"] if x["n"] >= T.MIN_LISTINGS]
     lines += [
         "",
         "## Optional",
@@ -486,7 +548,7 @@ def llms_txt(s, cats, guides):
 
 # ------------------------------------------------------------------- README
 
-def build_readme(s, mix):
+def build_readme(s, mix, ts):
     top, bottom = s["by_category"][0], s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
     tbl = "\n".join(
@@ -511,6 +573,39 @@ Highest demand: {hi}. Lowest: {lo}.
 
 **Or browse a category** for its full price distribution and every listing measured:
 <{SITE}/>
+
+## Two samples, published side by side
+
+This repository now holds **two independently collected samples of the same
+marketplace**, and they are kept apart on purpose rather than merged into a third set of
+numbers matching neither.
+
+| | Discover searches | Gumroad's category tree |
+|---|---:|---:|
+| Sampling frame | {s['cats']} chosen search terms | {ts['nodes_crawled']} published categories |
+| Distinct products | {s['n']:,} | **{ts['n']:,}** |
+| Listing observations | {s['obs']:,} | {ts['obs']:,} |
+| Distinct sellers | not recorded | **{ts['sellers']:,}** |
+| Identity key | card text | **product URL** |
+| Median paid asking price | {money(s['med'])} | {money(ts['med'])} |
+| Products with no ratings | {s['zpct']}% | {ts['zpct']}% |
+| Data | [`gumroad-latest.csv`](data/gumroad-latest.csv) | [`gumroad-taxonomy.csv`](data/gumroad-taxonomy.csv) |
+
+**Where they disagree, the disagreement is the finding.** The taxonomy walk reaches parts
+of the catalogue that popular search terms never surface, and those parts are cheaper and
+sell less. It is also the first version of this dataset that records **who** is selling:
+{ts['sellers_one_product']:,} of the {ts['sellers']:,} sellers have exactly one product in
+the sample, while the top 10% of sellers hold **{ts['seller_top10_share']}% of every
+rating measured**.
+
+**One caveat governs every per-category figure in the taxonomy sample.** Each node was
+crawled up to three pages deep, which caps it at {ts['cap']} listings, and
+{ts['nodes_at_cap']} of the {ts['nodes']} categories hit that cap. A category's listing
+count is therefore a **crawl depth, not a category size** — never quote it as the number
+of products in a category. {ts['nodes_empty']} nodes returned nothing and are excluded
+rather than reported as zeroes.
+
+→ [**All {ts['nodes']} categories, ranked**]({SITE}/t/index.html)
 
 ## The demand table
 
@@ -617,9 +712,11 @@ def main():
         r["price_usd"] = float(r["price_usd"])
         r["n"] = float(r["n"] or 0)
 
+    ts = json.loads((ROOT / "data" / "taxonomy-summary.json").read_text())
+
     mix = currency_mix(rows)
-    (ROOT / "README.md").write_text(build_readme(s, mix))
-    (ROOT / "docs" / "index.html").write_text(build_index(s, mix))
+    (ROOT / "README.md").write_text(build_readme(s, mix, ts))
+    (ROOT / "docs" / "index.html").write_text(build_index(s, mix, ts))
     cdir = ROOT / "docs" / "c"
     cdir.mkdir(exist_ok=True)
     topics = [c["topic"] for c in s["by_category"]]
@@ -628,9 +725,20 @@ def main():
         page = build_category(c, [r for r in rows if r["q"] == c["topic"]], s, sibs)
         (cdir / f"{slug(c['topic'])}.html").write_text(page)
     guides = build_guides.build(s, rows, ROOT / "docs" / "g")
-    (ROOT / "docs" / "sitemap.xml").write_text(sitemap(s["by_category"], guides))
+
+    # Second sample, second surface. Kept as its own tree under docs/t/ rather than
+    # merged into docs/c/: the two samples have different frames and merging them would
+    # produce a third set of figures matching neither published file.
+    trows = list(csv.DictReader((ROOT / "data" / "gumroad-taxonomy.csv").open()))
+    for r in trows:
+        r["price"] = float(r["price"])
+        r["price_usd"] = float(r["price_usd"])
+        r["n"] = float(r["n"] or 0)
+    taxo = build_taxonomy.build(ts, trows, ROOT / "docs" / "t")
+
+    (ROOT / "docs" / "sitemap.xml").write_text(sitemap(s["by_category"], guides, taxo))
     (ROOT / "docs" / "llms.txt").write_text(
-        llms_txt(s, s["by_category"], build_guides.GUIDES))
+        llms_txt(s, s["by_category"], build_guides.GUIDES, ts))
 
     # The 50-row sample is a published surface too, and it silently kept the old
     # column set through the USD normalisation. Generate it rather than hand-maintain.
@@ -639,7 +747,7 @@ def main():
         csv.writer(f).writerows(src[:51])
 
     print(f"README + index + {len(guides)} guides + {len(s['by_category'])} category pages"
-          f" + sitemap + sample")
+          f" + {len(taxo)} taxonomy pages + taxonomy index + sitemap + sample")
 
 
 if __name__ == "__main__":
