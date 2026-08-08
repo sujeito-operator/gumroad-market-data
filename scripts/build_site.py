@@ -211,6 +211,13 @@ def buy_block(scope):
     # a $0 minimum; it asks for an email, which is said here rather than discovered at the
     # checkout. Keep the paid link first and keep the free one visually secondary (`.alt`) —
     # the free layer is real and is not a teaser, so it must not be dressed up as one.
+    #
+    # THE GUARANTEE LINE NAMES NO NUMBER OF DAYS, AND THAT IS DELIBERATE — DO NOT "FIX" IT.
+    # The window lives on Gumroad, which no generator in this repo rebuilds, and it is read
+    # live by `gumroad_refund_policy.py` in the operator repo. Writing "30-day" here would
+    # put a figure on 542 pages whose only tie to the thing it describes is somebody
+    # remembering to change both. That is the same rule the affiliate line below states for
+    # the commission, and the same rule that `$79` broke on two pages for eight days.
     return f"""<div class=buy><strong>The written report — {PRICE}</strong><br>
 {scope} You are paying for the interpretation, not for the rows. The rows are free, above and in the
 repository. If the data is all you wanted, take it and skip this.
@@ -220,7 +227,9 @@ repository. If the data is all you wanted, take it and skip this.
 <br><span class=fine>The sample is the method sections lifted unedited out of the report — what was
 measured, the background rate, and the limits in full. Every section that says what to do is in the
 paid one. The free mirror is $0 with a $0 minimum and asks for an email at checkout. The
-same files without one: <a href="{REPO}/tree/main/data">the data folder</a>.</span></div>"""
+same files without one: <a href="{REPO}/tree/main/data">the data folder</a>.
+The report carries a money-back guarantee, stated on the checkout page: full refund, no
+reason needed, and you keep the files.</span></div>"""
 
 
 # The affiliate line carries NO percentage and NO dollar figure, on purpose. The commission
