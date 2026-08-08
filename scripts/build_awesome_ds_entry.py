@@ -62,7 +62,10 @@ def main():
     assert "21830104" not in line, "version DOI v1 is back in the entry"
     assert "1,344" not in line, "the first sample's count is not the headline any more"
     # House style for this list: one sentence per idea, no superlatives, no pricing.
-    for banned in ("best", "biggest", "largest", "$79", "buy", "premium"):
+    # The price is DERIVED from build_site.PRICE, never typed. A banned-token list with a
+    # literal "$79" in it stops catching the price the day the price moves, and it goes on
+    # passing — the `version: 2.3` family, in the one place that is meant to catch it.
+    for banned in ("best", "biggest", "largest", build_site.PRICE.lower(), "buy", "premium"):
         assert banned not in line.lower(), f"marketing language in the entry: {banned}"
     assert len(line) < 400, f"entry is {len(line)} chars; the section's longest is ~380"
 

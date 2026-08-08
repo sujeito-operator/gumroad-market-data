@@ -93,7 +93,7 @@ def zenodo_title(ts, sr):
 # The price is set in next.md, which is the single source of truth for it. It has
 # changed twice, and a stale price on a money surface is this project's most frequent
 # defect — change it in one place, here, and re-run the build.
-PRICE = "$79"
+PRICE = "$249"
 
 # WHAT THE PAID REPORT ACTUALLY COVERS. Read from the data, not typed, and read from
 # the TAXONOMY summary rather than `summary.json`.

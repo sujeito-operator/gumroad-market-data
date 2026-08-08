@@ -68,8 +68,10 @@ def main():
     assert "21830104" not in line, "version DOI v1 is back in the entry"
     assert "1,344" not in line, "the first sample's count is not the headline any more"
     # House style for this section: one plain sentence of what it is, no superlatives,
-    # no pricing. The $79 belongs in the PR body as a disclosure, not in the list.
-    for banned in ("best", "biggest", "largest", "$79", "buy now", "premium"):
+    # no pricing. The price belongs in the PR body as a disclosure, not in the list — and
+    # it is DERIVED from build_site.PRICE, never typed, so that this gate cannot go on
+    # passing after the price moves out from under its literal.
+    for banned in ("best", "biggest", "largest", build_site.PRICE.lower(), "buy now", "premium"):
         assert banned not in line.lower(), f"marketing language in the entry: {banned}"
     # The section's longest existing line (WP Goldmine) is ~230 chars.
     assert len(line) < 340, f"entry is {len(line)} chars; the section's longest is ~230"

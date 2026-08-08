@@ -244,7 +244,7 @@ Cite it as:
 
 **Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See [`LICENSE`](LICENSE).
 
-## The written report — $79
+## The written report — $249
 
 What is **not** free is the analysis: a report that reads the table rather than prints it —
 which categories are openings versus crowded rooms, where price and demand come apart, and
@@ -253,7 +253,7 @@ what the 34%-unrated background rate means if you are choosing what to build nex
 You are paying for the interpretation, not for the rows. The rows are above, free. If the
 data is all you wanted, take it and skip this.
 
-→ **[Read the report — $79](https://sujeitooperator.gumroad.com/l/bylafq)**
+→ **[Read the report — $249](https://sujeitooperator.gumroad.com/l/bylafq)**
 
 ---
 
