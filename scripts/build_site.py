@@ -113,6 +113,18 @@ BUY = "https://sujeitooperator.gumroad.com/l/bylafq"
 # location that search engines will actually find. Keep it $0 with a $0 minimum.
 FREE_MIRROR = "https://sujeitooperator.gumroad.com/l/gumroad-market-data"
 
+# The free SAMPLE of the paid report: three of its ten sections, sliced unedited out of the
+# report itself by `scripts/build_report_sample.py` in the operator repo, which refuses to
+# write unless every kept block is byte-identical to the report's own.
+#
+# WHY IT EXISTS. Until 2026-08-08 the report had cost $249 for a day and NOBODY OUTSIDE THIS
+# OPERATION HAD SEEN A PAGE OF IT — the live product's `preview_url` was null and its
+# `public_files` list was empty. That is a conversion problem for a buyer and a hard blocker
+# for an affiliate, who is asked to spend their own credibility on a document they cannot
+# read. It is served from this site rather than from Gumroad because a link is worth more
+# than an attachment: it can go in a pitch, a README and a directory row.
+SAMPLE_PDF = f"{SITE}/what-actually-sells-on-gumroad-sample.pdf"
+
 # Tagged release. `main` moves; a release tag does not, so this is the URL to cite or to
 # link from anywhere that needs the exact bytes a claim was computed from. It is also an
 # indexable page on github.com, which is worth more than one on this domain.
@@ -197,8 +209,11 @@ def buy_block(scope):
 {scope} You are paying for the interpretation, not for the rows. The rows are free, above and in the
 repository. If the data is all you wanted, take it and skip this.
 <br><a href="{BUY}">Read the report — {PRICE}</a>
+<a class=alt href="{SAMPLE_PDF}">Read three sections free first (PDF)</a>
 <a class=alt href="{FREE_MIRROR}">Or take all four CSVs free</a>
-<br><span class=fine>The free mirror is $0 with a $0 minimum and asks for an email at checkout. The
+<br><span class=fine>The sample is the method sections lifted unedited out of the report — what was
+measured, the background rate, and the limits in full. Every section that says what to do is in the
+paid one. The free mirror is $0 with a $0 minimum and asks for an email at checkout. The
 same files without one: <a href="{REPO}/tree/main/data">the data folder</a>.</span></div>"""
 
 
@@ -1227,6 +1242,14 @@ data deliberately withholds: which of the {REPORT_CATS} categories are openings 
 crowded rooms, where price and demand come apart, and what to do about it. That is the item
 you would earn on.</li>
 </ul>
+<p><strong>Read it before you promote it.</strong>
+<a href="{SAMPLE_PDF}">A free sample of the report is here</a> — three of its ten sections,
+lifted unedited out of the document: what was measured, the background rate you are competing
+against, and the method and limits in full. No signup, no email. If you want the whole thing to
+review before putting it in front of your readers, ask me at
+<a href="mailto:{t['contact']}">{t['contact']}</a> and I will send the full PDF, free, with no
+expectation that you promote anything. <em>You should not be recommending a document you have
+not read, and until 2026-08-08 there was nothing I could show you.</em></p>
 
 <h2>The terms, in full</h2>
 <table><tbody>{terms_rows}</tbody></table>
@@ -1278,7 +1301,8 @@ tracking and the payout are Gumroad's; I can only add or remove your link.</li>
 The form is open and self-serve. You do not need to write to me first, and I am not in the
 loop between you clicking and Gumroad tracking your link.
 <br><a href="{t['signup_url']}">Sign up as an affiliate</a>
-<a class=alt href="{t['product_url']}">See the report first</a>
+<a class=alt href="{SAMPLE_PDF}">Read the sample first</a>
+<a class=alt href="{t['product_url']}">See the product page</a>
 <span class=fine>Would rather ask something before joining?
 <a href="mailto:{t['contact']}">{t['contact']}</a>. A question is not a commitment.</span></div>
 
@@ -1304,6 +1328,11 @@ def assert_affiliates_page(html, t, sr):
         "the opt-in lower bound": "lower bound",
         "the zero-sales disclosure": "sold nothing to date",
         "the AI-agent disclosure": "autonomous AI agent",
+        # An affiliate is being asked to spend their own credibility. A page that does not
+        # let them read the thing first is asking them to take it on trust, which is the
+        # one thing this page exists to stop doing.
+        "the free sample of the report": SAMPLE_PDF,
+        "the offer of a full review copy": "send the full PDF, free",
     }
     missing = [k for k, v in need.items() if v not in html]
     if missing:
@@ -1460,6 +1489,17 @@ def assert_report_scope(s):
 
 
 def main():
+    # `buy_block()` now links the sample from all 542 category pages, both guide trees, the
+    # seller tree and the index. If the file is not there, this build publishes 542 dead
+    # links in the one block a buyer reads — so it stops instead. The dead-link rule
+    # (next.md §0000000000) says a URL is checked BEFORE it is published, and the cheapest
+    # possible check for a file we generate ourselves is whether it exists.
+    sample = ROOT / "docs" / SAMPLE_PDF.rsplit("/", 1)[1]
+    if not sample.exists() or sample.stat().st_size < 20_000:
+        raise SystemExit(
+            f"{sample} is missing or truncated — run `build_report_sample.py --publish` "
+            f"in the operator repo first. Refusing to publish 542 dead links.")
+
     s = json.loads((ROOT / "data" / "summary.json").read_text())
     rows = list(csv.DictReader((ROOT / "data" / "gumroad-latest.csv").open()))
     for r in rows:

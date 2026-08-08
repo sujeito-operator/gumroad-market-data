@@ -74,6 +74,10 @@ def assert_index(html, t):
         "the computed cut": t["affiliate_cut_display"],
         "the terms page": build_site.AFFILIATES_PAGE,
         "the buy link": build_site.BUY,
+        # The root of the hostname is where a stranger lands. Asking for $249 there
+        # without offering a way to read any of it first is the ask this page spent a
+        # whole section learning not to make.
+        "the free sample": build_site.SAMPLE_PDF,
         "the zero-sales disclosure": f"sold {t['sales_to_date']}",
         "the VS Code section": VSX_A,
     }
@@ -150,6 +154,11 @@ which categories are worth entering. <strong>Every row of data on this site is f
 free</strong>, and the report is interpretation of data you can download for nothing. If the
 data is all you wanted, take it and skip the report &mdash;
 <a href="{build_site.BUY}">it is here</a> if you want it.</p>
+<p><strong>You can read part of it before deciding.</strong>
+<a href="{build_site.SAMPLE_PDF}">A free sample</a> is three of the report's ten sections,
+lifted unedited out of the document &mdash; what was measured, the background rate you are
+competing against, and the method and limits in full. No signup and no email. Every section
+that says what to actually do is in the paid one.</p>
 
 <h2>If you have an audience, I would rather pay you than ask you for anything</h2>
 <p><strong>{t['commission_pct']}% of that report &mdash; {t['affiliate_cut_display']} a
