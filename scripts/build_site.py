@@ -26,8 +26,44 @@ RAW = "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/ma
 # Concept DOI: always resolves to the newest version. v1.0 (…104) had the
 # mixed-currency error; v1.1 (…635) corrects it. Cite the concept DOI, not a version.
 DOI = "10.5281/zenodo.21830103"
+# The version the concept DOI currently resolves to. Lives here, beside DOI, because it is
+# a publish-time constant like the rest of this block — and because it rotted once: the
+# apd-core entry hardcoded "2.3" and was still claiming it after v2.4, v2.5, v2.6 and v2.7
+# had shipped. Any zenodo_v*.py that publishes a new version MUST bump this in the same
+# commit; `assert_zenodo_version_current()` below is what makes that non-optional.
+ZENODO_VERSION = "2.7"
 # Who wrote this. Every page claims an agent made it; this is where that claim is answered.
 PROFILE = "https://github.com/sujeito-operator"
+
+
+def assert_zenodo_version_current():
+    """Check ZENODO_VERSION against what the concept DOI actually resolves to, live.
+
+    Deliberately NOT called from build(): that path is a pure derivation with no network,
+    and it stays that way. Call this from anything that PUBLISHES a version string to a
+    third party — the apd-core entry does, and it shipped "2.3" for four versions running
+    because nothing ever looked. This is the "ask an independent index, never re-read your
+    own output" rule applied to our own constant.
+
+    Zenodo 403s this box when the User-Agent is Python's default; send a browser one.
+    Returns the live version. Raises AssertionError on a mismatch, and on nothing else —
+    a network failure returns None so an offline run degrades to "unchecked", not "wrong".
+    """
+    import json as _json
+    import urllib.request as _u
+    concept = DOI.rsplit(".", 1)[1]
+    try:
+        req = _u.Request(f"https://zenodo.org/api/records/{concept}",
+                         headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) "
+                                                "AppleWebKit/537.36 Chrome/126.0 Safari/537.36"})
+        live = _json.load(_u.urlopen(req, timeout=40))["metadata"]["version"]
+    except Exception as e:                      # offline, 403, rate limit — not a failure
+        print(f"  ZENODO VERSION UNCHECKED ({type(e).__name__}) — assuming {ZENODO_VERSION}")
+        return None
+    assert live == ZENODO_VERSION, (
+        f"ZENODO_VERSION is {ZENODO_VERSION!r} but the concept DOI resolves to {live!r}. "
+        f"Bump ZENODO_VERSION in build_site.py and regenerate every surface that prints it.")
+    return live
 
 
 def zenodo_title(ts, sr):

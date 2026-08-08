@@ -77,7 +77,7 @@ title: Gumroad Digital Product Demand - {ts['n']:,} products, {ts['sellers']:,} 
 homepage: {build_site.REPO}
 category: Economics
 description: {description(s, ts, sr, ss)}
-version: 2.3
+version: {build_site.ZENODO_VERSION}
 keywords: creator economy, digital products, e-commerce, marketplace, gumroad, pricing, demand, long tail, unit sales, csv, open data
 image:
 temporal: {ss['temporal_coverage']} snapshot
@@ -127,10 +127,13 @@ def main():
                      load("sales-ratio-summary.json"), load("sellers-summary.json"))
     text = entry(s, ts, sr, ss)
 
-    # The two defects this file exists to stop coming back.
+    # The three defects this file exists to stop coming back.
     assert "21830104" not in text, "version DOI v1 is back in the entry — cite the concept DOI"
     assert "1,511" not in text, "the withdrawn 1,511 count is back in the entry"
     assert build_site.DOI in text
+    # The third: this entry publishes a `version:` field to a third-party catalogue, and it
+    # sat at 2.3 through v2.4/2.5/2.6/2.7 because it was typed here instead of derived.
+    build_site.assert_zenodo_version_current()
 
     # apd-core entries use plain YAML scalars, so a ": " anywhere in the prose silently
     # ends the scalar and the whole file stops parsing. Caught here rather than by a
