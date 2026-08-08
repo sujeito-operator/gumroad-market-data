@@ -211,11 +211,18 @@ def coverage(rows):
 
     THIS IS THE MOST IMPORTANT CAVEAT IN THE FILE AND IT WAS MISSING FOR A DAY.
     `collect_products.py` is resumable and walks `raw-taxonomy.jsonl` in its stored
-    order, which is alphabetical by top-level slug — `3d`, `audio`,
-    `business-and-money`, … As of 2026-08-08 it has fetched 780 product pages and
-    every one of them is under `3d`. So the sales-per-rating multipliers and the
-    observed-gross figures derived here do not describe Gumroad; they describe 3D and
+    order, which was alphabetical by top-level slug — `3d`, `audio`,
+    `business-and-money`, … As of 2026-08-08 it had fetched 780 product pages and
+    every one of them was under `3d`. So the sales-per-rating multipliers and the
+    observed-gross figures derived here did not describe Gumroad; they described 3D and
     VRChat assets, which is one branch of fifteen that returned listings.
+
+    The collector now interleaves across branches (see `stratify()` there), which fixes
+    the cause. It does NOT retire this function: a stratified queue reaches every branch
+    almost at once, so `single_branch` flips to False after a handful of pages while the
+    sample is still overwhelmingly one branch. Breadth and skew are therefore reported
+    separately below, and it is `skewed` — not `single_branch` — that the caveats and the
+    build gates key on.
 
     That was published on the highest-intent page in the funnel as an answer to "how
     much do people make on Gumroad", with four caveats attached, none of which was
@@ -236,13 +243,24 @@ def coverage(rows):
     universe = sorted({x["slug"].split("/")[0]
                        for x in json.loads(TAXONOMY.read_text())["by_node"]})
     dominant, dom_n = tops.most_common(1)[0]
+    dom_pct = 100 * dom_n / len(rows)
+    # An even draw would give each top-level branch this share. Comparing against it is
+    # what keeps the caveat honest once the crawl reaches a SECOND branch: `single_branch`
+    # flips to False the moment one page outside `3d` lands, and every sentence generated
+    # from it softens accordingly — while the sample is still overwhelmingly one branch.
+    # A caveat that weakens because the problem was 5% fixed is worse than no caveat, so
+    # skew is derived separately from breadth and both are published.
+    even_pct = 100.0 / len(universe)
     return {
         "top_levels_seen": sorted(tops),
         "n_top_levels_seen": len(tops),
         "n_top_levels_in_taxonomy": len(universe),
         "dominant": dominant,
-        "dominant_pct": round(100 * dom_n / len(rows), 1),
+        "dominant_pct": round(dom_pct, 1),
         "single_branch": len(tops) == 1,
+        "even_pct": round(even_pct, 1),
+        # Dominant branch holds at least twice what an even draw would give it.
+        "skewed": dom_pct >= 2 * even_pct,
     }
 
 

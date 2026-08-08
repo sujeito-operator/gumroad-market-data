@@ -43,6 +43,7 @@ project after too many requests in a short window, and that outage blocked the o
 payment rail we have. Default delay is deliberately slow. Do not lower it to go faster.
 """
 import argparse
+import heapq
 import json
 import pathlib
 import sys
@@ -82,27 +83,98 @@ def product_urls(path):
     return [(u, nodes[u]) for u in order]
 
 
-def already_done(path):
-    done = set()
+def top_level(nodes):
+    """Top-level branch for a product, from the first node it ranks under.
+
+    `nodes` entries are SLUGS (`3d/3d-assets/blender`), not `" > "`-joined labels.
+    Splitting on the wrong separator is not a loud failure — it silently reports
+    every product as its own top level, which is exactly the blindness this
+    function exists to remove. Split on `/`.
+    """
+    for s in nodes:
+        if s:
+            return s.split("/", 1)[0]
+    return "?"
+
+
+def already_done(path, retry_failed=True):
+    """URLs already collected, and how many USABLE rows fall in each top-level branch.
+
+    Two distinctions here, both of which were wrong in the first version of this and both
+    of which bias the sample rather than announcing themselves:
+
+    1. `per_branch` counts only rows with `ok: true`. It feeds `stratify()`, whose job is
+       to balance the DATA — counting a timeout as coverage would let a branch that keeps
+       failing look well covered and starve it of further attempts.
+    2. A failed row does not permanently retire its URL. About one page in five times out
+       on a first pass, and treating those as done silently drops them from every future
+       run — an invisible ~20% hole, unevenly spread, in exactly the sample whose coverage
+       this module is trying to make honest. Pass `retry_failed=False` for the older
+       behaviour of never re-attempting anything already written.
+    """
+    done, per_branch = set(), {}
     p = pathlib.Path(path)
     if not p.exists():
-        return done
+        return done, per_branch
     with p.open() as fh:
         for line in fh:
             line = line.strip()
             if not line:
                 continue
             try:
-                done.add(json.loads(line)["url"])
+                d = json.loads(line)
             except Exception:
                 continue  # a torn final line from a killed run is not fatal
-    return done
+            ok = bool(d.get("ok"))
+            if ok or not retry_failed:
+                done.add(d["url"])
+            if ok:
+                b = top_level(d.get("nodes") or [])
+                per_branch[b] = per_branch.get(b, 0) + 1
+    return done, per_branch
+
+
+def stratify(todo, per_branch, limit):
+    """Order the queue so the budget spreads across branches, poorest-covered first.
+
+    WHY THIS IS NOT A TUNING CHOICE. `raw-taxonomy.jsonl` is stored in crawl order,
+    which is alphabetical by top-level slug, so a plain `todo[:limit]` spends the
+    entire budget inside whichever branch sorts first. It did: 839 of 839 product
+    pages landed in `3d`, one of 15 top-level branches, and every dollar figure
+    derived from them described 3D/VRChat assets — high unit volumes, low prices —
+    while being labelled as describing Gumroad. The numbers were right and the
+    label was not.
+
+    A resumable collector's coverage is a claim about the data. Rather than
+    document the imbalance again, take from the branch with the fewest rows
+    collected so far at every step, counting rows already on disk. A run of any
+    size then produces a balanced sample, and a resumed run repairs one.
+    """
+    queues = {}
+    for u, nodes in todo:
+        queues.setdefault(top_level(nodes), []).append((u, nodes))
+    # Seed each branch's position with what is already collected, so this run
+    # spends itself on the branches the previous runs starved.
+    heap = [(per_branch.get(b, 0), b) for b in queues]
+    heapq.heapify(heap)
+    order, at = [], {b: 0 for b in queues}
+    while heap and (not limit or len(order) < limit):
+        n, b = heapq.heappop(heap)
+        q = queues[b]
+        order.append(q[at[b]])
+        at[b] += 1
+        if at[b] < len(q):
+            heapq.heappush(heap, (n + 1, b))
+    return order
 
 
 def scrape(pg, url, nodes):
     pg.goto(url, timeout=45000, wait_until="domcontentloaded")
     pg.wait_for_timeout(1200)
-    raw = pg.get_attribute("#app", "data-page")
+    # The blob is server-rendered into the initial HTML, so if it is not present shortly
+    # after domcontentloaded it is not coming. The default 30s timeout made each miss cost
+    # more than three successful fetches, and roughly one page in five misses.
+    raw = pg.get_attribute("#app", "data-page", timeout=8000)
     if not raw:
         return {"url": url, "ok": False, "err": "no data-page blob", "nodes": nodes}
     pr = json.loads(raw)["props"]["product"]
@@ -147,14 +219,23 @@ def main():
     ap.add_argument("--out", dest="out", default="data/raw-products.jsonl")
     ap.add_argument("--limit", type=int, default=600)
     ap.add_argument("--delay", type=float, default=2.5)
+    ap.add_argument("--no-retry-failed", action="store_true",
+                    help="never re-attempt a URL that previously failed")
     a = ap.parse_args()
 
     todo = product_urls(a.src)
-    done = already_done(a.out)
+    done, per_branch = already_done(a.out, retry_failed=not a.no_retry_failed)
     todo = [(u, n) for u, n in todo if u not in done]
-    if a.limit:
-        todo = todo[:a.limit]
+    todo = stratify(todo, per_branch, a.limit)
     print(f"{len(done)} already collected; attempting {len(todo)} this run", flush=True)
+    print("  on disk:  " + ", ".join(f"{b}={n}" for b, n in
+                                     sorted(per_branch.items(), key=lambda kv: -kv[1])), flush=True)
+    plan = {}
+    for _, n in todo:
+        b = top_level(n)
+        plan[b] = plan.get(b, 0) + 1
+    print("  this run: " + ", ".join(f"{b}={n}" for b, n in
+                                     sorted(plan.items(), key=lambda kv: -kv[1])), flush=True)
 
     n_sales = n_ok = 0
     with sync_playwright() as p:

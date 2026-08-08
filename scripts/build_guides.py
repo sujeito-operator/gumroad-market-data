@@ -392,10 +392,15 @@ def sales_analyse():
 def coverage_warn(d, what):
     """The caveat that governs every figure from the per-product crawl.
 
-    `collect_products.py` walks the taxonomy in stored order, which is alphabetical by
-    top-level slug, and it has not finished. Every product page fetched so far is under
-    one branch. So these figures are not about Gumroad — they are about that branch, and
-    two live pages presented them as platform-wide answers for a day.
+    `collect_products.py` has not finished, and for a day every product page it had
+    fetched was under one branch — it used to walk the taxonomy in stored order, which is
+    alphabetical by top-level slug. So those figures were not about Gumroad, they were
+    about that branch, and two live pages presented them as platform-wide answers.
+
+    The collector now interleaves across branches, so the wording here deliberately
+    describes THE SAMPLE rather than the traversal: a sentence explaining the skew by the
+    algorithm went stale the moment the algorithm was fixed, which is the same rot this
+    function exists to prevent.
 
     Generated from `coverage` in the summary rather than written into the pages, so when
     the crawl reaches the next branch the wording changes with the data instead of
@@ -404,15 +409,24 @@ def coverage_warn(d, what):
     c = d["coverage"]
     if not c["single_branch"]:
         seen = ", ".join(branch_label(s) for s in c["top_levels_seen"])
+        # Breadth and skew are different claims. Reaching a second branch flips
+        # `single_branch` and must not, on its own, be allowed to soften the warning
+        # while one branch still holds most of the sample — so the dominant share is
+        # stated whenever it exceeds twice an even draw.
+        skew = ""
+        if c.get("skewed"):
+            skew = (f" <strong>They are also unevenly weighted: "
+                    f"{c['dominant_pct']:.0f}% of them sit under "
+                    f"{branch_label(c['dominant'])} alone</strong>, against the "
+                    f"{c['even_pct']:.0f}% an even draw would give it.")
         return (f"<p class=warn><strong>Which categories this covers.</strong> The listings "
                 f"behind {what} come from {c['n_top_levels_seen']} of Gumroad's "
                 f"{c['n_top_levels_in_taxonomy']} top-level categories ({seen}), so they are "
-                f"not an even draw across the platform. Weight them accordingly.</p>")
+                f"not an even draw across the platform.{skew} Weight them accordingly.</p>")
     label = branch_label(c["dominant"])
     return (f"<p class=warn><strong>Read this first: these figures are about {label}, not about "
             f"Gumroad.</strong> {what.capitalize()} come from re-fetching individual product "
-            f"pages, and that crawl walks Gumroad's category tree in alphabetical order and has "
-            f"not finished. <strong>{c['dominant_pct']:.0f}% of the pages fetched so far sit "
+            f"pages, and that crawl has not finished. <strong>{c['dominant_pct']:.0f}% of the pages fetched so far sit "
             f"under {label}</strong> &mdash; one of the "
             f"{c['n_top_levels_in_taxonomy']} top-level categories that returned listings. "
             f"So this is a measurement of one corner of the marketplace, and {label} is an "
@@ -1527,8 +1541,8 @@ publish a unit-sales count</strong> ({d['disclose_pct_paid']}% of paid listings,
 {d['disclosing_sellers']} sellers. The ratio is measured on the
 {d['paired']} of those that also have at least one rating.</p>
 <p class=cite><strong>The category limit comes first</strong> and it is stated in full at the top
-of this page: the crawl behind these products walks Gumroad's tree alphabetically and has not
-finished, so this is one branch of the marketplace rather than a cross-section of it.</p>
+of this page: the crawl behind these products has not finished and its sample is uneven, so it
+leans on one branch of the marketplace rather than being a cross-section of it.</p>
 <p class=cite><strong>Two further biases, and which way each cuts.</strong> First, displaying a sales counter
 is <em>opt-in</em>, and a seller with nothing to show is likelier to leave it off &mdash; so this is
 not a random draw of Gumroad products, and the listings in it are larger than typical. Second, the

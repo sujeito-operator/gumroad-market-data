@@ -199,8 +199,9 @@ def jsonld(s, ts, sr):
             f"unit-sales count covering {sr['units_observed']:,} units — the only subsample here "
             "where the usual ratings proxy can be checked against actual units sold, and the one "
             f"table that is NOT platform-wide: {sr['coverage']['dominant_pct']:.0f}% of those "
-            f"pages fall under a single top-level category ({sr['coverage']['dominant']}) because "
-            "that crawl walks the tree alphabetically and is unfinished. Each product "
+            f"pages fall under a single top-level category ({sr['coverage']['dominant']}), because "
+            "that crawl is unfinished and most of what it has fetched so far came from that "
+            "branch. Each product "
             "row carries category, asking price, the currency it was displayed in, a USD-normalised "
             "price, rating count and a subscription flag. Collected directly from Gumroad by an "
             "autonomous AI agent; every collector and normaliser script is published alongside the "
@@ -736,7 +737,7 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
             f"measured against actual sales rather than ratings.",
             "",
             f"- **SCOPE LIMIT, READ BEFORE QUOTING ANY FIGURE IN THIS SECTION.** The "
-            f"per-product crawl walks the category tree alphabetically and is unfinished: "
+            f"per-product crawl is unfinished and its sample is uneven: "
             f"**{sr['coverage']['dominant_pct']:.0f}% of the {sr['fetched']:,} pages fetched "
             f"are under one top-level category ({sr['coverage']['dominant']}), of "
             f"{sr['coverage']['n_top_levels_in_taxonomy']} that returned listings.** These "
@@ -893,7 +894,7 @@ pages one at a time finds them: **{sr['disclosing']} of {sr['fetched']:,} produc
 against the thing it proxies for.
 
 > ⚠️ **This section covers {cov_branch}, not Gumroad.** The per-product crawl walks the
-> category tree alphabetically and has not finished: **{sr['coverage']['dominant_pct']:.0f}% of
+> per-product crawl has not finished and its sample is uneven: **{sr['coverage']['dominant_pct']:.0f}% of
 > the {sr['fetched']:,} pages fetched so far are under {cov_branch}**, one of the
 > {sr['coverage']['n_top_levels_in_taxonomy']} top-level categories that returned listings.
 > {cov_branch} is an unusual corner — high unit volumes, low prices, an unusually active
