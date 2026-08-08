@@ -145,8 +145,72 @@ GROSS_BANDS = [(0, 99.999, "Under $100"), (100, 999.999, "$100 – $999"),
                (1000, 9999.999, "$1,000 – $9,999"), (10000, 99999.999, "$10,000 – $99,999"),
                (100000, float("inf"), "$100,000 or more")]
 
+# The dominant branch's median and everything else's must differ by at least this factor
+# before the pooled median is treated as a mixture statistic. See gross_split().
+DIVERGENT_RATIO = 3.0
 
-def gross_stats(paid_disc):
+
+def branch_of(r):
+    """Top-level branch slug for a row. `nodes` holds SLUGS, so split on `/`, not `" > "`."""
+    return (r.get("nodes") or [""])[0].split("/")[0].strip() or "(none)"
+
+
+def gross_split(paid_disc, dominant):
+    """The gross distribution split by dominant branch vs everything else.
+
+    WHY THIS EXISTS, AND WHY IT IS DERIVED RATHER THAN WRITTEN DOWN.
+    Widening the crawl from 1,011 to 1,180 rows moved the pooled observed-gross median
+    from $624 to $1,168 — and that number describes nobody. Split by branch, the paid
+    disclosing listings are two populations roughly forty-seven-fold apart: `3d` at a
+    median of $286 with 65% under $1,000, and everything else at $13,547 with 10% under
+    $1,000. The pooled figure sits in the empty space between them.
+
+    This is the same rule the sales multipliers have followed since the free/paid split
+    was found — never publish a single number across two populations — arriving late at
+    the gross section. Deriving `divergent` rather than hardcoding "always split" matters:
+    if the crawl keeps widening and the two groups converge, the trigger relaxes on its
+    own and the pages stop carrying a caveat that is no longer true. A hand-written
+    caveat would still be there.
+
+    WHAT THIS IS NOT. A high non-dominant median is NOT evidence that the platform is
+    richer than the `3d` figures suggested, and no surface may say so. The non-dominant
+    group is a handful of rows per branch, its total is dominated by a couple of
+    listings (`conc_top2_share` measures exactly that), and disclosure is voluntary and
+    very unevenly taken up between branches (`disclosure_by_branch` in coverage()).
+    Which way that cuts has to be worked out per branch, not assumed.
+    """
+    groups = []
+    for key, sel in (("dominant", lambda r: branch_of(r) == dominant),
+                     ("other", lambda r: branch_of(r) != dominant)):
+        rows = [r for r in paid_disc if sel(r)]
+        vals = sorted(r["price_usd"] * r["sales_count"] for r in rows)
+        if not vals:
+            continue
+        tot = sum(vals)
+        groups.append({
+            "key": key,
+            "branch": dominant if key == "dominant" else "",
+            "n": len(vals),
+            "spread": spread(vals),
+            "total": round(tot),
+            "under_1k": sum(1 for v in vals if v < 1000),
+            "under_1k_pct": round(100 * sum(1 for v in vals if v < 1000) / len(vals), 1),
+            "n_branches": len({branch_of(r) for r in rows}),
+            # Two listings carried $5.7M of a $13.3M total when this was written. A group
+            # total this concentrated is not a fact about its branches.
+            "conc_top2_share": round(100 * sum(vals[-2:]) / tot, 1) if tot else 0.0,
+        })
+    out = {"dominant": dominant, "groups": groups, "divergent": False}
+    if len(groups) == 2:
+        meds = [g["spread"]["median"] for g in groups]
+        lo, hi = min(meds), max(meds)
+        out["ratio"] = round(hi / lo, 1) if lo else 0.0
+        out["divergent"] = bool(lo and hi / lo >= DIVERGENT_RATIO)
+        out["low_key"] = groups[0]["key"] if meds[0] == lo else groups[1]["key"]
+    return out
+
+
+def gross_stats(paid_disc, dominant):
     """Observed lifetime gross for every PAID listing that publishes a unit count.
 
     This is the only figure in the project computed from units actually sold rather than
@@ -193,6 +257,10 @@ def gross_stats(paid_disc):
         "under_1k_pct": round(100 * sum(1 for v in vals if v < 1000) / n, 1) if n else 0.0,
         "bands": bands,
         "units": spread([r["sales_count"] for r in paid_disc]),
+        # Read this BEFORE any figure above it. Where `divergent` is true the pooled
+        # median is a mixture statistic and may not be published on its own — see
+        # gross_split(). The build gates key on this, not on a written note.
+        "split": gross_split(paid_disc, dominant),
     }
 
 
@@ -238,8 +306,7 @@ def coverage(rows):
     # `nodes` holds SLUGS ("3d/3d-assets/blender"), not " > "-joined labels. Splitting
     # on the wrong separator silently reports 27 "top levels" that are all one branch,
     # which is the exact failure this function exists to catch.
-    tops = collections.Counter(
-        (r.get("nodes") or [""])[0].split("/")[0].strip() or "(none)" for r in rows)
+    tops = collections.Counter(branch_of(r) for r in rows)
     universe = sorted({x["slug"].split("/")[0]
                        for x in json.loads(TAXONOMY.read_text())["by_node"]})
     dominant, dom_n = tops.most_common(1)[0]
@@ -261,6 +328,20 @@ def coverage(rows):
         "even_pct": round(even_pct, 1),
         # Dominant branch holds at least twice what an even draw would give it.
         "skewed": dom_pct >= 2 * even_pct,
+        # Publishing a unit count is voluntary and take-up is NOT uniform across
+        # branches — measured 2026-08-08 at 40% in design and 10% in audio, comics,
+        # fiction-books and gaming. Any statement about what the branch split means has
+        # to be checked against this, because a branch that discloses rarely is showing
+        # only the listings whose owners wanted them seen. Derived, so it cannot go
+        # stale against a claim written beside it.
+        "disclosure_by_branch": sorted(
+            ({"branch": b,
+              "n": tops[b],
+              "disclosing": sum(1 for r in rows if branch_of(r) == b and r["discloses"]),
+              "pct": round(100 * sum(1 for r in rows if branch_of(r) == b and r["discloses"])
+                           / tops[b], 1)}
+             for b in tops),
+            key=lambda x: -x["pct"]),
     }
 
 
@@ -287,6 +368,10 @@ def main():
 
     paid_all = [r for r in rows if r["price_usd"] > 0]
     free_all = [r for r in rows if r["price_usd"] == 0]
+
+    # Computed before the summary because gross_stats() splits on the dominant branch
+    # and must not carry its own copy of what "dominant" means.
+    cov = coverage(rows)
 
     with OUT_CSV.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=FIELDS)
@@ -350,9 +435,9 @@ def main():
         "unrated_max_sales": max((r["sales_count"] for r in unrated), default=0),
         "unrated_over_10": sum(1 for r in unrated if r["sales_count"] >= 10),
         "unrated_over_100": sum(1 for r in unrated if r["sales_count"] >= 100),
-        "gross": gross_stats(paid_disc),
         # Must be read before any figure above it — see coverage().
-        "coverage": coverage(rows),
+        "coverage": cov,
+        "gross": gross_stats(paid_disc, cov["dominant"]),
     }
     OUT_JSON.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 

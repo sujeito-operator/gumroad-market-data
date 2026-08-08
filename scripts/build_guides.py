@@ -445,6 +445,92 @@ def branch_label(slug):
     return slug
 
 
+def gross_split_warn(d):
+    """The caveat that stops the pooled observed-gross median being published alone.
+
+    Widening the crawl moved that median from $624 to $1,168, and $1,168 describes
+    nobody: split by branch the paid disclosing listings are two populations about
+    forty-seven-fold apart, and the pooled figure sits in the empty space between them.
+    The sales multipliers have been published free-and-paid-separately for exactly this
+    reason since the free/paid gap was found; this is the same rule reaching the gross
+    section.
+
+    Generated from `gross.split.divergent`, so if the crawl widens until the two groups
+    converge this paragraph disappears on its own rather than becoming a false caveat.
+    The second half is the part it would be easy to get wrong in the other direction: a
+    high non-dominant median is NOT evidence that the platform is richer than the
+    dominant branch suggested, and the two facts that stop anyone reading it that way —
+    how few branches those rows spread over, and how much of the group total sits in two
+    listings — are measured here rather than asserted.
+    """
+    s = d["gross"]["split"]
+    if not s.get("divergent"):
+        return ""
+    dom = next(g for g in s["groups"] if g["key"] == "dominant")
+    oth = next(g for g in s["groups"] if g["key"] == "other")
+    lab = branch_label(s["dominant"])
+    disc = {b["branch"]: b for b in d["coverage"]["disclosure_by_branch"]}
+    hi = max((b for b in disc.values() if b["n"] >= 20), key=lambda b: b["pct"])
+    lo = min((b for b in disc.values() if b["n"] >= 20), key=lambda b: b["pct"])
+    return (
+        f"<p class=warn><strong>There is no single answer here, and quoting one would be "
+        f"the error this page exists to correct.</strong> Split by category branch, these "
+        f"{dom['n'] + oth['n']} listings are two different populations about "
+        f"{s['ratio']:.0f}-fold apart. Under {lab}: {dom['n']} listings, median "
+        f"<strong>${dom['spread']['median']:,.0f}</strong> lifetime gross, "
+        f"{dom['under_1k_pct']}% of them under $1,000. Everywhere else: {oth['n']} listings, "
+        f"median <strong>${oth['spread']['median']:,.0f}</strong>, {oth['under_1k_pct']}% under "
+        f"$1,000. A median across both would land between them and be true of neither group, "
+        f"so this page does not print one.</p>"
+        f"<p class=warn><strong>Do not read the second figure as &ldquo;the rest of Gumroad "
+        f"is richer&rdquo; either.</strong> Those {oth['n']} listings are spread thinly over "
+        f"{oth['n_branches']} branches, and <strong>two of them alone hold "
+        f"{oth['conc_top2_share']}% of the ${oth['total']:,.0f}</strong> that group has taken "
+        f"between them &mdash; so its median rests on very few rows per branch. Publishing a "
+        f"unit count is also voluntary and take-up is uneven between branches, from "
+        f"{hi['pct']:.0f}% in {branch_label(hi['branch'])} down to {lo['pct']:.0f}% in "
+        f"{branch_label(lo['branch'])}, and a branch where few sellers disclose is showing "
+        f"only the listings whose owners wanted them seen. Which way that cuts differs by "
+        f"branch and is not worked out here.</p>")
+
+
+def assert_gross_split(html, d, where, renders_section=False):
+    """Fail the build if a page prints the pooled gross median without the split.
+
+    The rule from `gross_split()` is publish the split or publish nothing, and the
+    project's standing lesson is that only an assertion enforces a rule like that. This
+    checks the OUTPUT, not the template: the pooled median reaching a page by any route —
+    a stat tile, a sentence, a new section someone adds later — trips it. It runs over
+    EVERY page for that reason, because the surface that rotted last time was the one
+    nobody thought to look at.
+
+    `renders_section` additionally requires both branch medians to be present, and is set
+    only for the page that actually carries the observed-gross section.
+    """
+    s = d["gross"]["split"]
+    if not s.get("divergent"):
+        return
+    pooled = f"${d['gross']['spread']['median']:,.0f}"
+    if pooled in html and "two different populations" not in html:
+        raise SystemExit(f"BUILD ABORTED: {where} prints the pooled observed-gross median "
+                         f"{pooled} across two populations {s['ratio']:.0f}x apart without "
+                         f"the branch split. See gross_split_warn().")
+    # The head is checked SEPARATELY from the body. A meta description and a JSON-LD
+    # description travel on their own — into a search result, a social card, a scraper —
+    # so "the body explains it further down" is not a defence there. The first version of
+    # this gate passed a page whose snippet quoted the pooled median alone.
+    head = html.split("</head>", 1)[0]
+    if pooled in head:
+        raise SystemExit(f"BUILD ABORTED: {where} quotes the pooled observed-gross median "
+                         f"{pooled} in its <head> (meta description or JSON-LD), which is "
+                         f"read without the page. Name both branch medians or neither.")
+    if renders_section:
+        for g in s["groups"]:
+            if f"${g['spread']['median']:,.0f}" not in html:
+                raise SystemExit(f"BUILD ABORTED: {where} renders the observed-gross section "
+                                 f"without the {g['key']} branch median. See gross_split_warn().")
+
+
 def assert_coverage_warned(html, where):
     """Fail the build if a page built on the per-product crawl ships without the caveat.
 
@@ -606,10 +692,14 @@ def g_earnings(s, a):
     d = sales_analyse()
     g = d["gross"]
     gsp, gu = g["spread"], g["units"]
-    # Names the branch the gross sample actually covers, so the stat tiles cannot claim
-    # the platform while the caveat below them says otherwise.
+    gdom = next(x for x in g["split"]["groups"] if x["key"] == "dominant")
+    goth = next(x for x in g["split"]["groups"] if x["key"] == "other")
+    # Names the branch the gross sample is dominated by, so the stat tiles cannot claim
+    # the platform while the caveat below them says otherwise. Keyed on `skewed` rather
+    # than `single_branch`: one page from a second branch flips `single_branch` and would
+    # otherwise silently drop the label while the sample is still mostly one branch.
     cov_label = (branch_label(d["coverage"]["dominant"])
-                 if d["coverage"]["single_branch"] else "")
+                 if d["coverage"]["single_branch"] or d["coverage"]["skewed"] else "")
     gbands = "".join(f"<tr><td>{b['label']}</td><td class=n>{b['n']}</td>"
                      f"<td class=n>{b['pct']}%</td><td class=n>{b['share']}%</td></tr>"
                      for b in g["bands"])
@@ -627,34 +717,36 @@ sample &mdash; and the two are never combined.</p>
 
 {coverage_warn(d, f"the {g['n']} listings in this section")}
 
+{gross_split_warn(d)}
+
 <div class=kv>
-<div><b>${gsp['median']:,.0f}</b><span>Median lifetime gross &mdash; {g['n']} paid {cov_label} listings publishing unit sales</span></div>
-<div><b>{gu['median']:,.0f}</b><span>Median units sold, lifetime, same listings</span></div>
-<div><b>{g['under_1k_pct']}%</b><span>Of them have grossed under $1,000 in their whole lifetime</span></div>
+<div><b>${gdom['spread']['median']:,.0f}</b><span>Median lifetime gross &mdash; the {gdom['n']} paid {cov_label} listings publishing unit sales</span></div>
+<div><b>${goth['spread']['median']:,.0f}</b><span>Median lifetime gross &mdash; the {goth['n']} paid listings outside {cov_label}, across {goth['n_branches']} branches</span></div>
+<div><b>{gdom['under_1k_pct']}%</b><span>Of the {cov_label} listings have grossed under $1,000 in their whole lifetime &mdash; against {goth['under_1k_pct']}% of the rest</span></div>
 <div><b>{g['top1_share']}%</b><span>Of all the money in this sample sits with the top 1%</span></div>
 </div>
 
 <table><thead><tr><th>Lifetime gross</th><th class=n>Listings</th><th class=n>Share of listings</th>
 <th class=n>Share of the money</th></tr></thead><tbody>{gbands}</tbody></table>
 
-<p>The median paid listing here has grossed <strong>${gsp['median']:,.0f}</strong> over its entire
-life, with a quartile range of ${gsp['q1']:,.0f} to ${gsp['q3']:,.0f}. The mean is
-<strong>${g['mean']:,.0f}</strong>, roughly {g['mean'] / gsp['median']:.0f} times the median, and
-that gap is the whole story: {g['bands'][-1]['n']} listings out of {g['n']} account for
-{g['bands'][-1]['share']}% of the ${g['total']:,.0f} this sample has taken between them, while the
-bottom half share {g['bottom50_share']}% of it. Any "average Gumroad seller earns X" figure is
-describing those {g['bands'][-1]['n']} listings and calling it the middle.</p>
+<p>The table above pools both groups, because the <em>shape</em> of the distribution is the one
+thing they agree on: it is extremely top-heavy either way. {g['bands'][-1]['n']} listings out of
+{g['n']} account for {g['bands'][-1]['share']}% of the ${g['total']:,.0f} this sample has taken
+between them, while the bottom half share {g['bottom50_share']}% of it. That is why any "average
+Gumroad seller earns X" figure is describing those {g['bands'][-1]['n']} listings and calling it
+the middle &mdash; and it is the same reason the two medians above are printed separately rather
+than averaged into one.</p>
 
 <p class=warn><strong>Beyond the category limit above, read this as a ceiling rather than a
 middle &mdash; four more reasons.</strong>
 <strong>One:</strong> publishing a sales count is voluntary, and a seller with nothing to show has
-less reason to show it, so this subsample is selected upward. The true median across all listings
-is lower than ${gsp['median']:,.0f}, not higher. <strong>Two:</strong> the price used is today's
+less reason to show it, so this subsample is selected upward. Both medians above are higher than
+the truth for their group, not lower. <strong>Two:</strong> the price used is today's
 price; sellers discount, raise prices and run launch offers, and pay-what-you-want buyers often pay
 above the minimum, so no listing sold every unit at the price we observed.
 <strong>Three:</strong> this is gross, before Gumroad's fee, refunds and tax &mdash; the seller
 keeps meaningfully less. <strong>Four:</strong> it is lifetime over an age we cannot see, not
-annual: a listing that has grossed ${gsp['q3']:,.0f} may have taken five years to do it.
+annual: a listing that has grossed ${gdom['spread']['q3']:,.0f} may have taken five years to do it.
 So treat these as the shape of the distribution, which is reliable, rather than as anyone's
 income, which they are not.</p>
 
@@ -743,11 +835,17 @@ any success story you have read, and the base rate is on this page.</p>
     return page(
         "how-much-do-people-make-on-gumroad",
         f"How much do people make on Gumroad? Measured across {s['n']:,} listings",
+        # A meta description is read WITHOUT the page it belongs to, so it cannot lean on
+        # the split paragraph in the body: it has to carry both medians itself or neither.
+        # The version this replaced quoted the pooled median AND called all 249 listings
+        # 3D, when only 178 of them are — a number that is right beside a label that is
+        # not, which is this project's most-repeated defect.
         f"{s['n']:,} Gumroad listings measured for demand: {s['zpct']}% have never been rated. "
-        f"Plus lifetime gross for {g['n']} paid {cov_label} listings that publish a real "
-        f"unit-sales count &mdash; median ${gsp['median']:,.0f}, {g['under_1k_pct']}% under $1,000.",
+        f"Plus lifetime gross for {g['n']} paid listings that publish a real unit-sales "
+        f"count &mdash; median ${gdom['spread']['median']:,.0f} for the {gdom['n']} under "
+        f"{cov_label}, ${goth['spread']['median']:,.0f} for the {goth['n']} outside it.",
         "How much do people actually make on Gumroad?",
-        f"{s['n']:,} listings measured for demand, plus {g['n']} {cov_label} listings with "
+        f"{s['n']:,} listings measured for demand, plus {g['n']} listings with "
         f"published sales counts &middot; August 2026 &middot; free, openly licensed data",
         "Most answers to this question are guesses, because Gumroad publishes revenue for nobody. "
         "But it publishes a unit-sales count for the listings whose sellers switch it on, and that "
@@ -1053,7 +1151,9 @@ collector source alongside it. Filter for <code>price_usd == 0</code> and re-der
 """
     return page(
         "free-vs-paid-digital-products",
-        "Free vs paid digital products: what 1,344 Gumroad products show",
+        # Derived, not typed: this was the last hardcoded sample size in a published
+        # <title>, and it was correct only because nothing had changed it yet.
+        f"Free vs paid digital products: what {s['n']:,} Gumroad products show",
         f"{a['free_n']} of {s['n']:,} Gumroad products are free, and they hold "
         f"{a['free_share_ratings']}% of all ratings. Median free product: {a['free_med']} ratings. "
         f"Median paid product: {a['paid_med']}. Measured, free to check, CC BY.",
@@ -1893,13 +1993,19 @@ BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_f
 # category-coverage caveat. Both shipped without it and read as platform-wide answers.
 CRAWL_BACKED = {"how-much-do-people-make-on-gumroad", SALES_GUIDE}
 
+# The one page carrying the observed-gross section. It must render BOTH branch medians;
+# every other page merely must not quote the pooled one on its own.
+GROSS_SECTION = "how-much-do-people-make-on-gumroad"
+
 
 def build(s, rows, outdir):
     a = analyse(s, rows)
+    d = sales_analyse()
     outdir.mkdir(exist_ok=True)
     for fn, (sl, _) in zip(BUILDERS, GUIDES):
         html = fn(s, a)
         if sl in CRAWL_BACKED:
             assert_coverage_warned(html, f"{sl}.html")
+        assert_gross_split(html, d, f"{sl}.html", renders_section=(sl == GROSS_SECTION))
         (outdir / f"{sl}.html").write_text(html)
     return [sl for sl, _ in GUIDES]
