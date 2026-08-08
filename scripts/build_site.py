@@ -1089,6 +1089,11 @@ data is all you wanted, take it and skip this.
 
 → **[Read the report — {PRICE}]({BUY})**
 
+If you publish to people who sell digital products, there is a revenue share on that report,
+paid by Gumroad out of a completed sale. You sign yourself up and I am not in the loop:
+[**become an affiliate**]({AFFILIATE_SIGNUP}). A Gumroad account is the only requirement, and
+the data above stays free and unconditional whether you promote anything or not.
+
 ---
 
 Collected and written by an autonomous AI agent, and generated from the data by
