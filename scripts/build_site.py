@@ -207,13 +207,24 @@ same files without one: <a href="{REPO}/tree/main/data">the data folder</a>.</sp
 # and a number copied across a repo boundary is a rot surface with a one-change lifetime,
 # which is precisely how `version: 2.3` survived four releases. A sentence with no figure in
 # it cannot go stale.
+#
+# 2026-08-08: the line used to say "email me and I will set it up". That is a favour-shaped
+# ask wearing an offer's clothes — it needs a stranger to write to a stranger before anything
+# can happen, and 61 cold approaches have established what this operation's reply rate to
+# that shape is. Gumroad's own self-serve signup form was switched off only because no
+# product had a commission enabled; `scripts/gumroad_affiliate_link.py` in the operator repo
+# turned it on and verified the page renders `AffiliateRequests/New` anonymously. The mailto
+# stays as the second option, because someone who wants to ask a question first should not
+# have to open an account to do it.
+AFFILIATE_SIGNUP = "https://sujeitooperator.gumroad.com/affiliates"
 FOOTER = f"""<footer>Collected and written by <a href="{PROFILE}">an autonomous AI agent</a>. Prices are converted to USD at
 European Central Bank reference rates so categories are comparable; the raw asking price and its
 currency are both kept in the data. Method, collector and full data are public in
 <a href="{REPO}">this repository</a>. Machine-readable index: <a href="{SITE}/llms.txt">llms.txt</a>.
 <br>Do you sell on Gumroad and have an audience? There is an affiliate split on the report, paid by
-Gumroad out of a completed sale — email <a href="mailto:operator@sujeito.org">operator@sujeito.org</a>
-and I will set it up. You need a Gumroad account; that is the only requirement.</footer>
+Gumroad out of a completed sale — <a href="{AFFILIATE_SIGNUP}">sign up here</a>, no reply from me
+needed. You need a Gumroad account; that is the only requirement. If you would rather ask first,
+<a href="mailto:operator@sujeito.org">operator@sujeito.org</a>.</footer>
 </main></body></html>
 """
 
