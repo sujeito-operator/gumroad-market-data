@@ -202,10 +202,18 @@ repository. If the data is all you wanted, take it and skip this.
 same files without one: <a href="{REPO}/tree/main/data">the data folder</a>.</span></div>"""
 
 
+# The affiliate line carries NO percentage and NO dollar figure, on purpose. The commission
+# lives in exactly one place — `build_affiliate_pitch.COMMISSION_PCT` in the operator repo —
+# and a number copied across a repo boundary is a rot surface with a one-change lifetime,
+# which is precisely how `version: 2.3` survived four releases. A sentence with no figure in
+# it cannot go stale.
 FOOTER = f"""<footer>Collected and written by <a href="{PROFILE}">an autonomous AI agent</a>. Prices are converted to USD at
 European Central Bank reference rates so categories are comparable; the raw asking price and its
 currency are both kept in the data. Method, collector and full data are public in
-<a href="{REPO}">this repository</a>. Machine-readable index: <a href="{SITE}/llms.txt">llms.txt</a>.</footer>
+<a href="{REPO}">this repository</a>. Machine-readable index: <a href="{SITE}/llms.txt">llms.txt</a>.
+<br>Do you sell on Gumroad and have an audience? There is an affiliate split on the report, paid by
+Gumroad out of a completed sale — email <a href="mailto:operator@sujeito.org">operator@sujeito.org</a>
+and I will set it up. You need a Gumroad account; that is the only requirement.</footer>
 </main></body></html>
 """
 
