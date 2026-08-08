@@ -46,6 +46,19 @@ def zenodo_title(ts, sr):
 # changed twice, and a stale price on a money surface is this project's most frequent
 # defect — change it in one place, here, and re-run the build.
 PRICE = "$79"
+
+# WHAT THE PAID REPORT ACTUALLY COVERS. Read from the data, not typed, and read from
+# the TAXONOMY summary rather than `summary.json`.
+#
+# Until 2026-08-08 the buy blocks on 542 pages advertised the report as covering
+# `summary.json`'s `cats` — 42 search queries — because that is what the first edition
+# classified. The second edition classifies Gumroad's own category tree instead, and
+# the free download had already been advertising the larger sample for a day, so the
+# paid tier read as covering LESS than the free one. Two samples exist on this site on
+# purpose (see DO NOT MERGE THE SAMPLES); the report's scope is the taxonomy one, and
+# naming it here means a caller cannot pick the wrong sample by reaching for the
+# nearest variable in scope.
+REPORT_CATS = json.loads((ROOT / "data" / "taxonomy-summary.json").read_text())["nodes"]
 BUY = "https://sujeitooperator.gumroad.com/l/bylafq"
 # The same free CSV, mirrored as a $0 Gumroad product. Not a second paywall and not a
 # lead magnet: gumroad.com already ranks where this site does not, so it is a download
@@ -527,7 +540,7 @@ the page explains why that is not the endorsement of free it looks like.</span><
 by the same rated-share figure quoted at the top of this page.</span></li>
 </ul>
 
-{buy_block(f"What is <em>not</em> free is the analysis: a report that reads all {s['cats']} categories "
+{buy_block(f"What is <em>not</em> free is the analysis: a report that reads all {REPORT_CATS} categories "
            f"together — which are openings versus crowded rooms, where price and demand come apart, "
            f"and what the {s['zpct']}%-unrated background rate means if you are choosing what to "
            f"build next.")}
@@ -1043,6 +1056,35 @@ def sync_license(ts, sr):
     return out
 
 
+def assert_report_scope(s):
+    """No published buy block may advertise the report as covering the SMALLER sample.
+
+    Two counts live on this site and both are correct about their own sample: `cats`
+    (42 search queries) and `nodes` (261 taxonomy categories). The paid report covers
+    the second. Until 2026-08-08 every buy block quoted the first, because `s` was the
+    variable in scope in each of those functions — so the paid tier advertised itself
+    as covering a sixth of what the free download advertised, on all 542 pages at once.
+
+    The failure mode is reaching for the nearest variable, not forgetting a fact, so
+    the check is on the OUTPUT: any sentence that promises "all N categories" inside a
+    buy block has to name REPORT_CATS. Cheap, and it fails the build rather than
+    shipping.
+    """
+    bad = []
+    for f in sorted((ROOT / "docs").rglob("*.html")):
+        html = f.read_text()
+        for m in re.finditer(r"reads all (\d[\d,]*)|classifies all (\d[\d,]*)|"
+                             r"every one of (\d[\d,]*) categories|"
+                             r"classified all (\d[\d,]*)", html):
+            got = next(g for g in m.groups() if g)
+            if int(got.replace(",", "")) != REPORT_CATS:
+                bad.append((f.name, m.group(0)))
+    assert not bad, (f"buy block advertises the wrong sample "
+                     f"(report covers {REPORT_CATS}): {bad[:5]}")
+    assert str(s["cats"]) != str(REPORT_CATS), \
+        "the two samples now report the same count — check this assertion still tests anything"
+
+
 def main():
     s = json.loads((ROOT / "data" / "summary.json").read_text())
     rows = list(csv.DictReader((ROOT / "data" / "gumroad-latest.csv").open()))
@@ -1109,6 +1151,8 @@ def main():
     src = list(csv.reader((ROOT / "data" / "gumroad-latest.csv").open()))
     with (ROOT / "docs" / "sample-50-rows.csv").open("w", newline="") as f:
         csv.writer(f).writerows(src[:51])
+
+    assert_report_scope(s)
 
     print(f"README + index + {len(guides)} guides + {len(s['by_category'])} category pages"
           f" + {len(taxo)} taxonomy pages + taxonomy index + {len(sellers)} seller pages"

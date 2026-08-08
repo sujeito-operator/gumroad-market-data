@@ -545,7 +545,8 @@ share of its listings that are selling is <strong>r = {a['r_price_demand']:.2f}<
 nothing. Several of the highest-demand categories are among the cheapest. Picking a category
 because it looks lucrative is not supported by this data.</p>
 
-{B.buy_block(f"The report reads all {s['cats']} categories together and classifies each one as an "
+{B.buy_block(f"The report reads all {B.REPORT_CATS} of Gumroad's own categories together and classifies "
+             f"each one as an "
              f"opening, a crowded room or thin — with the concentration figure and the demand "
              f"figure for every category, and what to do differently in each case.")}
 
@@ -721,7 +722,7 @@ them. If you are deciding whether to put work into a product here, the base rate
 any success story you have read, and the base rate is on this page.</p>
 
 {B.buy_block(f"What the base rate does not tell you is where the remaining room is. The report "
-             f"classifies all {s['cats']} categories by demand and by how locked-up that demand "
+             f"classifies all {B.REPORT_CATS} categories by demand and by how locked-up that demand "
              f"already is, which is the difference between a category that is busy and one you can "
              f"actually enter.")}
 """
@@ -839,8 +840,8 @@ reachable or already held by three incumbents.</p>
 <a href="gumroad-pricing.html">the price ranges are here</a>, and every one of the {s['cats']}
 categories has <a href="../">its own measured page</a>. All of it is free.</p>
 
-{B.buy_block(f"The report is the version of this with the answer in it: every one of the "
-             f"{s['cats']} categories classified by whether its demand is reachable, and what "
+{B.buy_block(f"The report is the version of this with the answer in it: every one of "
+             f"{B.REPORT_CATS} categories classified by whether its demand is reachable, and what "
              f"changes about your approach in each case.")}
 """
     return page(
@@ -949,7 +950,7 @@ across {s['cats']} categories.</em> Zenodo. <a href="https://doi.org/{B.DOI}">ht
 <a href="../">its own measured page</a>.</p>
 
 {B.buy_block("The statistics above are the free layer. The report is the reading of them: each of "
-             f"the {s['cats']} categories classified by whether its demand is reachable or already "
+             f"the {B.REPORT_CATS} categories classified by whether its demand is reachable or already "
              "held, and what that changes about what you do next.")}
 """
     return page(
@@ -1026,7 +1027,7 @@ measured route to arrival is to put something in front of them that costs nothin
 written analysis, not the data. That is the same structure this page describes, applied to
 ourselves.</p>
 
-{B.buy_block(f"The report classifies all {s['cats']} categories by whether their demand is "
+{B.buy_block(f"The report classifies all {B.REPORT_CATS} categories by whether their demand is "
              "reachable or already held by incumbents — which is the question a free lead product "
              "is trying to answer before you build the paid one.")}
 
@@ -1204,7 +1205,7 @@ dearer half, which is close enough to a coin toss to act on as one.</p>
 <p>Which is the honest limit of this page. It positions your price against the market. It cannot
 tell you whether the market is worth entering.</p>
 
-{B.buy_block(f"The report is the part this tool deliberately does not do: it reads all {s['cats']} "
+{B.buy_block(f"The report is the part this tool deliberately does not do: it reads all {B.REPORT_CATS} "
              "categories together and classifies each as an opening, crowded or thin &mdash; "
              "whether the demand in it is reachable or already held by three incumbents.")}
 
@@ -1342,7 +1343,7 @@ median paid against {B.money(bands[0]['price'])} here) and both are published as
 Averaging them would produce a third set of numbers describing neither, so this site never does.</p>
 
 {B.buy_block("This page is about sellers. The report is the other axis: it reads all "
-             f"{s['cats']} categories together and classifies each as an opening, a crowded room "
+             f"{B.REPORT_CATS} categories together and classifies each as an opening, a crowded room "
              "or thin &mdash; which is the question you hit immediately after deciding that one "
              "product done properly beats ten.")}
 
