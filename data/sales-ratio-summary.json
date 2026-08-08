@@ -1,49 +1,49 @@
 {
-  "fetched": 1180,
-  "sellers": 703,
-  "disclosing": 283,
-  "disclose_pct": 24.0,
-  "disclose_pct_paid": 24.6,
-  "disclose_pct_free": 20.2,
-  "disclosing_sellers": 184,
-  "units_observed": 387726,
-  "paired": 200,
+  "fetched": 1359,
+  "sellers": 824,
+  "disclosing": 316,
+  "disclose_pct": 23.3,
+  "disclose_pct_paid": 23.7,
+  "disclose_pct_free": 20.7,
+  "disclosing_sellers": 214,
+  "units_observed": 450651,
+  "paired": 229,
   "all_ratio": {
-    "n": 200,
-    "median": 24.0,
-    "q1": 10.0,
-    "q3": 54.3,
+    "n": 229,
+    "median": 25.2,
+    "q1": 11.0,
+    "q3": 56.5,
     "min": 1.0,
     "max": 1418.0,
     "p10": 5.0,
-    "p90": 103.6
+    "p90": 104.0
   },
   "paid_ratio": {
-    "n": 166,
-    "median": 23.7,
-    "q1": 10.0,
-    "q3": 50.6,
+    "n": 190,
+    "median": 25.5,
+    "q1": 11.7,
+    "q3": 54.2,
     "min": 1.0,
     "max": 335.0,
-    "p10": 5.0,
-    "p90": 91.1
+    "p10": 5.4,
+    "p90": 101.2
   },
   "free_ratio": {
-    "n": 34,
-    "median": 29.6,
-    "q1": 9.9,
-    "q3": 92.1,
-    "min": 2.3,
+    "n": 39,
+    "median": 24.1,
+    "q1": 7.1,
+    "q3": 90.0,
+    "min": 1.2,
     "max": 1418.0,
-    "p10": 3.5,
-    "p90": 235.3
+    "p10": 2.3,
+    "p90": 224.9
   },
-  "paid_rating_rate": 4.2,
-  "free_rating_rate": 3.4,
-  "paid_pooled": 34.3,
-  "all_pooled": 47.6,
-  "spearman_all": 0.836,
-  "spearman_paired": 0.801,
+  "paid_rating_rate": 3.9,
+  "free_rating_rate": 4.1,
+  "paid_pooled": 33.3,
+  "all_pooled": 43.3,
+  "spearman_all": 0.831,
+  "spearman_paired": 0.784,
   "by_sales": [
     {
       "label": "1\u20139 sales",
@@ -58,157 +58,157 @@
     },
     {
       "label": "10\u201349",
-      "n": 28,
+      "n": 30,
       "median": 11.2,
-      "q1": 8.2,
-      "q3": 20.9,
-      "min": 2.4,
+      "q1": 7.8,
+      "q3": 21.8,
+      "min": 1.2,
       "max": 36.0,
-      "p10": 4.8,
-      "p90": 24.1
+      "p10": 3.0,
+      "p90": 24.0
     },
     {
       "label": "50\u2013199",
-      "n": 44,
-      "median": 21.4,
-      "q1": 11.6,
-      "q3": 50.3,
-      "min": 2.3,
+      "n": 53,
+      "median": 18.0,
+      "q1": 10.8,
+      "q3": 46.9,
+      "min": 1.3,
       "max": 151.0,
-      "p10": 7.1,
-      "p90": 92.0
+      "p10": 5.7,
+      "p90": 90.0
     },
     {
       "label": "200\u2013499",
-      "n": 50,
-      "median": 28.7,
-      "q1": 16.0,
-      "q3": 55.5,
+      "n": 55,
+      "median": 30.3,
+      "q1": 16.1,
+      "q3": 62.3,
       "min": 2.1,
-      "max": 140.5,
-      "p10": 5.8,
-      "p90": 97.3
+      "max": 205.0,
+      "p10": 6.3,
+      "p90": 117.3
     },
     {
       "label": "500\u20131,999",
-      "n": 36,
-      "median": 48.3,
-      "q1": 21.4,
-      "q3": 77.6,
+      "n": 40,
+      "median": 54.1,
+      "q1": 24.5,
+      "q3": 87.0,
       "min": 1.7,
       "max": 1418.0,
-      "p10": 12.8,
-      "p90": 254.5
+      "p10": 14.4,
+      "p90": 219.0
     },
     {
       "label": "2,000+",
-      "n": 26,
-      "median": 51.3,
-      "q1": 34.0,
-      "q3": 120.7,
+      "n": 35,
+      "median": 49.0,
+      "q1": 28.8,
+      "q3": 103.7,
       "min": 9.6,
       "max": 334.5,
-      "p10": 15.6,
-      "p90": 231.1
+      "p10": 18.5,
+      "p90": 223.9
     }
   ],
   "by_ratings": [
     {
       "label": "1\u20132 ratings",
-      "n": 45,
-      "median": 15.0,
-      "q1": 5.5,
-      "q3": 56.0,
+      "n": 50,
+      "median": 22.0,
+      "q1": 6.8,
+      "q3": 64.0,
       "min": 1.0,
       "max": 1418.0,
-      "p10": 2.0,
-      "p90": 118.6
+      "p10": 2.1,
+      "p90": 149.9
     },
     {
       "label": "3\u20139",
-      "n": 65,
-      "median": 30.3,
-      "q1": 11.9,
-      "q3": 62.8,
+      "n": 73,
+      "median": 31.2,
+      "q1": 12.5,
+      "q3": 63.9,
       "min": 1.3,
       "max": 407.8,
-      "p10": 7.2,
-      "p90": 109.1
+      "p10": 7.5,
+      "p90": 117.7
     },
     {
       "label": "10\u201349",
-      "n": 52,
-      "median": 28.5,
-      "q1": 15.3,
-      "q3": 49.5,
-      "min": 2.3,
+      "n": 58,
+      "median": 27.0,
+      "q1": 14.0,
+      "q3": 49.8,
+      "min": 1.2,
       "max": 334.5,
-      "p10": 7.1,
-      "p90": 89.9
+      "p10": 6.1,
+      "p90": 89.8
     },
     {
       "label": "50 or more",
-      "n": 38,
-      "median": 25.0,
-      "q1": 9.5,
-      "q3": 46.9,
-      "min": 1.7,
+      "n": 48,
+      "median": 26.4,
+      "q1": 14.3,
+      "q3": 53.5,
+      "min": 1.3,
       "max": 224.9,
       "p10": 3.1,
-      "p90": 143.6
+      "p90": 116.7
     }
   ],
   "by_price": [
     {
       "label": "under $10",
-      "n": 67,
-      "median": 16.8,
-      "q1": 8.3,
-      "q3": 38.3,
+      "n": 70,
+      "median": 17.9,
+      "q1": 8.6,
+      "q3": 40.7,
       "min": 1.0,
       "max": 220.0,
-      "p10": 2.6,
-      "p90": 60.4
+      "p10": 2.8,
+      "p90": 72.6
     },
     {
       "label": "$10\u201325",
-      "n": 60,
-      "median": 35.5,
-      "q1": 18.8,
-      "q3": 54.2,
+      "n": 71,
+      "median": 39.9,
+      "q1": 20.4,
+      "q3": 58.8,
       "min": 1.0,
-      "max": 151.0,
-      "p10": 8.1,
-      "p90": 86.5
+      "max": 203.0,
+      "p10": 9.2,
+      "p90": 100.9
     },
     {
       "label": "$25\u201350",
-      "n": 28,
-      "median": 19.6,
-      "q1": 9.7,
-      "q3": 49.3,
+      "n": 36,
+      "median": 20.3,
+      "q1": 9.9,
+      "q3": 49.4,
       "min": 1.7,
-      "max": 124.7,
-      "p10": 5.3,
-      "p90": 104.5
+      "max": 205.0,
+      "p10": 5.6,
+      "p90": 105.5
     },
     {
       "label": "$50+",
-      "n": 37,
+      "n": 43,
       "median": 31.2,
-      "q1": 10.1,
-      "q3": 74.8,
+      "q1": 11.9,
+      "q3": 73.6,
       "min": 2.1,
       "max": 335.0,
-      "p10": 5.8,
-      "p90": 129.2
+      "p10": 6.4,
+      "p90": 119.4
     }
   ],
-  "unrated_n": 83,
-  "unrated_median_sales": 7,
+  "unrated_n": 87,
+  "unrated_median_sales": 8,
   "unrated_max_sales": 1320,
-  "unrated_over_10": 34,
-  "unrated_over_100": 6,
+  "unrated_over_10": 37,
+  "unrated_over_100": 8,
   "coverage": {
     "top_levels_seen": [
       "3d",
@@ -230,28 +230,22 @@
     "n_top_levels_seen": 15,
     "n_top_levels_in_taxonomy": 15,
     "dominant": "3d",
-    "dominant_pct": 66.1,
+    "dominant_pct": 57.4,
     "single_branch": false,
     "even_pct": 6.7,
     "skewed": true,
     "disclosure_by_branch": [
       {
         "branch": "design",
-        "n": 30,
-        "disclosing": 12,
-        "pct": 40.0
+        "n": 44,
+        "disclosing": 18,
+        "pct": 40.9
       },
       {
         "branch": "business-and-money",
-        "n": 29,
-        "disclosing": 11,
-        "pct": 37.9
-      },
-      {
-        "branch": "recorded-music",
-        "n": 29,
-        "disclosing": 9,
-        "pct": 31.0
+        "n": 43,
+        "disclosing": 17,
+        "pct": 39.5
       },
       {
         "branch": "3d",
@@ -260,22 +254,34 @@
         "pct": 25.9
       },
       {
-        "branch": "music-and-sound-design",
-        "n": 29,
-        "disclosing": 7,
-        "pct": 24.1
-      },
-      {
         "branch": "films",
-        "n": 30,
-        "disclosing": 7,
-        "pct": 23.3
+        "n": 44,
+        "disclosing": 10,
+        "pct": 22.7
       },
       {
         "branch": "drawing-and-painting",
-        "n": 30,
-        "disclosing": 6,
-        "pct": 20.0
+        "n": 44,
+        "disclosing": 10,
+        "pct": 22.7
+      },
+      {
+        "branch": "music-and-sound-design",
+        "n": 43,
+        "disclosing": 9,
+        "pct": 20.9
+      },
+      {
+        "branch": "recorded-music",
+        "n": 43,
+        "disclosing": 9,
+        "pct": 20.9
+      },
+      {
+        "branch": "education",
+        "n": 44,
+        "disclosing": 9,
+        "pct": 20.5
       },
       {
         "branch": "other",
@@ -285,108 +291,102 @@
       },
       {
         "branch": "photography",
-        "n": 29,
-        "disclosing": 5,
-        "pct": 17.2
-      },
-      {
-        "branch": "education",
-        "n": 30,
-        "disclosing": 5,
-        "pct": 16.7
+        "n": 43,
+        "disclosing": 7,
+        "pct": 16.3
       },
       {
         "branch": "fitness-and-health",
-        "n": 29,
-        "disclosing": 4,
-        "pct": 13.8
-      },
-      {
-        "branch": "gaming",
-        "n": 29,
-        "disclosing": 3,
-        "pct": 10.3
-      },
-      {
-        "branch": "fiction-books",
-        "n": 30,
-        "disclosing": 3,
-        "pct": 10.0
-      },
-      {
-        "branch": "audio",
-        "n": 30,
-        "disclosing": 3,
-        "pct": 10.0
+        "n": 44,
+        "disclosing": 7,
+        "pct": 15.9
       },
       {
         "branch": "comics-and-graphic-novels",
-        "n": 30,
-        "disclosing": 3,
+        "n": 40,
+        "disclosing": 4,
         "pct": 10.0
+      },
+      {
+        "branch": "gaming",
+        "n": 43,
+        "disclosing": 4,
+        "pct": 9.3
+      },
+      {
+        "branch": "fiction-books",
+        "n": 44,
+        "disclosing": 4,
+        "pct": 9.1
+      },
+      {
+        "branch": "audio",
+        "n": 44,
+        "disclosing": 3,
+        "pct": 6.8
       }
     ]
   },
   "gross": {
-    "n": 249,
+    "n": 277,
     "spread": {
-      "n": 249,
-      "median": 1168.0,
-      "q1": 84.0,
-      "q3": 16680.0,
+      "n": 277,
+      "median": 2650.0,
+      "q1": 113.5,
+      "q3": 20647.5,
       "min": 0.0,
       "max": 3327750.0,
       "p10": 20.0,
-      "p90": 79420.0
+      "p90": 85915.6
     },
-    "total": 13339925,
-    "mean": 53574,
-    "top1_share": 42.7,
-    "top10_share": 87.3,
-    "bottom50_share": 0.2,
-    "under_1k": 122,
-    "under_1k_pct": 49.0,
+    "total": 14414664,
+    "mean": 52038,
+    "top1_share": 48.0,
+    "top10_share": 83.8,
+    "bottom50_share": 0.3,
+    "under_1k": 123,
+    "under_1k_pct": 44.4,
     "bands": [
       {
         "label": "Under $100",
         "n": 64,
-        "pct": 25.7,
+        "pct": 23.1,
         "share": 0.0
       },
       {
         "label": "$100 \u2013 $999",
-        "n": 58,
-        "pct": 23.3,
-        "share": 0.2
+        "n": 59,
+        "pct": 21.3,
+        "share": 0.1
       },
       {
         "label": "$1,000 \u2013 $9,999",
-        "n": 54,
-        "pct": 21.7,
-        "share": 1.9
+        "n": 66,
+        "pct": 23.8,
+        "share": 2.1
       },
       {
         "label": "$10,000 \u2013 $99,999",
-        "n": 53,
-        "pct": 21.3,
-        "share": 13.9
+        "n": 65,
+        "pct": 23.5,
+        "share": 17.0
       },
       {
         "label": "$100,000 or more",
-        "n": 20,
-        "pct": 8.0,
-        "share": 84.0
+        "n": 23,
+        "pct": 8.3,
+        "share": 80.7
       }
     ],
     "units": {
-      "n": 249,
-      "median": 60,
-      "q1": 8.0,
-      "q3": 396.0,
+      "n": 277,
+      "median": 92,
+      "q1": 10.0,
+      "q3": 431.0,
       "min": 0,
       "max": 45705,
-      "p10": 2.0,
-      "p90": 1742.0
+      "p10": 3.0,
+      "p90": 2266.0
     },
     "split": {
       "dominant": "3d",
@@ -414,26 +414,26 @@
         {
           "key": "other",
           "branch": "",
-          "n": 71,
+          "n": 99,
           "spread": {
-            "n": 71,
-            "median": 13547.0,
-            "q1": 5096.0,
-            "q3": 46900.0,
+            "n": 99,
+            "median": 12638.0,
+            "q1": 4508.0,
+            "q3": 49400.0,
             "min": 101.0,
             "max": 3327750.0,
-            "p10": 1128.5,
-            "p90": 167161.8
+            "p10": 2288.0,
+            "p90": 154224.0
           },
-          "total": 9334563,
-          "under_1k": 7,
-          "under_1k_pct": 9.9,
+          "total": 10409302,
+          "under_1k": 8,
+          "under_1k_pct": 8.1,
           "n_branches": 14,
-          "conc_top2_share": 61.1
+          "conc_top2_share": 54.8
         }
       ],
       "divergent": true,
-      "ratio": 47.5,
+      "ratio": 44.3,
       "low_key": "dominant"
     }
   }
