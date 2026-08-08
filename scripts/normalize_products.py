@@ -45,6 +45,7 @@ NO NEW COLLECTION HAPPENS HERE. This reads `data/raw-products.jsonl` and nothing
 Writes `data/gumroad-sales.csv` (one row per distinct product successfully fetched,
 whether or not it discloses sales) and `data/sales-ratio-summary.json`.
 """
+import collections
 import csv
 import json
 import pathlib
@@ -56,6 +57,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 RAW = ROOT / "data" / "raw-products.jsonl"
 OUT_CSV = ROOT / "data" / "gumroad-sales.csv"
 OUT_JSON = ROOT / "data" / "sales-ratio-summary.json"
+TAXONOMY = ROOT / "data" / "taxonomy-summary.json"
 
 FIELDS = [
     "url", "permalink", "title", "seller", "seller_url", "price_usd", "is_free",
@@ -204,6 +206,46 @@ def banded(pairs, bands, key):
     return out
 
 
+def coverage(rows):
+    """Which of Gumroad's top-level categories this crawl has actually reached.
+
+    THIS IS THE MOST IMPORTANT CAVEAT IN THE FILE AND IT WAS MISSING FOR A DAY.
+    `collect_products.py` is resumable and walks `raw-taxonomy.jsonl` in its stored
+    order, which is alphabetical by top-level slug — `3d`, `audio`,
+    `business-and-money`, … As of 2026-08-08 it has fetched 780 product pages and
+    every one of them is under `3d`. So the sales-per-rating multipliers and the
+    observed-gross figures derived here do not describe Gumroad; they describe 3D and
+    VRChat assets, which is one branch of fifteen that returned listings.
+
+    That was published on the highest-intent page in the funnel as an answer to "how
+    much do people make on Gumroad", with four caveats attached, none of which was
+    this one. It is derived here rather than written into a page so the label cannot
+    drift from the sample: when the crawl reaches `audio`, these numbers change and so
+    does every sentence generated from them.
+
+    Which way it cuts has to be worked out, not hand-waved: 3D/VRChat assets are a
+    high-volume, low-price niche with an unusually engaged buyer base, so the unit
+    counts run high and the prices run low relative to the platform. Neither the
+    multiplier nor the gross distribution should be generalised in either direction.
+    """
+    # `nodes` holds SLUGS ("3d/3d-assets/blender"), not " > "-joined labels. Splitting
+    # on the wrong separator silently reports 27 "top levels" that are all one branch,
+    # which is the exact failure this function exists to catch.
+    tops = collections.Counter(
+        (r.get("nodes") or [""])[0].split("/")[0].strip() or "(none)" for r in rows)
+    universe = sorted({x["slug"].split("/")[0]
+                       for x in json.loads(TAXONOMY.read_text())["by_node"]})
+    dominant, dom_n = tops.most_common(1)[0]
+    return {
+        "top_levels_seen": sorted(tops),
+        "n_top_levels_seen": len(tops),
+        "n_top_levels_in_taxonomy": len(universe),
+        "dominant": dominant,
+        "dominant_pct": round(100 * dom_n / len(rows), 1),
+        "single_branch": len(tops) == 1,
+    }
+
+
 def main():
     rows = load()
     for r in rows:
@@ -291,6 +333,8 @@ def main():
         "unrated_over_10": sum(1 for r in unrated if r["sales_count"] >= 10),
         "unrated_over_100": sum(1 for r in unrated if r["sales_count"] >= 100),
         "gross": gross_stats(paid_disc),
+        # Must be read before any figure above it — see coverage().
+        "coverage": coverage(rows),
     }
     OUT_JSON.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
 

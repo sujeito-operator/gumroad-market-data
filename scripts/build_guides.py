@@ -389,6 +389,60 @@ def sales_analyse():
     return json.load(open(B.ROOT / "data" / "sales-ratio-summary.json"))
 
 
+def coverage_warn(d, what):
+    """The caveat that governs every figure from the per-product crawl.
+
+    `collect_products.py` walks the taxonomy in stored order, which is alphabetical by
+    top-level slug, and it has not finished. Every product page fetched so far is under
+    one branch. So these figures are not about Gumroad — they are about that branch, and
+    two live pages presented them as platform-wide answers for a day.
+
+    Generated from `coverage` in the summary rather than written into the pages, so when
+    the crawl reaches the next branch the wording changes with the data instead of
+    rotting in place. `assert_coverage_warned()` makes sure it cannot be dropped.
+    """
+    c = d["coverage"]
+    if not c["single_branch"]:
+        seen = ", ".join(branch_label(s) for s in c["top_levels_seen"])
+        return (f"<p class=warn><strong>Which categories this covers.</strong> The listings "
+                f"behind {what} come from {c['n_top_levels_seen']} of Gumroad's "
+                f"{c['n_top_levels_in_taxonomy']} top-level categories ({seen}), so they are "
+                f"not an even draw across the platform. Weight them accordingly.</p>")
+    label = branch_label(c["dominant"])
+    return (f"<p class=warn><strong>Read this first: these figures are about {label}, not about "
+            f"Gumroad.</strong> {what.capitalize()} come from re-fetching individual product "
+            f"pages, and that crawl walks Gumroad's category tree in alphabetical order and has "
+            f"not finished. <strong>{c['dominant_pct']:.0f}% of the pages fetched so far sit "
+            f"under {label}</strong> &mdash; one of the "
+            f"{c['n_top_levels_in_taxonomy']} top-level categories that returned listings. "
+            f"So this is a measurement of one corner of the marketplace, and {label} is an "
+            f"unusual corner: high unit volumes, low prices, and a buyer base that is far more "
+            f"active than the platform average. <strong>Do not read any figure in this section "
+            f"as an answer for Gumroad as a whole, in either direction.</strong> The rest of "
+            f"this page, which is built on the category-search sample, is not affected.</p>")
+
+
+def branch_label(slug):
+    """Human label for a top-level taxonomy slug, taken from the taxonomy's own node names."""
+    ts = json.load(open(B.ROOT / "data" / "taxonomy-summary.json"))
+    for x in ts["by_node"]:
+        if x["slug"] == slug or x["slug"].startswith(slug + "/"):
+            return x["node"].split(" > ")[0]
+    return slug
+
+
+def assert_coverage_warned(html, where):
+    """Fail the build if a page built on the per-product crawl ships without the caveat.
+
+    The project's standing lesson is that a note saying "remember to say X" does not
+    survive; an assertion does. Two pages carried unqualified platform-wide claims from
+    a single-branch sample, and nothing caught it.
+    """
+    if "these figures are about" not in html and "Which categories this covers" not in html:
+        raise SystemExit(f"BUILD ABORTED: {where} uses the per-product crawl but does not "
+                         f"render the category-coverage caveat. See coverage_warn().")
+
+
 def B_pearson(a, b):
     n = len(a)
     ma, mb = sum(a) / n, sum(b) / n
@@ -537,6 +591,10 @@ def g_earnings(s, a):
     d = sales_analyse()
     g = d["gross"]
     gsp, gu = g["spread"], g["units"]
+    # Names the branch the gross sample actually covers, so the stat tiles cannot claim
+    # the platform while the caveat below them says otherwise.
+    cov_label = (branch_label(d["coverage"]["dominant"])
+                 if d["coverage"]["single_branch"] else "")
     gbands = "".join(f"<tr><td>{b['label']}</td><td class=n>{b['n']}</td>"
                      f"<td class=n>{b['pct']}%</td><td class=n>{b['share']}%</td></tr>"
                      for b in g["bands"])
@@ -544,7 +602,7 @@ def g_earnings(s, a):
                     f"<td class=n>{b['rated']}%</td><td class=n>{b['med']:,}</td></tr>"
                     for b in a["bands"])
     body = f"""
-<h2>The short answer, from listings that publish their sales</h2>
+<h2>A directly measured answer, for one corner of the marketplace</h2>
 <p>Most of this page measures demand through rating counts, because that is what Gumroad
 publishes for every listing. But about a quarter of listings publish a real unit-sales count,
 and for those the question can be answered directly: units sold, multiplied by the asking
@@ -552,10 +610,12 @@ price. That is a <em>different and smaller sample</em> from the {s['n']:,} listi
 this page uses &mdash; {g['n']} paid listings drawn from the category walk, not the search
 sample &mdash; and the two are never combined.</p>
 
+{coverage_warn(d, f"the {g['n']} listings in this section")}
+
 <div class=kv>
-<div><b>${gsp['median']:,.0f}</b><span>Median lifetime gross, {g['n']} paid listings publishing unit sales</span></div>
+<div><b>${gsp['median']:,.0f}</b><span>Median lifetime gross &mdash; {g['n']} paid {cov_label} listings publishing unit sales</span></div>
 <div><b>{gu['median']:,.0f}</b><span>Median units sold, lifetime, same listings</span></div>
-<div><b>{g['under_1k_pct']}%</b><span>Have grossed under $1,000 in their whole lifetime</span></div>
+<div><b>{g['under_1k_pct']}%</b><span>Of them have grossed under $1,000 in their whole lifetime</span></div>
 <div><b>{g['top1_share']}%</b><span>Of all the money in this sample sits with the top 1%</span></div>
 </div>
 
@@ -570,7 +630,8 @@ that gap is the whole story: {g['bands'][-1]['n']} listings out of {g['n']} acco
 bottom half share {g['bottom50_share']}% of it. Any "average Gumroad seller earns X" figure is
 describing those {g['bands'][-1]['n']} listings and calling it the middle.</p>
 
-<p class=warn><strong>Read this as a ceiling, not a middle &mdash; four reasons.</strong>
+<p class=warn><strong>Beyond the category limit above, read this as a ceiling rather than a
+middle &mdash; four more reasons.</strong>
 <strong>One:</strong> publishing a sales count is voluntary, and a seller with nothing to show has
 less reason to show it, so this subsample is selected upward. The true median across all listings
 is lower than ${gsp['median']:,.0f}, not higher. <strong>Two:</strong> the price used is today's
@@ -666,13 +727,13 @@ any success story you have read, and the base rate is on this page.</p>
 """
     return page(
         "how-much-do-people-make-on-gumroad",
-        f"How much do people make on Gumroad? Median ${gsp['median']:,.0f} gross, measured",
-        f"{g['n']} paid Gumroad listings that publish a real unit-sales count have grossed a median "
-        f"of ${gsp['median']:,.0f} over their lifetime, and {g['under_1k_pct']}% of them under "
-        f"$1,000. Plus demand across {s['n']:,} more listings.",
+        f"How much do people make on Gumroad? Measured across {s['n']:,} listings",
+        f"{s['n']:,} Gumroad listings measured for demand: {s['zpct']}% have never been rated. "
+        f"Plus lifetime gross for {g['n']} paid {cov_label} listings that publish a real "
+        f"unit-sales count &mdash; median ${gsp['median']:,.0f}, {g['under_1k_pct']}% under $1,000.",
         "How much do people actually make on Gumroad?",
-        f"{g['n']} listings with published sales counts, plus {s['n']:,} measured for demand "
-        f"&middot; August 2026 &middot; free, openly licensed data",
+        f"{s['n']:,} listings measured for demand, plus {g['n']} {cov_label} listings with "
+        f"published sales counts &middot; August 2026 &middot; free, openly licensed data",
         "Most answers to this question are guesses, because Gumroad publishes revenue for nobody. "
         "But it publishes a unit-sales count for the listings whose sellers switch it on, and that "
         "is enough to measure the distribution directly rather than infer it.",
@@ -1394,6 +1455,8 @@ def g_sales_ratio(s, a):
 tables below and they need none.</p></div>
 </div>
 
+{coverage_warn(d, "every figure on this page, and the estimator above")}
+
 <h2>Why there is no single multiplier</h2>
 <p>The number sellers quote each other is &ldquo;about thirty sales per rating&rdquo;, sometimes a
 hundred. Neither has anything behind it. Here is what {d['paired']} products that publish
@@ -1462,7 +1525,10 @@ publish a unit-sales count</strong> ({d['disclose_pct_paid']}% of paid listings,
 {d['disclose_pct_free']}% of free ones), covering {d['units_observed']:,} units sold in total across
 {d['disclosing_sellers']} sellers. The ratio is measured on the
 {d['paired']} of those that also have at least one rating.</p>
-<p class=cite><strong>Two biases, and which way each cuts.</strong> First, displaying a sales counter
+<p class=cite><strong>The category limit comes first</strong> and it is stated in full at the top
+of this page: the crawl behind these products walks Gumroad's tree alphabetically and has not
+finished, so this is one branch of the marketplace rather than a cross-section of it.</p>
+<p class=cite><strong>Two further biases, and which way each cuts.</strong> First, displaying a sales counter
 is <em>opt-in</em>, and a seller with nothing to show is likelier to leave it off &mdash; so this is
 not a random draw of Gumroad products, and the listings in it are larger than typical. Second, the
 ratio needs a rating to exist at all, which drops the {d['unrated_n']} zero-rating listings and
@@ -1808,9 +1874,17 @@ BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_f
             g_calculator, g_how_many, g_sales_ratio, g_breadth, g_mix]
 
 
+# Pages whose figures come from the per-product crawl, and which therefore MUST carry the
+# category-coverage caveat. Both shipped without it and read as platform-wide answers.
+CRAWL_BACKED = {"how-much-do-people-make-on-gumroad", SALES_GUIDE}
+
+
 def build(s, rows, outdir):
     a = analyse(s, rows)
     outdir.mkdir(exist_ok=True)
     for fn, (sl, _) in zip(BUILDERS, GUIDES):
-        (outdir / f"{sl}.html").write_text(fn(s, a))
+        html = fn(s, a)
+        if sl in CRAWL_BACKED:
+            assert_coverage_warned(html, f"{sl}.html")
+        (outdir / f"{sl}.html").write_text(html)
     return [sl for sl, _ in GUIDES]

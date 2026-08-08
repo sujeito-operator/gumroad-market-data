@@ -184,7 +184,10 @@ def jsonld(s, ts, sr):
             f"all {ts['sellers']:,} sellers; and {sr['fetched']:,} product pages fetched "
             f"individually, of which {sr['disclosing']} ({sr['disclose_pct']}%) publish a real "
             f"unit-sales count covering {sr['units_observed']:,} units — the only subsample here "
-            "where the usual ratings proxy can be checked against actual units sold. Each product "
+            "where the usual ratings proxy can be checked against actual units sold, and the one "
+            f"table that is NOT platform-wide: {sr['coverage']['dominant_pct']:.0f}% of those "
+            f"pages fall under a single top-level category ({sr['coverage']['dominant']}) because "
+            "that crawl walks the tree alphabetically and is unfinished. Each product "
             "row carries category, asking price, the currency it was displayed in, a USD-normalised "
             "price, rating count and a subscription flag. Collected directly from Gumroad by an "
             "autonomous AI agent; every collector and normaliser script is published alongside the "
@@ -719,6 +722,13 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
             f"covering {sr['units_observed']:,} units. This is the only sample here "
             f"measured against actual sales rather than ratings.",
             "",
+            f"- **SCOPE LIMIT, READ BEFORE QUOTING ANY FIGURE IN THIS SECTION.** The "
+            f"per-product crawl walks the category tree alphabetically and is unfinished: "
+            f"**{sr['coverage']['dominant_pct']:.0f}% of the {sr['fetched']:,} pages fetched "
+            f"are under one top-level category ({sr['coverage']['dominant']}), of "
+            f"{sr['coverage']['n_top_levels_in_taxonomy']} that returned listings.** These "
+            f"figures describe that branch, not Gumroad. Do not generalise them in either "
+            f"direction. Every other section of this file is unaffected.",
             f"- **There is no single multiplier, and that is the finding.** Median paid "
             f"listing sells **x{pr['median']}** its rating count, interquartile range "
             f"x{pr['q1']}-x{pr['q3']} over n={pr['n']}. Free listings: median "
@@ -764,6 +774,11 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
 def build_readme(s, mix, ts, ss, sr):
     top, bottom = s["by_category"][0], s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
+    # Label for the one branch the per-product crawl has reached. Derived, so the README's
+    # caveat cannot outlive the sample it describes.
+    cov_branch = next((x["node"].split(" > ")[0] for x in ts["by_node"]
+                       if x["slug"].split("/")[0] == sr["coverage"]["dominant"]),
+                      sr["coverage"]["dominant"])
     tbl = "\n".join(
         f"| [{c['topic']}]({SITE}/c/{slug(c['topic'])}.html) | {c['rated_share']}% | "
         f"{c['med_ratings']:,} | {c['top_n']:,} | {money(c['median'])} | {money(c['p90'])} | "
@@ -863,6 +878,15 @@ pages one at a time finds them: **{sr['disclosing']} of {sr['fetched']:,} produc
 ({sr['disclose_pct']}%) publish a real sales count**, covering
 {sr['units_observed']:,} units. That subset is the only place the proxy can be checked
 against the thing it proxies for.
+
+> ⚠️ **This section covers {cov_branch}, not Gumroad.** The per-product crawl walks the
+> category tree alphabetically and has not finished: **{sr['coverage']['dominant_pct']:.0f}% of
+> the {sr['fetched']:,} pages fetched so far are under {cov_branch}**, one of the
+> {sr['coverage']['n_top_levels_in_taxonomy']} top-level categories that returned listings.
+> {cov_branch} is an unusual corner — high unit volumes, low prices, an unusually active
+> buyer base — so **do not generalise the multiplier or the gross figures to the platform in
+> either direction.** Everything above this heading is from the category-search and category-walk
+> samples and is unaffected.
 
 > **There is no fixed multiplier.** Across the {sr['paired']} products publishing both, the
 > median paid listing sells **×{sr['paid_ratio']['median']}** its rating count — but the

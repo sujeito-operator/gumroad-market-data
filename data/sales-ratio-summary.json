@@ -270,5 +270,15 @@
       "p10": 2.0,
       "p90": 1549.9
     }
+  },
+  "coverage": {
+    "top_levels_seen": [
+      "3d"
+    ],
+    "n_top_levels_seen": 1,
+    "n_top_levels_in_taxonomy": 15,
+    "dominant": "3d",
+    "dominant_pct": 100.0,
+    "single_branch": true
   }
 }

@@ -600,6 +600,7 @@ Read these two samples as two frames on one marketplace, not as one superseding 
 
 > A minority of Gumroad sellers publish a unit-sales count on the product page. Re-fetching product pages individually found **202 of 780 (25.9%) do**, covering 311,164 units. This is the only sample here measured against actual sales rather than ratings.
 
+- **SCOPE LIMIT, READ BEFORE QUOTING ANY FIGURE IN THIS SECTION.** The per-product crawl walks the category tree alphabetically and is unfinished: **100% of the 780 pages fetched are under one top-level category (3d), of 15 that returned listings.** These figures describe that branch, not Gumroad. Do not generalise them in either direction. Every other section of this file is unaffected.
 - **There is no single multiplier, and that is the finding.** Median paid listing sells **x17.0** its rating count, interquartile range x8.4-x35.5 over n=105. Free listings: median x38.0, IQR x9.6-x130.1, n=24. Quote the range, not the median alone.
 - **The ratio rises with listing size**: x10.0 for listings with 1-2 ratings against x34.2 for 50 or more. A fixed 'x30 rule' is wrong at both ends.
 - **Ratings are a valid ordinal proxy**: rank correlation with units sold is 0.851. They rank demand reliably and measure it badly.

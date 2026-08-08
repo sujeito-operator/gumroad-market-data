@@ -92,6 +92,15 @@ pages one at a time finds them: **202 of 780 products
 311,164 units. That subset is the only place the proxy can be checked
 against the thing it proxies for.
 
+> ⚠️ **This section covers 3D, not Gumroad.** The per-product crawl walks the
+> category tree alphabetically and has not finished: **100% of
+> the 780 pages fetched so far are under 3D**, one of the
+> 15 top-level categories that returned listings.
+> 3D is an unusual corner — high unit volumes, low prices, an unusually active
+> buyer base — so **do not generalise the multiplier or the gross figures to the platform in
+> either direction.** Everything above this heading is from the category-search and category-walk
+> samples and is unaffected.
+
 > **There is no fixed multiplier.** Across the 129 products publishing both, the
 > median paid listing sells **×17.0** its rating count — but the
 > middle half spans ×8.4 to ×35.5, and the ratio
