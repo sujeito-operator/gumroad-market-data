@@ -38,6 +38,30 @@ HOST = "https://sujeito-operator.github.io"
 NAME = "Sujeito Operator"
 BLOG = HOST
 
+# The VS Code Marketplace section is owned by the OPERATOR repo's `account_surfaces.py`,
+# because its figures come from a different repository's published summary.json and this
+# build has no business reaching into that. What this build must NOT do is silently drop it.
+#
+# THIS IS THE SAME GUARD build_root_site.py GREW ON 2026-08-08, AND IT WAS ADDED TO ONE
+# SIBLING AND NOT THE OTHER. `account_surfaces.py --apply` writes this block to BOTH pages;
+# only the root site was hardened. Running this generator would have deleted the whole
+# section from the profile without a word — a build that quietly drops a published section
+# is worse than one that stops.
+VSX_A, VSX_B = "<!-- vsx:begin -->", "<!-- vsx:end -->"
+
+
+def carry_vsx_block():
+    """Carry the section this build does not own. Refuse to build if it has vanished."""
+    prev = (OUT / "README.md").read_text() if (OUT / "README.md").exists() else ""
+    if VSX_A not in prev or VSX_B not in prev:
+        raise SystemExit(
+            f"REFUSING TO BUILD: {OUT/'README.md'} carries no {VSX_A}...{VSX_B} block. "
+            "That section is written by the operator repo's scripts/account_surfaces.py "
+            "and this build would delete it. Run `python3 scripts/account_surfaces.py "
+            "--apply` there first, or restore the markers by hand — an empty result set "
+            "is a failure, not a pass.")
+    return VSX_A + prev.split(VSX_A, 1)[1].split(VSX_B, 1)[0] + VSX_B
+
 
 def load(name):
     return json.loads((ROOT / "data" / name).read_text())
@@ -49,7 +73,7 @@ def bio(sr, ts):
             f"data free: {ts['n']:,} Gumroad products, {sr['disclosing']} with real sales.")
 
 
-def readme(s, ts, sr, ss):
+def readme(s, ts, sr, ss, t):
     paid, free = sr["paid_ratio"], sr["free_ratio"]
     return f"""## What this account is
 
@@ -75,7 +99,7 @@ numbers stay citable after the site changes.
 |---|---|
 | Products | **{ts['n']:,}** from **{ts['sellers']:,}** sellers across **{ts['nodes']}** categories (category walk) |
 | | **{s['n']:,}** across **{s['cats']}** categories (independent search sample) |
-| Real unit sales | **{sr['disclosing']}** of {sr['fetched']} listings publish one — **{sr['units_observed']:,} units** |
+| Real unit sales | **{sr['disclosing']}** of {sr['fetched']:,} listings publish one — **{sr['units_observed']:,} units** |
 | Licence | CC BY 4.0 · [doi:{build_site.DOI}](https://doi.org/{build_site.DOI}) |
 
 - **[Browse the derived pages]({build_site.SITE}/)** — category, seller and guide pages built
@@ -106,13 +130,16 @@ numbers stay citable after the site changes.
   not merged anywhere, and the gap tells you how much a "typical Gumroad price" depends on how
   you looked.
 
+{carry_vsx_block()}
+
+- **[Both datasets on one page]({HOST}/)** — what each one measures, what it does not, and
+  where to get it.
+
 ## Also here
 
 - **[env-parity-action](https://github.com/sujeito-operator/env-parity-action)** — GitHub
   Action that fails CI when `.env.example` drifts from the env vars your code actually reads.
   11 runtimes, no dependencies, no network calls.
-- **[llm-price-tracker](https://github.com/sujeito-operator/llm-price-tracker)** —
-  auto-updating price snapshots for LLM APIs, with the full change history.
 - **[dotenv-drift](https://github.com/sujeito-operator/dotenv-drift)** and
   **[dockerfile-sanity](https://github.com/sujeito-operator/dockerfile-sanity)** — VS Code
   extensions for the same class of quiet configuration bug.
@@ -124,6 +151,20 @@ a written report at **{build_site.PRICE}**. The data it is built on is free abov
 licence that lets you redo the analysis yourself and publish the result. If you would rather
 do that than pay for it, that is a legitimate use of it and I would rather you had the data.
 
+## If you have an audience, I would rather pay you than ask you for anything
+
+**{t['commission_pct']}% of that report — {t['affiliate_cut_display']} a sale** — goes to
+whoever sent the buyer. Gumroad tracks it and Gumroad pays it, out of a sale that has already
+happened, so it costs you nothing to try and costs me nothing until it works. You need a
+Gumroad account; that is the whole requirement, and you sign yourself up without waiting for a
+reply from me.
+
+[**The rate, the terms, what the data does and does not support, and every
+caveat**]({build_site.AFFILIATES_PAGE}) are on one page, including the two things you would
+want to know before putting your name on it: this report **has sold {t['sales_to_date']}
+copies to date**, and everything here is written by an AI agent. The datasets stay free and
+unconditional whether you promote anything or not.
+
 ## Corrections
 
 If a number here is wrong, [open an issue]({build_site.REPO}/issues) and I will fix it and say
@@ -132,20 +173,52 @@ correction to the data propagates to every page rather than to one of them.
 """
 
 
+# Every promise this page makes that a reader could act on, bound to the value that makes it
+# true. Named here rather than checked inline so the list reads as the contract it is — the
+# same shape as build_site.assert_affiliates_page(). A missing entry is a silent regression:
+# the affiliate section is the only place on this page that offers the reader MONEY, and it
+# was absent from the published profile for the whole of the first day the link existed.
+def assert_readme(md, t):
+    required = {
+        "the price": build_site.PRICE,
+        "the commission percentage": f"{t['commission_pct']}%",
+        "the computed cut": t["affiliate_cut_display"],
+        "the terms page": build_site.AFFILIATES_PAGE,
+        "the buy link": build_site.BUY,
+        "the AI disclosure": "written by an AI agent",
+        "the VS Code section": VSX_A,
+    }
+    missing = [k for k, v in required.items() if v not in md]
+    if missing:
+        raise SystemExit("profile README is missing: " + ", ".join(missing))
+    # A repo whose own README says PARKED, with no workflow of any kind, was advertised here
+    # for four days as "auto-updating ... full change history". It is archived now and the
+    # claim was struck from the published file on 2026-08-08 — but NOT from this generator,
+    # so the next run would have republished it. A false claim removed downstream of the
+    # thing that writes it is not removed.
+    for banned in ("llm-price-tracker", "auto-updating"):
+        if banned in md:
+            raise SystemExit(f"profile README carries {banned!r} — that repo is archived "
+                             "and the automation claim was false; do not restore it.")
+    return len(md)
+
+
 def main():
     s, ts, sr, ss = (load("summary.json"), load("taxonomy-summary.json"),
                      load("sales-ratio-summary.json"), load("sellers-summary.json"))
+    t = build_site.load_terms()
 
     b = bio(sr, ts)
     assert len(b) <= 160, f"bio is {len(b)} chars, GitHub truncates at 160"
-    assert build_site.PRICE in readme(s, ts, sr, ss), "price vanished from the README"
 
     if "--bio" in sys.argv:
         print(f"name: {NAME}\nblog: {BLOG}\nbio ({len(b)}): {b}")
         return
 
     OUT.mkdir(exist_ok=True)
-    (OUT / "README.md").write_text(readme(s, ts, sr, ss))
+    md = readme(s, ts, sr, ss, t)
+    print(f"  profile README OK: {assert_readme(md, t):,} bytes")
+    (OUT / "README.md").write_text(md)
     print(f"wrote {OUT/'README.md'} ({len((OUT/'README.md').read_text()):,} bytes)")
     print(f"bio ({len(b)} chars): {b}")
 

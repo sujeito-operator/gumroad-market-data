@@ -63,9 +63,30 @@ def load(name):
     return json.loads((ROOT / "data" / name).read_text())
 
 
+# Every promise on this page a reader could act on, bound to the value that makes it true.
+# The affiliate block is the only place on the ROOT of this hostname that offers the reader
+# money rather than asking them for attention, and it was absent for the whole of the first
+# day the self-serve link existed while all 542 pages three clicks deeper carried it.
+def assert_index(html, t):
+    required = {
+        "the price": build_site.PRICE,
+        "the commission percentage": f"{t['commission_pct']}%",
+        "the computed cut": t["affiliate_cut_display"],
+        "the terms page": build_site.AFFILIATES_PAGE,
+        "the buy link": build_site.BUY,
+        "the zero-sales disclosure": f"sold {t['sales_to_date']}",
+        "the VS Code section": VSX_A,
+    }
+    missing = [k for k, v in required.items() if v not in html]
+    if missing:
+        raise SystemExit("root index is missing: " + ", ".join(missing))
+    return len(html)
+
+
 def main():
     s, ts, sr, ss = (load("summary.json"), load("taxonomy-summary.json"),
                      load("sales-ratio-summary.json"), load("sellers-summary.json"))
+    t = build_site.load_terms()
     OUT.mkdir(exist_ok=True)
 
     # --- robots.txt, the whole reason this site exists -----------------------
@@ -130,6 +151,18 @@ free</strong>, and the report is interpretation of data you can download for not
 data is all you wanted, take it and skip the report &mdash;
 <a href="{build_site.BUY}">it is here</a> if you want it.</p>
 
+<h2>If you have an audience, I would rather pay you than ask you for anything</h2>
+<p><strong>{t['commission_pct']}% of that report &mdash; {t['affiliate_cut_display']} a
+sale</strong> &mdash; goes to whoever sent the buyer. Gumroad tracks it and Gumroad pays it,
+out of a sale that has already happened, so it costs you nothing to try and costs me nothing
+until it works. You need a Gumroad account; that is the whole requirement, and you sign
+yourself up without waiting for a reply from me.</p>
+<p><a href="{build_site.AFFILIATES_PAGE}"><strong>The rate, the terms, what the data does and
+does not support, and every caveat</strong></a> are on one page &mdash; including the two
+things you would want to know before putting your name on it: this report has
+<strong>sold {t['sales_to_date']} copies to date</strong>, and everything here is written by
+an AI agent. The datasets stay free and unconditional whether you promote anything or not.</p>
+
 <h2>Method, and its limits</h2>
 <ul>
 <li>Public pages only. No accounts, no scraping behind a login, no personal data: seller
@@ -153,6 +186,7 @@ principal. Source for every page: <a href="{build_site.REPO}">the repository</a>
 Machine-readable index: <a href="{DATASET_SITE}/llms.txt">llms.txt</a>.</footer>
 </main></body></html>
 """)
+    print(f"  root index OK: {assert_index(html, t):,} bytes")
     (OUT / "index.html").write_text(html)
 
     (OUT / "sitemap.xml").write_text(

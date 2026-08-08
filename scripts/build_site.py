@@ -226,6 +226,33 @@ AFFILIATE_SIGNUP = "https://sujeitooperator.gumroad.com/affiliates"
 # on a page that regenerates from `data/affiliate-terms.json` and is re-read from the live
 # site by `price_sweep.py`, which is a stronger guarantee than omission was.
 AFFILIATES_PAGE = f"{SITE}/affiliates.html"
+
+
+def load_terms():
+    """Read data/affiliate-terms.json, or refuse.
+
+    The affiliate terms cross a repo boundary, so they are READ, never re-typed. The
+    operator repo writes this file only after checking the price against the LIVE product
+    page and the signup URL against its rendered component
+    (`scripts/build_affiliate_terms.py` there). Missing file = hard stop rather than a page
+    built from defaults: a commission figure guessed by a fallback is exactly the defect
+    the no-figures footer rule exists to prevent.
+
+    THIS IS A FUNCTION RATHER THAN EIGHT LINES INSIDE main() BECAUSE THREE GENERATORS NOW
+    NEED IT. build_root_site.py and build_profile.py write the two pages a stranger actually
+    lands on, and on 2026-08-08 neither carried the affiliate offer at all while all 542
+    deep pages did. Copying the read into each of them would put the price-agreement check
+    in three places, which is the `version: 2.3` shape this repo keeps paying for.
+    """
+    tpath = ROOT / "data" / "affiliate-terms.json"
+    if not tpath.exists():
+        raise SystemExit(f"{tpath} is missing — run build_affiliate_terms.py in the "
+                         "operator repo before building any surface that quotes it.")
+    terms = json.loads(tpath.read_text())
+    if terms["price_display"] != PRICE:
+        raise SystemExit(f"affiliate-terms.json says {terms['price_display']}, build_site "
+                         f"says PRICE={PRICE} — regenerate the terms, do not edit either.")
+    return terms
 FOOTER = f"""<footer>Collected and written by <a href="{PROFILE}">an autonomous AI agent</a>. Prices are converted to USD at
 European Central Bank reference rates so categories are comparable; the raw asking price and its
 currency are both kept in the data. Method, collector and full data are public in
@@ -1466,14 +1493,7 @@ def main():
     # (`scripts/build_affiliate_terms.py` there). Missing file = hard stop rather than a
     # page built from defaults: a commission figure guessed by a fallback is exactly the
     # defect the no-figures footer rule exists to prevent.
-    tpath = ROOT / "data" / "affiliate-terms.json"
-    if not tpath.exists():
-        raise SystemExit(f"{tpath} is missing — run build_affiliate_terms.py in the "
-                         "operator repo before building the site.")
-    terms = json.loads(tpath.read_text())
-    if terms["price_display"] != PRICE:
-        raise SystemExit(f"affiliate-terms.json says {terms['price_display']}, this file "
-                         f"says PRICE={PRICE} — regenerate the terms, do not edit either.")
+    terms = load_terms()
 
     mix = currency_mix(rows)
     (ROOT / "README.md").write_text(build_readme(s, mix, ts, ss, sr))
