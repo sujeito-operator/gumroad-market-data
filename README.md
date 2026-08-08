@@ -87,31 +87,31 @@ the two can never disagree.
 
 Every figure above uses **ratings** as a demand proxy, because a search card shows nothing
 else. A minority of sellers switch on a public unit-sales counter, and re-fetching product
-pages one at a time finds them: **202 of 780 products
-(25.9%) publish a real sales count**, covering
-311,164 units. That subset is the only place the proxy can be checked
+pages one at a time finds them: **212 of 816 products
+(26.0%) publish a real sales count**, covering
+328,616 units. That subset is the only place the proxy can be checked
 against the thing it proxies for.
 
 > ⚠️ **This section covers 3D, not Gumroad.** The per-product crawl walks the
-> category tree alphabetically and has not finished: **100% of
-> the 780 pages fetched so far are under 3D**, one of the
+> per-product crawl has not finished and its sample is uneven: **96% of
+> the 816 pages fetched so far are under 3D**, one of the
 > 15 top-level categories that returned listings.
 > 3D is an unusual corner — high unit volumes, low prices, an unusually active
 > buyer base — so **do not generalise the multiplier or the gross figures to the platform in
 > either direction.** Everything above this heading is from the category-search and category-walk
 > samples and is unaffected.
 
-> **There is no fixed multiplier.** Across the 129 products publishing both, the
-> median paid listing sells **×17.0** its rating count — but the
-> middle half spans ×8.4 to ×35.5, and the ratio
+> **There is no fixed multiplier.** Across the 139 products publishing both, the
+> median paid listing sells **×18.8** its rating count — but the
+> middle half spans ×8.6 to ×39.2, and the ratio
 > **climbs with the size of the listing**: ×10.0 at
 > 1–2 ratings against
-> ×34.2 at 50 or more. Free products run higher still
-> (×38.0, n=24).
+> ×30.7 at 50 or more. Free products run higher still
+> (×31.1, n=26).
 
 - **The proxy holds up for ranking.** Rank correlation between ratings and units sold is
-  **0.851**. Ratings rank demand reliably and measure it badly.
-- **73 of the 202 products with a public sales count have zero
+  **0.863**. Ratings rank demand reliably and measure it badly.
+- **73 of the 212 products with a public sales count have zero
   ratings** — median 6 units, the largest
   **1,320 sales with no rating at all**. An unrated listing is weak
   evidence of no demand, not proof of it.
@@ -120,7 +120,7 @@ against the thing it proxies for.
   zero-rating listings and makes every median here a **lower bound**.
 
 Data: [`data/gumroad-sales.csv`](data/gumroad-sales.csv) (one row per product fetched,
-including the 578 publishing no sales count, so the opt-in
+including the 604 publishing no sales count, so the opt-in
 rate is re-derivable), [`data/sales-ratio-summary.json`](data/sales-ratio-summary.json),
 derived by [`scripts/normalize_products.py`](scripts/normalize_products.py).
 
@@ -232,7 +232,7 @@ from v1.0, including the mixed-currency error it corrects.
 
 **Archived with a DOI:** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103) (CC BY 4.0). Cite it as:
 
-> Sujeito Operator (2026). *What Actually Sells on Gumroad: 8,325 live products from 4,545 sellers, with real unit sales for 202 (August 2026)* [Data set]. Zenodo.
+> Sujeito Operator (2026). *What Actually Sells on Gumroad: 8,325 live products from 4,545 sellers, with real unit sales for 212 (August 2026)* [Data set]. Zenodo.
 > https://doi.org/10.5281/zenodo.21830103
 
 **Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See [`LICENSE`](LICENSE).
