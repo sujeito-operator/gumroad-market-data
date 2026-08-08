@@ -229,12 +229,15 @@ No email wall, no account, no "request access". Use it for anything, with or wit
 [**Gumroad Market Data 2026 — free CSV**](https://sujeitooperator.gumroad.com/l/gumroad-market-data). $0 with a $0 minimum; the suggested
 amount is optional and typing zero is the expected case.
 
-**Citing this?** `main` moves as the data is corrected. Pin to
-[**release v1.1**](https://github.com/sujeito-operator/gumroad-market-data/releases/tag/v1.1) instead — the exact bytes every figure above was computed from,
-at [a download URL that will not change](https://github.com/sujeito-operator/gumroad-market-data/releases/download/v1.1/gumroad-latest.csv). The release notes record what changed
-from v1.0, including the mixed-currency error it corrects.
+**Citing this?** `main` moves as the data is corrected, so cite the archive, not this repo. Use
+the **concept DOI** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103), which always resolves to the newest version;
+its record page shows the versioned DOI for the exact bytes, currently version 2.7.
+This file is itself archived in that deposit, which is why it names the concept DOI and not a
+version — a README pinned to one version DOI is wrong the moment it is archived under the next.
+GitHub [release v1.1](https://github.com/sujeito-operator/gumroad-market-data/releases/tag/v1.1) is an older snapshot kept for provenance; it is **not**
+this data and should not be cited for these figures.
 
-**Archived with a DOI:** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103) (CC BY 4.0). Cite it as:
+Cite it as:
 
 > Sujeito Operator (2026). *What Actually Sells on Gumroad: 8,325 live products from 4,545 sellers, with real unit sales for 316 (August 2026)* [Data set]. Zenodo.
 > https://doi.org/10.5281/zenodo.21830103

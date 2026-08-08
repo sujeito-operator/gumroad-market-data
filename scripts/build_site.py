@@ -32,6 +32,12 @@ DOI = "10.5281/zenodo.21830103"
 # had shipped. Any zenodo_v*.py that publishes a new version MUST bump this in the same
 # commit; `assert_zenodo_version_current()` below is what makes that non-optional.
 ZENODO_VERSION = "2.7"
+# The VERSIONED DOI — the one that names exact bytes and never moves. This is the correct
+# citation target, and until 2026-08-08 nothing pointed at it: four surfaces told a careful
+# reader to pin GitHub release v1.1 for "the exact bytes every figure was computed from",
+# which was a 1,511-row file from a superseded crawl. A wrong citation instruction is worse
+# than a wrong number: the reader does exactly what you told them and cites the wrong data.
+ZENODO_VERSION_DOI = "10.5281/zenodo.21848047"
 # Who wrote this. Every page claims an agent made it; this is where that claim is answered.
 PROFILE = "https://github.com/sujeito-operator"
 
@@ -56,13 +62,19 @@ def assert_zenodo_version_current():
         req = _u.Request(f"https://zenodo.org/api/records/{concept}",
                          headers={"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) "
                                                 "AppleWebKit/537.36 Chrome/126.0 Safari/537.36"})
-        live = _json.load(_u.urlopen(req, timeout=40))["metadata"]["version"]
+        rec = _json.load(_u.urlopen(req, timeout=40))
+        live, live_doi = rec["metadata"]["version"], rec["doi"]
     except Exception as e:                      # offline, 403, rate limit — not a failure
         print(f"  ZENODO VERSION UNCHECKED ({type(e).__name__}) — assuming {ZENODO_VERSION}")
         return None
     assert live == ZENODO_VERSION, (
         f"ZENODO_VERSION is {ZENODO_VERSION!r} but the concept DOI resolves to {live!r}. "
         f"Bump ZENODO_VERSION in build_site.py and regenerate every surface that prints it.")
+    # Same check for the versioned DOI. It is the citation target, so a stale one sends a
+    # reader to bytes that are not the ones the figures came from — see its comment above.
+    assert live_doi == ZENODO_VERSION_DOI, (
+        f"ZENODO_VERSION_DOI is {ZENODO_VERSION_DOI!r} but the concept DOI resolves to "
+        f"{live_doi!r}. Bump it in build_site.py and regenerate every surface.")
     return live
 
 
@@ -288,10 +300,14 @@ def jsonld(s, ts, sr):
             {"@type": "DataDownload", "encodingFormat": "text/csv",
              "name": "All four tables (Gumroad mirror, free)", "contentUrl": FREE_MIRROR},
             {"@type": "DataDownload", "encodingFormat": "text/csv",
-             "name": f"Discover sample, pinned to release v{VERSION}",
-             "contentUrl": RELEASE_CSV},
+             "name": f"Citable archive, all files, version {ZENODO_VERSION} "
+                     f"(exact bytes, permanent)",
+             "contentUrl": f"https://doi.org/{ZENODO_VERSION_DOI}"},
         ],
-        "version": VERSION,
+        # NOT the GitHub release tag. This block is what Google Dataset Search reads, and it
+        # was declaring version "1.1" with a superseded 1,511-row CSV as the pinned
+        # distribution while the archive said 2.7. The archive's version is the real one.
+        "version": ZENODO_VERSION,
     }, indent=2)
 
 
@@ -439,11 +455,14 @@ wall, no account, no "request access". Prefer a quick look first?
 <p><strong>Also mirrored on Gumroad</strong> for anyone who would rather click one button than
 clone a repo: <a href="{FREE_MIRROR}">the same CSV, free</a>. It is $0 with a $0 minimum — the
 suggested amount is optional and typing zero is the expected case.</p>
-<p><strong>Citing a fixed version?</strong> <code>main</code> moves as the data is corrected, so pin to
-<a href="{RELEASE}">release v{VERSION}</a> — the exact bytes every figure on this page was computed
-from, downloadable at <a href="{RELEASE_CSV}">a URL that will not change</a>. The release notes also
-record what changed from v1.0, including the currency error it corrects.</p>
-<p><strong>Archived with a DOI:</strong> <a href="https://doi.org/{DOI}">{DOI}</a> — data
+<p><strong>Citing a fixed version?</strong> <code>main</code> moves as the data is corrected, so cite the
+versioned DOI <a href="https://doi.org/{ZENODO_VERSION_DOI}">{ZENODO_VERSION_DOI}</a> — version
+{ZENODO_VERSION} of the archive, the exact bytes every figure on this page was computed from, at a
+landing page that will not move. GitHub
+<a href="{RELEASE}">release v{VERSION}</a> is an older snapshot kept for provenance and is
+<strong>not</strong> this data.</p>
+<p><strong>Archived with a DOI:</strong> the concept DOI
+<a href="https://doi.org/{DOI}">{DOI}</a> always resolves to the newest version — data
 <strong>CC BY 4.0</strong>, collector code <strong>MIT</strong>.</p>
 
 {buy_block("What is <em>not</em> free is the analysis: a report that reads the table rather than "
@@ -645,8 +664,8 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
         "",
         "## Data",
         "",
-        f"- [Full CSV, tagged release]({RELEASE_CSV}): the exact bytes every figure here "
-        f"was computed from. `main` moves; this tag does not.",
+        f"- [Citable archive, version {ZENODO_VERSION}](https://doi.org/{ZENODO_VERSION_DOI}): "
+        f"the exact bytes every figure here was computed from. `main` moves; this DOI does not.",
         f"- [50-row sample]({SITE}/sample-50-rows.csv): the column shape, no download.",
         f"- [summary.json]({RAW}/data/summary.json): every published figure as JSON.",
         f"- [Repository]({REPO}): collection and normalisation scripts.",
@@ -1025,12 +1044,15 @@ No email wall, no account, no "request access". Use it for anything, with or wit
 [**Gumroad Market Data 2026 — free CSV**]({FREE_MIRROR}). $0 with a $0 minimum; the suggested
 amount is optional and typing zero is the expected case.
 
-**Citing this?** `main` moves as the data is corrected. Pin to
-[**release v{VERSION}**]({RELEASE}) instead — the exact bytes every figure above was computed from,
-at [a download URL that will not change]({RELEASE_CSV}). The release notes record what changed
-from v1.0, including the mixed-currency error it corrects.
+**Citing this?** `main` moves as the data is corrected, so cite the archive, not this repo. Use
+the **concept DOI** [{DOI}](https://doi.org/{DOI}), which always resolves to the newest version;
+its record page shows the versioned DOI for the exact bytes, currently version {ZENODO_VERSION}.
+This file is itself archived in that deposit, which is why it names the concept DOI and not a
+version — a README pinned to one version DOI is wrong the moment it is archived under the next.
+GitHub [release v{VERSION}]({RELEASE}) is an older snapshot kept for provenance; it is **not**
+this data and should not be cited for these figures.
 
-**Archived with a DOI:** [{DOI}](https://doi.org/{DOI}) (CC BY 4.0). Cite it as:
+Cite it as:
 
 > Sujeito Operator (2026). *{zenodo_title(ts, sr)}* [Data set]. Zenodo.
 > https://doi.org/{DOI}
@@ -1119,6 +1141,53 @@ def assert_readme_names_both_samples(s, ts):
     if missing:
         raise SystemExit("README headline does not name both samples; missing: "
                          + ", ".join(missing))
+
+
+def assert_citation_target(extra=()):
+    """No generated surface may tell a reader that a GitHub release holds the current bytes.
+
+    Found live 2026-08-08: four surfaces — the README (which ships INSIDE the Zenodo
+    deposit), the landing page, `llms.txt`, and the schema.org `distribution` block Google
+    Dataset Search reads — all said to pin `release v1.1` for "the exact bytes every figure
+    was computed from". That release carries a 1,511-row CSV from a superseded crawl, and
+    the JSON-LD additionally declared `"version": "1.1"` while the archive said 2.7.
+
+    A wrong citation instruction is worse than a wrong figure. A wrong figure misleads a
+    reader who is skimming; a wrong citation instruction is obeyed by the careful one, who
+    then publishes a citation to data that never produced the numbers. Those are exactly the
+    readers a DOI-archived dataset attracts, and Zenodo is the only surface here with
+    measured human traffic.
+
+    Same shape as `assert_gross_split`: the check is on the OUTPUT, not on the source, and
+    it checks the neighbourhood rather than the string — the defect was never one bad token,
+    it was a true URL next to a claim that had quietly stopped being true.
+    """
+    claim = re.compile(r"exact bytes|will not change|pinned to release|\bpin to\b", re.I)
+    disclaim = re.compile(r"older snapshot|superseded|not this data", re.I)
+    # A sentence end, not any full stop: `github.com/` and `v1.1` both contain one, and an
+    # earlier draft of this gate anchored on them and read a four-word window.
+    boundary = re.compile(r"[.!?](?=\s|<|$)")
+    bad = []
+    files = [(f.name, f.read_text()) for f in sorted((ROOT / "docs").rglob("*.html"))]
+    files += [("README.md", (ROOT / "README.md").read_text()),
+              ("llms.txt", (ROOT / "docs" / "llms.txt").read_text())]
+    files += list(extra)
+    hits = 0
+    for name, text in files:
+        for m in re.finditer(r"/releases/(?:tag|download)/", text):
+            starts = [b.end() for b in boundary.finditer(text, 0, m.start())]
+            lo = starts[-1] if starts else max(0, m.start() - 400)
+            nxt = boundary.search(text, m.start())
+            hi = nxt.end() if nxt else min(len(text), m.start() + 400)
+            sent = " ".join(text[lo:hi].split())
+            hits += 1
+            if claim.search(sent) or not disclaim.search(sent):
+                bad.append((name, sent[:180]))
+    assert not bad, (
+        "a generated surface pins a GitHub release as the current/citable bytes, or links "
+        f"one without saying it is superseded. The citation target is the versioned DOI "
+        f"{ZENODO_VERSION_DOI}: {bad[:3]}")
+    return f"{len(files)} surfaces, {hits} release links"
 
 
 def assert_report_scope(s):
@@ -1219,6 +1288,7 @@ def main():
 
     assert_readme_names_both_samples(s, ts)
     assert_report_scope(s)
+    print(f"  citation target OK: {assert_citation_target()}")
 
     print(f"README + index + {len(guides)} guides + {len(s['by_category'])} category pages"
           f" + {len(taxo)} taxonomy pages + taxonomy index + {len(sellers)} seller pages"
