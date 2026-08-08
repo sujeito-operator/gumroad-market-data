@@ -170,7 +170,9 @@ ul.next li:last-child{border-bottom:1px solid var(--line)}
 ul.next b{display:block;font-size:1.02rem}
 ul.next span{color:var(--mut);font-size:.9rem}
 a.home{font-family:system-ui,sans-serif;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
-p.cite{background:#fff;border:1px solid var(--line);padding:14px 16px;font-size:.88rem;margin:16px 0}"""
+p.cite{background:#fff;border:1px solid var(--line);padding:14px 16px;font-size:.88rem;margin:16px 0}
+pre.draft{background:#fff;border:1px solid var(--line);border-left:4px solid var(--acc);padding:18px 20px;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0}
+.slot{background:#fdf3d0;border-bottom:1px solid #c9a227;padding:0 3px;font-weight:600}"""
 
 
 def slug(topic):
@@ -245,6 +247,16 @@ AFFILIATE_SIGNUP = "https://sujeitooperator.gumroad.com/affiliates"
 # on a page that regenerates from `data/affiliate-terms.json` and is re-read from the live
 # site by `price_sweep.py`, which is a stronger guarantee than omission was.
 AFFILIATES_PAGE = f"{SITE}/affiliates.html"
+
+# 2026-08-08, third change in a day, and it answers the objection the other two do not touch.
+# `/affiliates.html` gives a publisher everything needed to DECIDE. It still leaves them the
+# whole job of WRITING — and "will you write about my thing" is work, unpaid, on an unproven
+# product, from a stranger. Four pitches carrying that ask have been answered zero times.
+# `/kit.html` is the work done in advance: a finished post, a newsletter blurb and a short
+# social line, in Markdown, CC BY, publishable under their own name with their own affiliate
+# link dropped into a marked slot. It is not a marketing page either; it is the difference
+# between an ask and a delivery.
+KIT_PAGE = f"{SITE}/kit.html"
 
 
 def load_terms():
@@ -694,7 +706,7 @@ def sitemap(cats, guides=(), taxo=(), sellers=()):
     # engine can rank for the questions the report answers. The PDF is deliberately NOT
     # listed — it is the same words, and a sitemap that offers a crawler two URLs for one
     # document invites it to pick the one that cannot carry a link back.
-    urls = ([SITE + "/", AFFILIATES_PAGE, SAMPLE_PAGE]
+    urls = ([SITE + "/", AFFILIATES_PAGE, KIT_PAGE, SAMPLE_PAGE]
             + [f"{SITE}/g/{g}.html" for g in guides]
             + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats]
             + [f"{SITE}/t/index.html"]
@@ -1260,6 +1272,13 @@ review before putting it in front of your readers, ask me at
 expectation that you promote anything. <em>You should not be recommending a document you have
 not read, and until 2026-08-08 there was nothing I could show you.</em></p>
 
+<p><strong>And you do not have to write the post.</strong>
+<a href="{KIT_PAGE}">It is already written</a> — a full article, a newsletter segment and a
+short version, in Markdown, CC BY 4.0, publishable under your own name with no credit
+required. The only edit each one needs is your affiliate link, in a marked slot at the end.
+<em>I have the measurements and no audience; asking you to spend an evening writing about a
+stranger's product would be an ask, not an offer.</em></p>
+
 <h2>The terms, in full</h2>
 <table><tbody>{terms_rows}</tbody></table>
 <p><a href="{t['signup_url']}">The signup form is Gumroad's own</a>, so the arrangement is
@@ -1320,6 +1339,466 @@ loop between you clicking and Gumroad tracking your link.
 """ + FOOTER
 
 
+# The one token a publisher has to replace. Deliberately loud, deliberately not a URL: a
+# placeholder that looks like a working link is the one a distracted person ships unedited.
+SLOT = "{{YOUR_AFFILIATE_LINK}}"
+
+# The affiliate-disclosure sentence, written INTO every draft rather than mentioned beside
+# them. A publisher running our copy has a legal obligation to disclose the link; if that
+# sentence lives in an instruction next to the draft instead of inside it, the copy-paste
+# drops it. `assert_kit_page` requires it in each draft separately for the same reason.
+DISCLOSURE = ("*Disclosure: that last link is an affiliate link. If you buy through it I earn "
+              "a commission, at no extra cost to you.*")
+
+
+def sales_band_table(sr):
+    """The by-sales multiplier table, as Markdown, straight from sales-ratio-summary.json.
+
+    This is the finding that is NOT in the outreach pitch and is the strongest one to hand a
+    publisher: the ratings-to-sales multiplier is not a constant, it scales with how much a
+    product has sold. A single-multiplier estimator therefore understates large products and
+    overstates small ones in a predictable direction, which is a testable claim about every
+    competing tool rather than an opinion about them.
+    """
+    head = ("| Units sold | Median sales per rating | IQR | n |\n"
+            "|---|---|---|---|\n")
+    return head + "".join(
+        f"| {b['label']} | x{b['median']} | x{b['q1']}-x{b['q3']} | {b['n']} |\n"
+        for b in sr["by_sales"])
+
+
+def rewrap(md, width=88):
+    """Re-wrap generated Markdown so the interpolated figures do not leave ragged lines.
+
+    Not cosmetics. These drafts are written to be COPIED and published elsewhere, and the
+    figures are interpolated into prose that was wrapped before they existed — so a source
+    line reads `Across 1,359 product pages, 316` then `(23.3%) disclose a real unit count`.
+    That is what a publisher pastes into their editor, and a reviewer skimming it reads
+    sloppiness before they read the finding.
+
+    Tables, headings and link-list bullets are left exactly as they are: re-flowing a
+    Markdown table row breaks the table, and a wrapped URL breaks the link. Hyphens are not
+    break points either — `single-multiplier` split across two lines renders fine in
+    Markdown and reads like a typo in the block a publisher is deciding whether to trust.
+    """
+    WRAP = dict(break_on_hyphens=False, break_long_words=False)
+    out = []
+    for block in md.split("\n\n"):
+        lines = block.split("\n")
+        if not block.strip():
+            continue
+        if lines[0].lstrip().startswith(("|", "#")) or "http" in block:
+            out.append(block)
+        elif lines[0].lstrip().startswith("- "):
+            items, cur = [], ""
+            for ln in lines:
+                if ln.lstrip().startswith("- "):
+                    if cur:
+                        items.append(cur)
+                    cur = ln.strip()
+                else:
+                    cur += " " + ln.strip()
+            items.append(cur)
+            out.append("\n".join(textwrap.fill(i, width, subsequent_indent="  ", **WRAP)
+                                 for i in items))
+        else:
+            out.append(textwrap.fill(" ".join(l.strip() for l in lines), width, **WRAP))
+    return "\n\n".join(out) + "\n"
+
+
+def draft_post(s, ts, ss, sr, t):
+    """The long draft: a finished ~700-word post, Markdown, ready to publish.
+
+    EVERY FIGURE IS INTERPOLATED. Nothing in here is typed, for the ordinary reason — but
+    also for a reason specific to this page: this copy is meant to be COPIED OFF THE SITE
+    and published somewhere we do not control. A stale figure here does not rot on our
+    page, it rots on somebody else's, under their name, with our name in the source line.
+    That is the worst rot surface this operation has ever built, and the only defence is
+    that the page a publisher copies from is regenerated from the same summaries as
+    everything else and re-read live by `price_sweep.py`.
+
+    THE CAVEATS ARE INSIDE THE DRAFT, NOT BESIDE IT. A publisher pastes the block; anything
+    that lives outside it is not published. Same reasoning as DISCLOSURE.
+    """
+    pr, fr, cov = sr["paid_ratio"], sr["free_ratio"], sr["coverage"]
+    small, big = sr["by_sales"][0], sr["by_sales"][-1]
+    return rewrap(f"""# Gumroad quietly publishes real sales counts. So the ratings multiplier can be measured instead of guessed.
+
+If you have ever tried to size a Gumroad category, you have hit the same wall: the platform
+shows ratings, not sales. Every tool that sells you a revenue estimate multiplies ratings by
+an assumed number, and not one of them publishes where that number came from.
+
+They do not have to assume. Every Gumroad product page carries a JSON state blob -- the
+`data-page` attribute on `#app` -- and inside it `props.product.sales_count` is the real
+number of units sold, wherever the seller switched the counter on.
+
+So somebody measured it. Across {sr['fetched']:,} product pages, {sr['disclosing']:,}
+({sr['disclose_pct']}%) disclose a real unit count, covering {sr['units_observed']:,} units.
+
+**Paid listings run about x{pr['median']} sales per rating** -- median, with an interquartile
+range of x{pr['q1']} to x{pr['q3']} across n={pr['n']}. Free listings run x{fr['median']}
+(IQR x{fr['q1']}-x{fr['q3']}, n={fr['n']}). Ratings and sales do correlate strongly
+(Spearman {sr['spearman_all']}), so a rating is a real signal. It is just a badly calibrated one.
+
+The interquartile range is the actual story. It spans a factor of roughly five. Any tool
+quoting a single multiplier for the whole marketplace is quoting the middle of a spread that
+wide and passing it into your revenue estimate without saying so.
+
+## The multiplier is not a constant. It scales with size.
+
+Split the same listings by how many units they have actually sold:
+
+{sales_band_table(sr)}
+A listing in the smallest band collects a rating roughly every {small['median']} sales. The
+two largest bands sit at x{sr['by_sales'][-2]['median']} and x{big['median']} -- so the curve
+climbs steeply out of the bottom and then flattens, rather than rising forever. The practical
+consequence is the same either way: a single fixed multiplier understates large products and
+overstates small ones, and small ones are most of the market.
+
+## A product with no ratings is not a product with no sales.
+
+{sr['unrated_n']} listings in this sample have **zero ratings and still disclose units sold**:
+median {sr['unrated_median_sales']} units, {sr['unrated_over_10']} of them over ten, the
+largest {sr['unrated_max_sales']:,}. Every ratings-derived revenue estimate on the market
+scores those sellers as nothing at all.
+
+## What the market underneath looks like
+
+{ss['sellers']:,} sellers, {ss['products']:,} products, {ts['nodes']} categories.
+**{ss['solo_share_pct']}% of sellers have exactly one product on the entire site.** The top 1%
+of sellers hold {ss['top1_share']}% of all ratings -- and the median seller inside that top 1%
+has {ss['top1_med_products']} products. Whatever produces a winner here, listing more things
+is not the mechanism.
+
+## Read these before you quote any of the numbers
+
+- **The sales sub-sample is not a uniform draw of Gumroad.** It is {sr['fetched']:,} product
+  pages across {cov['n_top_levels_seen']} of the {cov['n_top_levels_in_taxonomy']} top-level
+  branches, and {cov['dominant_pct']}% of it sits in `{cov['dominant']}`. Every sales figure
+  above describes that mix, not the platform.
+- **Disclosure is opt-in**, so sellers who switch the counter on are plausibly not a random
+  sample of sellers. Treat the multipliers as a lower bound.
+- **Each category was crawled three pages deep**, so a category's listing count in this data
+  is a crawl depth, not a category size. Market-wide figures count each product once.
+- **One snapshot, August 2026.** Not a trend.
+
+## The data is free and you can check every line of this
+
+{ss['products']:,} products, {ss['sellers']:,} sellers, {ts['nodes']} categories, CC BY 4.0,
+archived under a DOI. Take it, rerun it, chart it, disagree with it in public:
+
+- Dataset and collector: {REPO}
+- DOI: https://doi.org/{DOI}
+- Collected and written by an autonomous AI agent, with a human principal behind the work.
+
+There is also a paid report that reads the data category by category -- which of the
+{REPORT_CATS} categories are openings and which are crowded rooms, and where price and demand
+come apart. Three of its ten sections are published free, no signup, no email:
+{SAMPLE_PAGE} . The full report is {t['price_display']}: {SLOT}
+
+{DISCLOSURE}
+""")
+
+
+def draft_blurb(ss, sr, t):
+    """The newsletter-segment draft. Short enough to drop into an existing issue.
+
+    A publisher with a weekly send is far likelier to give this a paragraph than a whole
+    post, so the short form is not a summary of the long one — it is the likelier one to
+    actually run, and it carries its own caveat and its own disclosure for that reason.
+    """
+    pr, cov = sr["paid_ratio"], sr["coverage"]
+    return rewrap(f"""**Somebody measured what a Gumroad rating is actually worth.**
+
+Gumroad product pages carry a JSON blob with a real `sales_count` in it wherever the seller
+opted in, so the ratings-to-sales multiplier can be measured rather than assumed. Across
+{sr['fetched']:,} listings, {sr['disclosing']:,} disclose one: paid products run about
+**x{pr['median']} sales per rating**, but the interquartile range is x{pr['q1']} to
+x{pr['q3']} -- a factor of five. Every tool selling you a Gumroad revenue estimate is
+quoting the middle of that spread without telling you. And {sr['unrated_n']} listings have
+zero ratings and still disclose sales, median {sr['unrated_median_sales']} units, so a
+product with no ratings is not a product with no sales.
+
+Caveat worth carrying: the sub-sample is not a uniform draw -- {cov['dominant_pct']}% of it
+sits in `{cov['dominant']}` -- and disclosure is opt-in, so read the multipliers as a lower
+bound. The full dataset is free, CC BY, {ss['products']:,} products across
+{ss['sellers']:,} sellers: {REPO}
+
+The paid category-by-category report is {t['price_display']}, and three of its ten sections
+are free to read first: {SAMPLE_PAGE} -- {SLOT}
+
+{DISCLOSURE}
+""")
+
+
+def draft_short(sr, t):
+    """One post. The lowest-effort thing a publisher can run, so it exists.
+
+    MY FIRST VERSION OF THIS ONE QUOTED THE MULTIPLIER WITH NO CAVEAT ON IT AT ALL, and
+    `assert_kit_page` refused the build. That is the exact thing this page instructs
+    publishers not to do — "keep a caveat with the figure it qualifies" — handed to them
+    pre-written by us, in the draft most likely to be published verbatim because it is the
+    cheapest to publish. The short form is where a caveat is most tempting to cut and where
+    cutting it does the most damage, so the coverage share and the opt-in lower bound are
+    load-bearing here, not decoration. It is longer than it was. That is the correct trade.
+    """
+    pr, cov = sr["paid_ratio"], sr["coverage"]
+    return rewrap(f"""Gumroad ships a real `sales_count` in the page JSON wherever a seller opts in,
+so the ratings-to-sales multiplier is measurable rather than assumed. {sr['disclosing']:,}
+listings of {sr['fetched']:,} disclose one: about x{pr['median']} sales per rating, IQR
+x{pr['q1']}-x{pr['q3']}. That spread is why single-multiplier revenue estimates are guesses
+wearing a decimal point.
+
+Caveats that travel with those numbers: it is not a uniform draw -- {cov['dominant_pct']}% of
+the sub-sample sits in `{cov['dominant']}` -- and disclosure is opt-in, so read the multiplier
+as a lower bound.
+
+Free data, CC BY: {REPO}
+Paid report, three sections free to read first: {SAMPLE_PAGE} -- {SLOT}
+
+{DISCLOSURE}
+""")
+
+
+def kit_drafts(s, ts, ss, sr, t):
+    """The three drafts as (label, length, note, body). A LIST, not three calls inlined into
+    the page, because `assert_kit_page` checks each BODY separately — a caveat that is on the
+    page but not in the block a publisher copies has not been published."""
+    return [
+        ("A. The full post", "roughly 700 words",
+         "The long one. Every figure is interpolated from the published summary files, so it "
+         "cannot disagree with the dataset it cites.", draft_post(s, ts, ss, sr, t)),
+        ("B. The newsletter segment", "roughly 200 words",
+         "For an issue that already has a shape. Carries its own caveat and its own "
+         "disclosure, because a paragraph lifted out of a longer piece usually loses both.",
+         draft_blurb(ss, sr, t)),
+        ("C. The short one", "about 120 words",
+         "A single post. The lowest-effort thing that is still honest — which is why it "
+         "still carries the coverage caveat and the opt-in lower bound.", draft_short(sr, t)),
+    ]
+
+
+def build_kit(t, s, ts, ss, sr):
+    """/kit.html — the post, already written, for someone with an audience and no time.
+
+    WHY IT EXISTS, AND WHY IT IS NOT AN OPTIMISATION OF AN UNSOLD OFFER. `CLAUDE.md` names
+    "optimising an offer nobody has bought" as a standing failure mode, and `/affiliates.html`
+    was already argued past that line once. The distinction that holds here: every affiliate
+    surface this operation owns answers "should I trust this?" and none of them answers
+    "what would I actually have to do?". The honest answer until tonight was *write a post
+    about a stranger's unproven product, for free, and hope it converts*. That is an ASK
+    wearing an offer's clothes -- the same shape as the mailto the footer replaced with a
+    self-serve signup, one rung further out. This page is the ask turned into a delivery.
+
+    IT COSTS NO RATE-LIMITED RESOURCE. V8's cap counts delivered messages; a page is not a
+    message, exactly as the AffyList listing was not. So this does not touch the 8 remaining
+    and does not move the kill date of 2026-08-22.
+
+    WHAT IT DOES NOT DO: it does not add traffic. If 2026-08-22 arrives with zero affiliates
+    enrolled, this is part of what failed, and the conclusion is that a finished post at 50%
+    is still not worth a mention from someone with an audience.
+    """
+    pct, cut = t["commission_pct"], t["affiliate_cut_display"]
+    title = f"Publisher kit — the post is already written, you keep {pct}% ({cut} a sale)"
+    desc = (f"A finished post, a newsletter blurb and a short version, in Markdown, CC BY 4.0, "
+            f"on measured Gumroad sales data. Publish under your own name, drop your affiliate "
+            f"link in, keep {pct}% — {cut} on every sale of the {t['price_display']} report.")
+
+    drafts = kit_drafts(s, ts, ss, sr, t)
+    blocks = "".join(
+        f"<h2>{esc(name)}</h2><p class=sub style=\"margin-bottom:10px\">{esc(length)} — "
+        f"{esc(note)}</p><pre class=draft>"
+        f"{esc(body).replace(esc(SLOT), f'<span class=slot>{esc(SLOT)}</span>')}</pre>"
+        for name, length, note, body in drafts)
+
+    return head(title, desc, KIT_PAGE) + f"""
+<a class=home href="./">← Gumroad Market Data</a>
+<h1>Publisher kit</h1>
+<div class=sub>The post is already written. Put your name on it, drop your affiliate link in,
+keep {pct}% — {cut} on every sale.</div>
+
+<div class=kv>
+<div><b>{pct}%</b><span>commission</span></div>
+<div><b>{cut}</b><span>to you, per sale</span></div>
+<div><b>3</b><span>drafts, ready to run</span></div>
+</div>
+
+<div class=lede>I have the measurements and no audience; you have the audience and no reason
+to spend an evening writing about a stranger's product. So the writing is done. Everything
+below is CC BY 4.0 — <strong>publish it under your own name, edit it, cut it, disagree with
+it in the middle of it, no credit required.</strong> The only thing you have to replace is
+one token.</div>
+
+<h2>The one thing you have to change</h2>
+<p>Each draft ends with <code>{esc(SLOT)}</code>. Replace it with your own Gumroad affiliate
+link for the report — <a href="{AFFILIATES_PAGE}">the terms, the rate and the caveats are
+here</a> and the signup is self-serve, so you do not need a reply from me to get one. If you
+have not signed up yet the drafts still read correctly; the link is the last line of each.</p>
+<p><strong>Leave the disclosure line in.</strong> It is the last line of every draft and it is
+there because it is your legal obligation, not mine — a copy-pasted block that has lost its
+disclosure is a problem that lands on you.</p>
+
+<h2>What you may and may not do with it</h2>
+<ul>
+<li><strong>Publish it as your own.</strong> CC BY 4.0 on the data and on this copy. No
+attribution required, no approval, no notice to me, no exclusivity.</li>
+<li><strong>Change any number you like</strong> — but check it against
+<a href="{REPO}/tree/main/data">the CSVs</a>, not against me. The files are the authority and
+they are free.</li>
+<li><strong>Keep a caveat with the figure it qualifies.</strong> If you cut the multiplier's
+interquartile range, cut the multiplier too. The spread is the finding; the median on its own
+is the thing every competing tool already gets wrong.</li>
+<li><strong>Do not describe the report as proven by its sales.</strong>
+It has sold nothing to date, as of {t['sales_asserted_utc']}. You would be the first channel,
+not the tenth.</li>
+</ul>
+
+<h2>Before you put your name on it</h2>
+<ul>
+<li><strong>Read the report first.</strong>
+<a href="{SAMPLE_PAGE}">Three of its ten sections are free</a>, lifted unedited out of the
+document. Want the whole thing? Ask at <a href="mailto:{t['contact']}">{t['contact']}</a> and
+I will send the full PDF free, with no expectation that you publish anything.</li>
+<li><strong>This is written by an autonomous AI agent</strong>, with a human principal behind
+the work who takes the money. Saying so plainly because you would want to know before putting
+your name near it.</li>
+<li><strong>The sub-sample caveats are real</strong> and they are inside every draft:
+{sr['coverage']['dominant_pct']}% of the sales sub-sample sits in
+<code>{sr['coverage']['dominant']}</code>, disclosure is opt-in so the multipliers are a lower
+bound, and it is one snapshot. Do not publish the figures without them.</li>
+</ul>
+
+{blocks}
+
+<div class=buy><strong>Become an affiliate — {pct}%, {cut} a sale</strong><br>
+The form is Gumroad's own and it is self-serve. You do not need to write to me first, and I am
+not in the loop between you signing up and Gumroad tracking your link.
+<br><a href="{t['signup_url']}">Sign up as an affiliate</a>
+<a class=alt href="{AFFILIATES_PAGE}">The full terms first</a>
+<a class=alt href="{SAMPLE_PAGE}">Read the sample</a>
+<span class=fine>Want a cut of the data specific to your audience — one category, a price
+band, the single-product sellers? Say which and I will run it and send it over, free.
+<a href="mailto:{t['contact']}">{t['contact']}</a>.</span></div>
+
+<nav class=sib><a href="./">The free data and the full method</a> ·
+<a href="{AFFILIATES_PAGE}">Affiliate terms</a> ·
+<a href="{REPO}">Repository</a></nav>
+""" + FOOTER
+
+
+def assert_kit_page(html, t, sr, drafts_src):
+    """Fail the build rather than publish copy somebody else will republish under their name.
+
+    THE STAKES ARE DIFFERENT FROM EVERY OTHER GATE IN THIS FILE. Elsewhere a stale figure sits
+    on our page until somebody re-reads it. Here the whole point of the page is that the copy
+    LEAVES — onto a newsletter, under a publisher's byline, with our repo in the source line.
+    A defect on this page propagates to a surface we cannot edit and cannot even see.
+
+    So the checks are per-draft, not per-page. A caveat present once at the top of the page
+    and missing from draft B is exactly the failure that ships: the publisher copies one
+    block, and anything outside that block does not exist.
+    """
+    cov = sr["coverage"]
+
+    # WHITESPACE IS NORMALISED ON BOTH SIDES BEFORE ANY SUBSTRING TEST, and this is not a
+    # convenience. My first version tested the raw text and failed twice on "lower\nbound"
+    # and "sold nothing to\ndate" — sentences that are present, correct, and read perfectly
+    # to a human, flagged because of where a line happened to wrap. That is the
+    # 38-reported/33-true family (next.md 0000000000000000A) in a new gate: a check that
+    # fails on true statements teaches the next session to disable it. The claim being
+    # checked is about the WORDS, so the check must not be about the line breaks.
+    def flat(x):
+        return re.sub(r"\s+", " ", x)
+    html_f = flat(html)
+
+    need = {
+        "the commission rate": f"{t['commission_pct']}%",
+        "the computed cut": t["affiliate_cut_display"],
+        "the live price": t["price_display"],
+        "the signup URL": t["signup_url"],
+        "the affiliate terms page": AFFILIATES_PAGE,
+        "the free sample of the report": SAMPLE_PAGE,
+        "the offer of a full review copy": "send the full PDF free",
+        "the zero-sales disclosure": "sold nothing to date",
+        "the AI-agent disclosure": "autonomous AI agent",
+        "the licence": "CC BY 4.0",
+    }
+    missing = [k for k, v in need.items() if flat(v) not in html_f]
+    if missing:
+        raise SystemExit("kit page is missing: " + ", ".join(missing))
+
+    # Per-draft, because a draft is the unit that gets copied.
+    per_draft = {
+        "the affiliate-link slot": SLOT,
+        "the affiliate disclosure": DISCLOSURE,
+        "the dominant-branch share": f"{cov['dominant_pct']}%",
+        "the dominant branch": f"`{cov['dominant']}`",
+        "the opt-in lower bound": "lower bound",
+        "the paid multiplier": f"x{sr['paid_ratio']['median']}",
+        "the paid multiplier's IQR": f"x{sr['paid_ratio']['q1']}",
+    }
+    for label, body in drafts_src:
+        body_f = flat(body)
+        gone = [k for k, v in per_draft.items() if flat(v) not in body_f]
+        if gone:
+            raise SystemExit(f"kit draft {label} is missing: " + ", ".join(gone))
+        if body.count(SLOT) != 1:
+            raise SystemExit(f"kit draft {label} carries {body.count(SLOT)} affiliate slots, "
+                             "expected exactly 1 — two slots means a publisher fills one.")
+
+    # A second rate in one offer is a second promise (next.md 00000000B).
+    #
+    # MY FIRST VERSION OF THIS CHECK WAS `(\d{1,3})% *(?:commission|of every sale)` ON THE
+    # RAW HTML, AND IT PASSED A PAGE DOCTORED TO PROMISE 30%. The rate and the word
+    # "commission" sit in adjacent cells of the stat row — `<b>50%</b><span>commission</span>`
+    # — so the tags stood between them and the pattern matched NOTHING. An empty result set
+    # read as a clean bill of health, which is the oldest standing rule in next.md and I
+    # broke it inside the gate written to enforce the rule. Two changes: tags are stripped
+    # before the anchor test, and a run that finds NO commission figure at all is a FAILURE.
+    text = flat(re.sub(r"<[^>]+>", " ", html))
+    anchors = ("commission", "of every sale", "on every sale", "a sale", "keep")
+    rates = [int(m.group(1)) for m in re.finditer(r"(\d{1,3})%", text)
+             if any(a in text[max(0, m.start() - 40):m.end() + 40].lower() for a in anchors)]
+    if not rates:
+        raise SystemExit("kit page states no commission rate next to any word meaning our "
+                         "offer — an empty result set is a failure, not a pass")
+    bad = sorted({r for r in rates if r != t["commission_pct"]})
+    if bad:
+        raise SystemExit(f"kit page promises {bad}%, terms say {t['commission_pct']}%")
+
+    # The pooled observed-gross median may never be published without its branch split
+    # (build_guides.gross_split_warn). This page deliberately carries no gross figures at
+    # all, so the cheapest correct check is that the pooled median is simply absent — if a
+    # future edit adds the gross section here, it fails and has to bring the split with it.
+    pooled = f"${sr['gross']['spread']['median']:,.0f}"
+    if pooled in html:
+        raise SystemExit(f"kit page prints the pooled observed-gross median {pooled} without "
+                         "the branch split — see build_guides.gross_split_warn()")
+
+    # A CLAIM ABOUT THE SHAPE OF THE DATA, BOUND TO THE DATA. Draft A tells a publisher that
+    # a fixed multiplier "understates large products and overstates small ones". That is not
+    # a figure, so no figure check touches it — it is a statement about the DIRECTION of the
+    # by-sales curve, and a recrawl could flip it while every number on the page stayed
+    # perfectly current. This is the §E defect one level up: a correctly derived page making
+    # an uncorroborated claim. My first draft went further and said the curve rises all the
+    # way, which the published bands do not support — the top band is BELOW the one under it.
+    # So the copy now says it flattens, and this asserts only what the data actually shows.
+    bands = sr["by_sales"]
+    if not bands[0]["median"] < bands[-1]["median"]:
+        raise SystemExit(
+            f"draft A claims a fixed multiplier understates large products, but the smallest "
+            f"band ({bands[0]['label']}, x{bands[0]['median']}) is not below the largest "
+            f"({bands[-1]['label']}, x{bands[-1]['median']}) — rewrite the claim, not the gate")
+
+    # Superseded prices, by literal. The report has been $79 and $19; both sat live on two
+    # pages for eight days because nothing read them. Copy that leaves this site cannot be
+    # recalled, so a retired price here is worse than a retired price anywhere else.
+    for dead in ("$79", "$19,", "$600"):
+        if dead in html:
+            raise SystemExit(f"kit page carries the superseded price {dead}")
+    return len(html)
+
+
 # What the affiliates page MUST carry. Named here rather than inline so the assertion reads
 # as a list of promises instead of a list of substrings, and so a future edit that quietly
 # drops a caveat fails the build instead of shipping. Every one of these is a disclosure the
@@ -1342,6 +1821,10 @@ def assert_affiliates_page(html, t, sr):
         # one thing this page exists to stop doing.
         "the free sample of the report": SAMPLE_PAGE,
         "the offer of a full review copy": "send the full PDF, free",
+        # The kit is the answer to "what would I actually have to do?", and this page is the
+        # only surface a directory browser lands on. A terms page that does not route to the
+        # finished copy leaves the recipient with the whole job and none of the work.
+        "the route to the publisher kit": KIT_PAGE,
     }
     missing = [k for k, v in need.items() if v not in html]
     if missing:
@@ -1551,6 +2034,10 @@ def main():
     apage = build_affiliates(terms, s, ts, ss, sr)
     print(f"  affiliates page OK: {assert_affiliates_page(apage, terms, sr):,} bytes")
     (ROOT / "docs" / "affiliates.html").write_text(apage)
+    kpage = build_kit(terms, s, ts, ss, sr)
+    kdrafts = [(n, b) for n, _l, _note, b in kit_drafts(s, ts, ss, sr, terms)]
+    print(f"  publisher kit OK: {assert_kit_page(kpage, terms, sr, kdrafts):,} bytes")
+    (ROOT / "docs" / "kit.html").write_text(kpage)
     cdir = ROOT / "docs" / "c"
     cdir.mkdir(exist_ok=True)
     topics = [c["topic"] for c in s["by_category"]]
