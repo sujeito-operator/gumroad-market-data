@@ -77,7 +77,7 @@ def assert_index(html, t):
         # The root of the hostname is where a stranger lands. Asking for $249 there
         # without offering a way to read any of it first is the ask this page spent a
         # whole section learning not to make.
-        "the free sample": build_site.SAMPLE_PDF,
+        "the free sample": build_site.SAMPLE_PAGE,
         "the zero-sales disclosure": f"sold {t['sales_to_date']}",
         "the VS Code section": VSX_A,
     }
@@ -155,7 +155,7 @@ free</strong>, and the report is interpretation of data you can download for not
 data is all you wanted, take it and skip the report &mdash;
 <a href="{build_site.BUY}">it is here</a> if you want it.</p>
 <p><strong>You can read part of it before deciding.</strong>
-<a href="{build_site.SAMPLE_PDF}">A free sample</a> is three of the report's ten sections,
+<a href="{build_site.SAMPLE_PAGE}">A free sample</a> is three of the report's ten sections,
 lifted unedited out of the document &mdash; what was measured, the background rate you are
 competing against, and the method and limits in full. No signup and no email. Every section
 that says what to actually do is in the paid one.</p>
