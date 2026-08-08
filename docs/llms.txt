@@ -598,17 +598,17 @@ Read these two samples as two frames on one marketplace, not as one superseding 
 
 ## Fourth view: real unit sales, and what one rating is worth
 
-> A minority of Gumroad sellers publish a unit-sales count on the product page. Re-fetching product pages individually found **212 of 816 (26.0%) do**, covering 328,616 units. This is the only sample here measured against actual sales rather than ratings.
+> A minority of Gumroad sellers publish a unit-sales count on the product page. Re-fetching product pages individually found **250 of 1,011 (24.7%) do**, covering 362,016 units. This is the only sample here measured against actual sales rather than ratings.
 
-- **SCOPE LIMIT, READ BEFORE QUOTING ANY FIGURE IN THIS SECTION.** The per-product crawl is unfinished and its sample is uneven: **96% of the 816 pages fetched are under one top-level category (3d), of 15 that returned listings.** These figures describe that branch, not Gumroad. Do not generalise them in either direction. Every other section of this file is unaffected.
-- **There is no single multiplier, and that is the finding.** Median paid listing sells **x18.8** its rating count, interquartile range x8.6-x39.2 over n=113. Free listings: median x31.1, IQR x9.9-x109.0, n=26. Quote the range, not the median alone.
-- **The ratio rises with listing size**: x10.0 for listings with 1-2 ratings against x30.7 for 50 or more. A fixed 'x30 rule' is wrong at both ends.
-- **Ratings are a valid ordinal proxy**: rank correlation with units sold is 0.863. They rank demand reliably and measure it badly.
-- **73 of 212 products with a public sales count have zero ratings** (median 6 units, max 1,320). An unrated listing is weak evidence of no demand, not proof of it.
+- **SCOPE LIMIT, READ BEFORE QUOTING ANY FIGURE IN THIS SECTION.** The per-product crawl is unfinished and its sample is uneven: **77% of the 1,011 pages fetched are under one top-level category (3d), of 15 that returned listings.** These figures describe that branch, not Gumroad. Do not generalise them in either direction. Every other section of this file is unaffected.
+- **There is no single multiplier, and that is the finding.** Median paid listing sells **x23.0** its rating count, interquartile range x10.0-x48.5 over n=147. Free listings: median x30.3, IQR x10.0-x98.5, n=27. Quote the range, not the median alone.
+- **The ratio rises with listing size**: x11.5 for listings with 1-2 ratings against x26.9 for 50 or more. A fixed 'x30 rule' is wrong at both ends.
+- **Ratings are a valid ordinal proxy**: rank correlation with units sold is 0.861. They rank demand reliably and measure it badly.
+- **76 of 250 products with a public sales count have zero ratings** (median 7 units, max 1,320). An unrated listing is weak evidence of no demand, not proof of it.
 - **Bias, both directions.** The counter is opt-in, so the sample is not random; and the ratio requires >=1 rating, which excludes the worst under-rating and makes every median a **lower bound**.
 - Sample: the taxonomy walk's products re-fetched one page at a time. **Never merged with the 42-search sample.**
 
-- [Sales CSV](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-sales.csv): one row per product fetched, including the 604 with no public sales count, so the opt-in rate is re-derivable.
+- [Sales CSV](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-sales.csv): one row per product fetched, including the 761 with no public sales count, so the opt-in rate is re-derivable.
 - [sales-ratio-summary.json](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/sales-ratio-summary.json): every figure above as JSON, with the full banded distributions.
 - [How many sales is one Gumroad rating?](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-sales-per-rating.html)
 

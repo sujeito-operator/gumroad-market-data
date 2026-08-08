@@ -801,11 +801,15 @@ def build_readme(s, mix, ts, ss, sr):
     lo = ", ".join(f"{c['topic']} ({c['rated_share']}%)" for c in s["by_category"][-3:])
     return f"""# What actually sells on Gumroad — measured
 
-**{s['n']:,} live Gumroad products across {s['cats']} categories, collected 5 August 2026.**
+**{ts['n']:,} live Gumroad products from {ts['sellers']:,} sellers across {ts['nodes']}
+categories of Gumroad's own category tree — plus a separate {s['n']:,}-product sample across
+{s['cats']} Discover searches. Collected August 2026, and
+[kept apart on purpose](#two-samples-published-side-by-side).**
 
-> **{s['zero']} of the {s['n']:,} products in this sample — {s['zpct']}% — have no ratings at all.**
-> They are listed, priced, and selling nothing. The gap between categories where that happens
-> and ones where it doesn't runs from **{top['rated_share']}% of listings rated** at the top to
+> **{ts['zero']:,} of the {ts['n']:,} products in the category-tree sample — {ts['zpct']}% — have
+> no ratings at all.** They are listed, priced, and selling nothing. In the {s['cats']}-search
+> sample the same figure is {s['zpct']}%, and the gap between categories where it happens and
+> ones where it doesn't runs from **{top['rated_share']}% of listings rated** at the top to
 > **{bottom['rated_share']}%** at the bottom.
 
 Highest demand: {hi}. Lowest: {lo}.
@@ -1057,6 +1061,30 @@ def sync_license(ts, sr):
     return out
 
 
+def assert_readme_names_both_samples(s, ts):
+    """The README headline must name BOTH samples, and lead with the larger.
+
+    Until 2026-08-08 it opened "1,344 live Gumroad products across 42 categories" — the
+    *search* sample — while the GitHub repo description directly above it on the same page
+    read "8,325 products ... across 261 categories", the *taxonomy* sample. Both were true
+    about their own sample and neither said which one it was, so the top of our only
+    indexable asset read as a self-contradiction and undersold the dataset six-fold.
+
+    This is the "do not merge the samples" rule seen from the other side: keeping them
+    apart is necessary but not sufficient, because an unlabelled figure is indistinguishable
+    from a wrong one. Fails the build rather than shipping.
+    """
+    head = (ROOT / "README.md").read_text().split("\n## ")[0]
+    missing = [lab for lab, val in (("taxonomy n", f"{ts['n']:,}"),
+                                    ("taxonomy nodes", str(ts['nodes'])),
+                                    ("search n", f"{s['n']:,}"),
+                                    ("search cats", str(s['cats'])))
+               if val not in head]
+    if missing:
+        raise SystemExit("README headline does not name both samples; missing: "
+                         + ", ".join(missing))
+
+
 def assert_report_scope(s):
     """No published buy block may advertise the report as covering the SMALLER sample.
 
@@ -1153,6 +1181,7 @@ def main():
     with (ROOT / "docs" / "sample-50-rows.csv").open("w", newline="") as f:
         csv.writer(f).writerows(src[:51])
 
+    assert_readme_names_both_samples(s, ts)
     assert_report_scope(s)
 
     print(f"README + index + {len(guides)} guides + {len(s['by_category'])} category pages"
