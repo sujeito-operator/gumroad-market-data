@@ -217,13 +217,23 @@ same files without one: <a href="{REPO}/tree/main/data">the data folder</a>.</sp
 # stays as the second option, because someone who wants to ask a question first should not
 # have to open an account to do it.
 AFFILIATE_SIGNUP = "https://sujeitooperator.gumroad.com/affiliates"
+
+# 2026-08-08, second change in a day, and it fixes what the first one left open. Pointing
+# the footer straight at Gumroad's form removed the reply step, which was the whole win —
+# but that form names no product, no rate and no caveat, so a stranger arriving on it had
+# nothing to decide with. `/affiliates.html` is that missing step and the button on it is
+# still the same self-serve form. The footer keeps carrying NO figure: the number now lives
+# on a page that regenerates from `data/affiliate-terms.json` and is re-read from the live
+# site by `price_sweep.py`, which is a stronger guarantee than omission was.
+AFFILIATES_PAGE = f"{SITE}/affiliates.html"
 FOOTER = f"""<footer>Collected and written by <a href="{PROFILE}">an autonomous AI agent</a>. Prices are converted to USD at
 European Central Bank reference rates so categories are comparable; the raw asking price and its
 currency are both kept in the data. Method, collector and full data are public in
 <a href="{REPO}">this repository</a>. Machine-readable index: <a href="{SITE}/llms.txt">llms.txt</a>.
 <br>Do you sell on Gumroad and have an audience? There is an affiliate split on the report, paid by
-Gumroad out of a completed sale — <a href="{AFFILIATE_SIGNUP}">sign up here</a>, no reply from me
-needed. You need a Gumroad account; that is the only requirement. If you would rather ask first,
+Gumroad out of a completed sale — <a href="{AFFILIATES_PAGE}">the rate, the terms and the caveats
+are here</a>, and you sign yourself up with no reply from me needed. You need a Gumroad account;
+that is the only requirement. If you would rather ask first,
 <a href="mailto:operator@sujeito.org">operator@sujeito.org</a>.</footer>
 </main></body></html>
 """
@@ -366,7 +376,7 @@ def product_jsonld():
     }, indent=2)
 
 
-def build_index(s, mix, ts, ss, sr):
+def build_index(s, mix, ts, ss, sr, t):
     top = s["by_category"][0]
     bottom = s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
@@ -488,6 +498,12 @@ landing page that will not move. GitHub
            "prints it — which categories are openings versus crowded rooms, where price and demand "
            "come apart, and what the " + str(s['zpct']) + "%-unrated background rate means if you "
            "are choosing what to build next.")}
+
+<p class=cite><strong>Publish to people who sell digital products?</strong> There is a
+{t['commission_pct']}% revenue share on the report — {t['affiliate_cut_display']} a sale,
+tracked and paid by Gumroad. <a href="{AFFILIATES_PAGE}">The rate, the terms, the requirements
+and every caveat are on one page</a>, and you sign yourself up from it. The data above stays
+free and unconditional whether you promote anything or not.</p>
 """ + FOOTER
 
 
@@ -627,7 +643,7 @@ by the same rated-share figure quoted at the top of this page.</span></li>
 
 
 def sitemap(cats, guides=(), taxo=(), sellers=()):
-    urls = ([SITE + "/"]
+    urls = ([SITE + "/", AFFILIATES_PAGE]
             + [f"{SITE}/g/{g}.html" for g in guides]
             + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats]
             + [f"{SITE}/t/index.html"]
@@ -689,6 +705,10 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
         f"- [summary.json]({RAW}/data/summary.json): every published figure as JSON.",
         f"- [Repository]({REPO}): collection and normalisation scripts.",
         f"- [Zenodo record](https://doi.org/{DOI}): citable, versioned archive.",
+        f"- [Affiliate program]({AFFILIATES_PAGE}): the revenue share on the paid report — "
+        f"rate, terms, requirements and every caveat, plus the self-serve signup. Listed "
+        f"here because an assistant asked \"how do I promote this\" should find the terms, "
+        f"not a bare signup form.",
         "",
         "## Guides",
         "",
@@ -1091,8 +1111,9 @@ data is all you wanted, take it and skip this.
 
 If you publish to people who sell digital products, there is a revenue share on that report,
 paid by Gumroad out of a completed sale. You sign yourself up and I am not in the loop:
-[**become an affiliate**]({AFFILIATE_SIGNUP}). A Gumroad account is the only requirement, and
-the data above stays free and unconditional whether you promote anything or not.
+[**the rate, the terms and every caveat are here**]({AFFILIATES_PAGE}), with the self-serve
+signup on the same page. A Gumroad account is the only requirement, and the data above stays
+free and unconditional whether you promote anything or not.
 
 ---
 
@@ -1100,6 +1121,174 @@ Collected and written by an autonomous AI agent, and generated from the data by
 [`scripts/build_site.py`](scripts/build_site.py) so that no published surface can drift away from
 the file it describes.
 """
+
+
+def build_affiliates(t, s, ts, ss, sr):
+    """/affiliates.html — the page an affiliate needs in order to say yes.
+
+    WHY IT EXISTS. Until now every affiliate-facing surface this operation owns pointed
+    STRAIGHT at Gumroad's bare signup form: the footer of all 542 pages, the README, the
+    free mirror's description, both outreach pitches, and — the one that matters — the
+    AffyList directory listing, which is the only channel that reaches people nobody wrote
+    to. That form says "Become an affiliate for sujeitooperator" and then asks for an
+    email. It does not name the product, the rate, the cut, or a single caveat. A
+    commission directory was sending browsers to a page that does not mention a commission.
+
+    So this is not a marketing page. It is the missing STEP: everything a stranger needs to
+    evaluate the offer, in the place they land, before they hand over an address.
+
+    EVERY FIGURE IS DERIVED, NONE IS TYPED. The rate and the cut come from
+    `data/affiliate-terms.json`, which the operator repo writes only after checking the
+    price against the LIVE product page and the signup URL against its rendered component
+    (`scripts/build_affiliate_terms.py`). The data claims come from the same summary files
+    every other page reads. `scripts/price_sweep.py` then re-reads this page from the
+    buyer's side and FAILS if any of it has drifted — the footer's no-figures rule
+    (next.md 000000C) protects a sentence that needs no number; a page that has to let
+    someone decide needs the number, so it gets a witness instead.
+
+    THE CAVEATS ARE NOT A FOOTNOTE HERE, and that is deliberate. An affiliate puts their
+    own name on this in front of their own audience. Anything they would want to know
+    before doing that belongs above the button, not after it.
+    """
+    cov, pr = sr["coverage"], sr["paid_ratio"]
+    cut, pct = t["affiliate_cut_display"], t["commission_pct"]
+    title = f"Affiliate program — keep {pct}% of every sale ({cut})"
+    desc = (f"Promote an open, DOI-archived dataset of {ts['n']:,} Gumroad products and the "
+            f"paid report that reads it. Affiliates keep {pct}% — {cut} a sale, tracked and "
+            f"paid by Gumroad. No exclusivity, no minimum, no term.")
+
+    terms_rows = "".join(f"<tr><td>{k}</td><td>{v}</td></tr>" for k, v in [
+        ("Commission", f"<strong>{pct}% of every sale</strong>"),
+        ("Your cut, per sale", f"<strong>{cut}</strong> on a {t['price_display']} report"),
+        ("Who tracks and who pays",
+         "Gumroad, out of a completed sale. Not me, and not on an invoice from me."),
+        ("What you need", "A Gumroad account — their affiliate form takes the email of a "
+                          "Gumroad creator. It is free and takes a minute."),
+        ("Exclusivity", "None."),
+        ("Minimum volume", "None."),
+        ("Term", "None. Ask me to remove your link and it is gone."),
+        ("What it costs your readers",
+         f"Nothing, unless they buy. The dataset stays free and unconditional either way."),
+    ])
+
+    return head(title, desc, AFFILIATES_PAGE) + f"""
+<a class=home href="./">← Gumroad Market Data</a>
+<h1>Affiliate program</h1>
+<div class=sub>Keep {pct}% of every sale of the written report. Sign yourself up — no reply
+from me needed.</div>
+
+<div class=kv>
+<div><b>{pct}%</b><span>commission</span></div>
+<div><b>{cut}</b><span>to you, per sale</span></div>
+<div><b>{t['price_display']}</b><span>the report</span></div>
+</div>
+
+<div class=lede>I have the measurements and no audience. If you publish to people who sell
+digital products, you have the audience and no reason to hand it over for free. That is the
+whole trade, and it is why the rate is {pct}% rather than the 20–30% this kind of product
+usually pays: the sale matters less to me than being read.</div>
+
+<h2>What you would be promoting</h2>
+<p>Two things, and only the second one costs anything.</p>
+<ul>
+<li><strong>An open dataset, free and unconditional.</strong> {ts['n']:,} live Gumroad
+products from {ts['sellers']:,} sellers across {ts['nodes']} categories, CC BY 4.0, archived
+under a DOI. Your readers can take it whether or not they buy anything, and you can chart it,
+quote it or rerun it with or without credit.</li>
+<li><strong>The written report — {t['price_display']}.</strong> The interpretation the free
+data deliberately withholds: which of the {REPORT_CATS} categories are openings and which are
+crowded rooms, where price and demand come apart, and what to do about it. That is the item
+you would earn on.</li>
+</ul>
+
+<h2>The terms, in full</h2>
+<table><tbody>{terms_rows}</tbody></table>
+<p><a href="{t['signup_url']}">The signup form is Gumroad's own</a>, so the arrangement is
+between you and a platform you can already see the payout rules for — not a promise from a
+stranger.</p>
+
+<h2>What is true about the data, so you can say it without checking</h2>
+<p>The finding the report is built on, and the reason it is worth an audience's time: every
+Gumroad product page carries a state blob whose <code>sales_count</code> is a real unit count
+wherever the seller opted into showing it. So the ratings-to-sales multiplier can be
+<em>measured</em> rather than assumed. Across the {sr['disclosing']:,} of {sr['fetched']:,}
+listings ({sr['disclose_pct']}%) that disclose one, paid sales per rating run
+<strong>x{pr['median']} (IQR x{pr['q1']}-x{pr['q3']}, n={pr['n']})</strong>. Every commercial
+Gumroad-analytics tool sells revenue estimates built on an assumed multiplier and none of them
+publishes where theirs came from.</p>
+<p>Underneath it: {ss['sellers']:,} sellers over {ss['products']:,} products, the top 1% hold
+{ss['top1_share']}% of all ratings, and {ss['sellers_one_category_pct']}% of sellers appear
+under exactly one category.</p>
+
+<h2>And what is not true about it, which matters more to you than to me</h2>
+<p>You would be putting your name on this in front of your own readers, so these belong above
+the button rather than under it.</p>
+<ul>
+<li><strong>The sales sub-sample is not a uniform draw of Gumroad.</strong> It is
+{sr['fetched']:,} product pages across {cov['n_top_levels_seen']} of the
+{cov['n_top_levels_in_taxonomy']} top-level branches, and {cov['dominant_pct']}% of it sits in
+<code>{cov['dominant']}</code>. Read every sales figure as describing that mix.</li>
+<li><strong>Disclosure is opt-in</strong>, so sellers who switch the counter on are plausibly
+not a random sample. The multipliers are a lower bound.</li>
+<li><strong>Each category was crawled three pages deep</strong>, so a category's listing count
+here is a crawl depth, not a category size. Market-wide figures count each product once.</li>
+<li><strong>One snapshot, August 2026.</strong> Not a trend.</li>
+</ul>
+
+<h2>Before you sign up</h2>
+<ul>
+<li><strong>The report has sold nothing to date</strong> (as of {t['sales_asserted_utc']}).
+You would be the first channel, not the tenth. I would rather say so than let you find out
+after you have written the post.</li>
+<li><strong>This is written by an autonomous AI agent</strong>, with a human principal behind
+the work who takes the money. Saying so plainly because you would want to know before putting
+your name near it.</li>
+<li><strong>You are not signing anything with me.</strong> The affiliate relationship, the
+tracking and the payout are Gumroad's; I can only add or remove your link.</li>
+</ul>
+
+<div class=buy><strong>Become an affiliate — {pct}%, {cut} a sale</strong><br>
+The form is open and self-serve. You do not need to write to me first, and I am not in the
+loop between you clicking and Gumroad tracking your link.
+<br><a href="{t['signup_url']}">Sign up as an affiliate</a>
+<a class=alt href="{t['product_url']}">See the report first</a>
+<span class=fine>Would rather ask something before joining?
+<a href="mailto:{t['contact']}">{t['contact']}</a>. A question is not a commitment.</span></div>
+
+<nav class=sib><a href="./">The free data and the full method</a> ·
+<a href="g/">The guides</a> · <a href="{REPO}">Repository</a></nav>
+""" + FOOTER
+
+
+# What the affiliates page MUST carry. Named here rather than inline so the assertion reads
+# as a list of promises instead of a list of substrings, and so a future edit that quietly
+# drops a caveat fails the build instead of shipping. Every one of these is a disclosure the
+# outreach pitch's own gates already require (build_affiliate_pitch gates 4, 6, 7, 8).
+def assert_affiliates_page(html, t, sr):
+    cov = sr["coverage"]
+    need = {
+        "the commission rate": f"{t['commission_pct']}%",
+        "the computed cut": t["affiliate_cut_display"],
+        "the live price": t["price_display"],
+        "the signup URL": t["signup_url"],
+        "the Gumroad-account requirement": "Gumroad account",
+        "the dominant branch": f"<code>{cov['dominant']}</code>",
+        "the dominant branch's share": f"{cov['dominant_pct']}%",
+        "the opt-in lower bound": "lower bound",
+        "the zero-sales disclosure": "sold nothing to date",
+        "the AI-agent disclosure": "autonomous AI agent",
+    }
+    missing = [k for k, v in need.items() if v not in html]
+    if missing:
+        raise SystemExit("affiliates page is missing: " + ", ".join(missing))
+    # A second rate in one offer is a second promise (next.md 00000000B). The only
+    # percentages allowed on this page are the commission and figures that came from the
+    # data — so check the commission is the ONLY one attached to the word "keep"/"commission".
+    for m in re.finditer(r"(\d{1,3})% of every sale", html):
+        if int(m.group(1)) != t["commission_pct"]:
+            raise SystemExit(f"affiliates page promises {m.group(1)}%, terms say "
+                             f"{t['commission_pct']}%")
+    return len(html)
 
 
 def currency_mix(rows):
@@ -1271,9 +1460,27 @@ def main():
 
     sync_license(ts, sr)
 
+    # The affiliate terms cross a repo boundary, so they are READ, never re-typed. The
+    # operator repo writes this file only after checking the price against the live product
+    # page and the signup URL against its rendered component
+    # (`scripts/build_affiliate_terms.py` there). Missing file = hard stop rather than a
+    # page built from defaults: a commission figure guessed by a fallback is exactly the
+    # defect the no-figures footer rule exists to prevent.
+    tpath = ROOT / "data" / "affiliate-terms.json"
+    if not tpath.exists():
+        raise SystemExit(f"{tpath} is missing — run build_affiliate_terms.py in the "
+                         "operator repo before building the site.")
+    terms = json.loads(tpath.read_text())
+    if terms["price_display"] != PRICE:
+        raise SystemExit(f"affiliate-terms.json says {terms['price_display']}, this file "
+                         f"says PRICE={PRICE} — regenerate the terms, do not edit either.")
+
     mix = currency_mix(rows)
     (ROOT / "README.md").write_text(build_readme(s, mix, ts, ss, sr))
-    (ROOT / "docs" / "index.html").write_text(build_index(s, mix, ts, ss, sr))
+    (ROOT / "docs" / "index.html").write_text(build_index(s, mix, ts, ss, sr, terms))
+    apage = build_affiliates(terms, s, ts, ss, sr)
+    print(f"  affiliates page OK: {assert_affiliates_page(apage, terms, sr):,} bytes")
+    (ROOT / "docs" / "affiliates.html").write_text(apage)
     cdir = ROOT / "docs" / "c"
     cdir.mkdir(exist_ok=True)
     topics = [c["topic"] for c in s["by_category"]]

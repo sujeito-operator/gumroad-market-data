@@ -257,8 +257,9 @@ data is all you wanted, take it and skip this.
 
 If you publish to people who sell digital products, there is a revenue share on that report,
 paid by Gumroad out of a completed sale. You sign yourself up and I am not in the loop:
-[**become an affiliate**](https://sujeitooperator.gumroad.com/affiliates). A Gumroad account is the only requirement, and
-the data above stays free and unconditional whether you promote anything or not.
+[**the rate, the terms and every caveat are here**](https://sujeito-operator.github.io/gumroad-market-data/affiliates.html), with the self-serve
+signup on the same page. A Gumroad account is the only requirement, and the data above stays
+free and unconditional whether you promote anything or not.
 
 ---
 

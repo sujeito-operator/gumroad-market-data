@@ -16,6 +16,7 @@
 - [summary.json](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/summary.json): every published figure as JSON.
 - [Repository](https://github.com/sujeito-operator/gumroad-market-data): collection and normalisation scripts.
 - [Zenodo record](https://doi.org/10.5281/zenodo.21830103): citable, versioned archive.
+- [Affiliate program](https://sujeito-operator.github.io/gumroad-market-data/affiliates.html): the revenue share on the paid report — rate, terms, requirements and every caveat, plus the self-serve signup. Listed here because an assistant asked "how do I promote this" should find the terms, not a bare signup form.
 
 ## Guides
 
