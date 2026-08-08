@@ -14,6 +14,20 @@ assertion, not a note saying to remember.
 
 Every figure below is read from data/*.json. Nothing here is typed by hand, so the next
 time the data moves this file's output moves with it.
+
+RELEASES ARE THE FOURTH INSTANCE OF THE SAME CLASS, found 2026-08-08 ~04:5x UTC. The
+Releases tab is a published surface — GitHub renders the newest release on the repo
+sidebar and its assets are directly downloadable — and `v1.1` was still headlined
+"1,511 live Gumroad products across 42 categories" and still shipping a 1,511-row
+`gumroad-latest.csv`, with two recorded downloads, long after every generated surface had
+moved on. It survived the 2026-08-07 sweep for the usual reason: nothing generated it.
+
+A release cannot be rewritten to track the data — it is an archival artifact, and editing
+its body to match today's figures would be falsifying what was published. So the fix is
+the one Zenodo already uses for the same problem: leave the body alone and mark it
+SUPERSEDED, with a banner that contains NO FIGURES AT ALL, only pointers to the three
+surfaces that are regenerated (repo `data/`, the site, the concept DOI). A banner with no
+numbers in it cannot go stale, which is the entire design constraint.
 """
 import json
 import os
@@ -66,6 +80,42 @@ def description():
 # rewrite of description() cannot quietly drop the repo out of the queries again.
 SEARCH_WORDS = ("gumroad", "dataset", "csv", "sellers", "products")
 
+# Headlines that were true once and are not the current sample. Checked against the
+# generated description AND against every release body.
+SUPERSEDED = ("1,511", "1511", "42 categories", "1,344")
+
+# Deliberately figure-free — see the module docstring. Every pointer here is to a surface
+# that something regenerates, so this text is correct for as long as the repo exists.
+SUPERSEDE_MARK = "> **SUPERSEDED — do not use the files attached to this release.**"
+SUPERSEDE_BANNER = f"""{SUPERSEDE_MARK}
+> They are kept only so that anything already published from them stays checkable, and the
+> body below is left exactly as it was written: it was true for this release and it is not
+> true now. For the current rows, the current figures and the current file list, use the
+> three surfaces that are regenerated together — the repo's `data/` directory, the site at
+> {HOMEPAGE} , and the citable archive at https://doi.org/{CONCEPT_DOI} (a concept DOI, so
+> it always resolves to the newest version).
+
+---
+
+"""
+
+
+def stale_releases(rels):
+    """Releases whose body states a superseded headline and carries no banner yet.
+
+    Only a release that actually makes a stale claim is touched. A clean release is left
+    alone rather than banner-stamped for tidiness, because the banner is a correction and
+    a correction on something that was never wrong is noise.
+    """
+    out = []
+    for r in rels:
+        body = r.get("body") or ""
+        if SUPERSEDE_MARK in body:
+            continue
+        if any(s in body for s in SUPERSEDED):
+            out.append(r)
+    return out
+
 
 def api(path, token, method="GET", body=None):
     req = urllib.request.Request(
@@ -104,13 +154,26 @@ def main():
         sys.exit(f"FAIL: description omits search words {missing} — GitHub's default "
                  f"repo search matches description, not topics")
 
+    token = envfile.load().get("GITHUB_CLASSIC_PAT")
+    if not token:
+        sys.exit("FAIL: GITHUB_CLASSIC_PAT missing from .env")
+
+    # Releases are read in dry-run too. The whole reason this surface rotted for two days
+    # is that nothing ever looked at it, so looking must not be gated behind --write.
+    rels = api(f"repos/{REPO}/releases", token)
+    stale = stale_releases(rels)
+    print(f"\nreleases   : {len(rels)} total, {len(stale)} stating a superseded headline")
+    for r in stale:
+        hits = [s for s in SUPERSEDED if s in (r.get("body") or "")]
+        print(f"  {r['tag_name']}: {hits} -> would prepend the SUPERSEDED banner")
+
     if "--write" not in sys.argv:
         print("\n(dry run — pass --write to apply)")
         return
 
-    token = envfile.load().get("GITHUB_CLASSIC_PAT")
-    if not token:
-        sys.exit("FAIL: GITHUB_CLASSIC_PAT missing from .env")
+    for r in stale:
+        api(f"repos/{REPO}/releases/{r['id']}", token, "PATCH",
+            {"body": SUPERSEDE_BANNER + (r.get("body") or "")})
 
     api(f"repos/{REPO}", token, "PATCH", {"description": desc, "homepage": HOMEPAGE})
     api(f"repos/{REPO}/topics", token, "PUT", {"names": TOPICS})
@@ -129,6 +192,19 @@ def main():
     if sorted(live_topics) != sorted(TOPICS):
         print("MISMATCH topics:", live_topics)
         ok = False
+
+    # Re-read the releases from the API rather than trusting the PATCH responses: the
+    # banner is the correction, and a correction that only exists in a 200 we already
+    # threw away is the "the script printed done" failure this project keeps hitting.
+    live_rels = api(f"repos/{REPO}/releases", token)
+    left = stale_releases(live_rels)
+    if left:
+        print("MISMATCH releases still unbannered:", [r["tag_name"] for r in left])
+        ok = False
+    for r in live_rels:
+        if SUPERSEDE_MARK in (r.get("body") or ""):
+            print(f"VERIFIED release {r['tag_name']}: SUPERSEDED banner live")
+
     if not ok:
         sys.exit("FAIL: live repo does not match what was sent")
     print("\nVERIFIED live:", live["description"])

@@ -221,6 +221,13 @@ def main():
     ap.add_argument("--delay", type=float, default=2.5)
     ap.add_argument("--no-retry-failed", action="store_true",
                     help="never re-attempt a URL that previously failed")
+    # A 429 does not announce itself: gumroad.com serves an error page with no `#app`,
+    # so every fetch after the throttle lands looks exactly like the ~1-in-5 pages that
+    # legitimately miss the blob. Two runs burned the rest of their --limit against a
+    # wall that way. At a 20% base miss rate, 8 misses in a row is a 1-in-400,000 event,
+    # so a streak that long is the throttle and not the data.
+    ap.add_argument("--max-consecutive-fail", type=int, default=8,
+                    help="abort the run after this many failures in a row (0 = never)")
     a = ap.parse_args()
 
     todo = product_urls(a.src)
@@ -237,7 +244,8 @@ def main():
     print("  this run: " + ", ".join(f"{b}={n}" for b, n in
                                      sorted(plan.items(), key=lambda kv: -kv[1])), flush=True)
 
-    n_sales = n_ok = 0
+    n_sales = n_ok = streak = 0
+    aborted = None
     with sync_playwright() as p:
         br = p.chromium.launch(headless=True)
         ctx = br.new_context(user_agent=UA)
@@ -253,15 +261,25 @@ def main():
                 fh.flush()          # a killed run must leave usable output
                 if rec.get("ok"):
                     n_ok += 1
+                    streak = 0
                     if rec.get("sales_count") is not None:
                         n_sales += 1
+                else:
+                    streak += 1
                 if i % 10 == 0 or i == len(todo):
                     print(f"[{i}/{len(todo)}] ok={n_ok} with_sales={n_sales} "
                           f"({100*n_sales/max(1,n_ok):.1f}% of ok)", flush=True)
+                if a.max_consecutive_fail and streak >= a.max_consecutive_fail:
+                    aborted = (f"{streak} consecutive failures at [{i}/{len(todo)}] — "
+                               f"treating this as the gumroad.com request budget, not the data. "
+                               f"Last error: {rec.get('err')!r}")
+                    print("ABORT: " + aborted, flush=True)
+                    break
                 time.sleep(a.delay)
         br.close()
     print(f"DONE ok={n_ok} with_sales={n_sales}")
-    return 0
+    # Non-zero so a wrapper or a later session cannot read a throttled run as a full one.
+    return 4 if aborted else 0
 
 
 if __name__ == "__main__":
