@@ -38,13 +38,13 @@ small.cap{color:#8a3a3a;font-family:Helvetica,sans-serif;font-size:6.5pt;letter-
   line-height:1.5}
 </style>
 <h1>What actually sells on Gumroad</h1>
-<div class=sub>Second edition &middot; 8,325 live products and 4,545 sellers
+<div class=sub>Second edition &middot; 8,322 live products and 4,543 sellers
 measured across 261 of Gumroad&rsquo;s own categories &middot; August 2026 &middot;
 prices in USD</div>
 
 <div class=lede><strong>Demand is not the scarce thing. Available demand is.</strong>
-43% of the 8,325 products in this sample have never received a single rating,
-and the top 1% of products hold 51.8% of all the ratings in it. But the
+43% of the 8,322 products in this sample have never received a single rating,
+and the top 1% of products hold 51.9% of all the ratings in it. But the
 categories where demand looks worst are not the ones to avoid, and the busiest ones are
 frequently the least available &mdash; their demand is already committed to an incumbent top
 three. This report separates <em>demand exists</em> from <em>demand is winnable</em> and
@@ -54,7 +54,7 @@ classifies every one of Gumroad&rsquo;s 261 measured categories on both.</div>
 <p class=note>The first edition measured 1,344 products across 42 <em>search
 queries</em> and said so as a limit: &ldquo;category boundaries are search queries, not
 Gumroad&rsquo;s own taxonomy&rdquo;. This edition walks the taxonomy itself &mdash;
-261 real category nodes, 8,325 distinct products, 4,545 distinct
+261 real category nodes, 8,322 distinct products, 4,543 distinct
 sellers &mdash; and adds two things the first edition did not have: the seller axis
 (section&nbsp;6) and figures in dollars from listings that publish a real unit-sales count
 (section&nbsp;7). One finding from the first edition is <strong>revised</strong> in
@@ -76,8 +76,8 @@ https://sujeito-operator.github.io/gumroad-market-data/<br>The full report: http
 walk of that tree taken on 5 August 2026: 359 nodes visited,
 261 returning listings and 98 empty, capturing asking price, the
 currency it was displayed in, whether it billed recurring, the seller, and the rating count.
-That produced 15,077 listing observations covering <strong>8,325 distinct
-products</strong> from <strong>4,545 distinct sellers</strong>. The data is free
+That produced 9,878 listing observations covering <strong>8,322 distinct
+products</strong> from <strong>4,543 distinct sellers</strong>. The data is free
 and published in full, with the collector that produced it, so nothing below has to be taken
 on trust &mdash; it can be recomputed.</p>
 <p><strong>Rating count is a proxy for units sold, not a sales figure.</strong> Only some
@@ -87,7 +87,7 @@ platform, which is the only place in this report where a figure in dollars appea
 it carries its own scope limit.</p>
 <p class=warn><strong>The single most important limit: a category&rsquo;s listing count here is
 a crawl depth, not a category size.</strong> The collector takes three pages per node, a
-ceiling of 71 listings, and <strong>166 of the 261
+ceiling of 44 listings, and <strong>191 of the 261
 nodes hit it</strong>. For those nodes this is a measurement of the <em>visible top</em> of the
 category, not of its population &mdash; and the visible top is where the rated listings are.
 Every capped row in the table in section&nbsp;5 is marked <small class=cap>&#9633;</small>, and
@@ -101,25 +101,25 @@ a median straight from Gumroad&rsquo;s displayed prices is averaging across unit
 low.</p>
 
 <h2>2. The background rate you are competing against</h2>
-<p>3,562 of 8,325 products &mdash; 43% &mdash; have no ratings at all.
+<p>3,562 of 8,322 products &mdash; 43% &mdash; have no ratings at all.
 They are live, priced, and showing no evidence of ever having sold. Read it as a base rate:
 before any question of quality, price or category, that is the share of listings on this
 platform with nothing to show.</p>
-<p>The other side of the same distribution is harsher. Of 205,250 ratings in
-the sample, the top 1% of products hold <strong>51.8%</strong>, the top 5% hold
-78.7% and the top 10% hold 88.0%. The median product that has
+<p>The other side of the same distribution is harsher. Of 204,971 ratings in
+the sample, the top 1% of products hold <strong>51.9%</strong>, the top 5% hold
+78.8% and the top 10% hold 88.0%. The median product that has
 <em>any</em> rating has 5. The single most-rated product in the sample
 has 10,800.</p>
 <p>Neither number is a reason not to launch. Both are a reason to be exact about where.</p>
 
 <h2>10. Method and limits, in full</h2>
 <p>Gumroad&rsquo;s category tree was walked with a headless browser on 5 August 2026:
-359 nodes requested, three pages deep each, a ceiling of 71
+359 nodes requested, three pages deep each, a ceiling of 44
 listings per node. 261 nodes returned listings and 98 were empty.
 Each listing observation carries asking price, displayed currency, subscription flag, seller
-handle, rating count and title, giving 15,077 observations. A product can appear under
-several nodes; 6,752 observations are a repeat sighting, so the observations cover
-8,325 distinct products keyed on product URL. <strong>Per-category figures count a
+handle, rating count and title, giving 9,878 observations. A product can appear under
+several nodes; 1,556 observations are a repeat sighting, so the observations cover
+8,322 distinct products keyed on product URL. <strong>Per-category figures count a
 product in each category it genuinely appears under; every market-wide figure counts it
 once</strong>, because counting the products that appear in several categories more than once
 tilts every aggregate toward the listings that are already winning. Prices are converted to USD
@@ -128,7 +128,7 @@ listings with at least one rating. Top-three share is the sum of the three large
 counts in a category over the sum of all of them. Section&nbsp;7 comes from a separate
 per-product crawl that re-fetches individual product pages for the unit-sales count.</p>
 <p><strong>Limits, stated plainly.</strong> One snapshot, not a trend. A category&rsquo;s
-listing count is a crawl depth, not a category size &mdash; 166 of
+listing count is a crawl depth, not a category size &mdash; 191 of
 261 nodes hit the ceiling and are marked in section&nbsp;8, and
 15 more are too small to carry a verdict at all. Rating counts are a proxy
 with a category-dependent ratio to units; section&nbsp;7 measures that ratio for one branch
