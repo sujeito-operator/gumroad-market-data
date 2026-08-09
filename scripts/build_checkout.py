@@ -35,6 +35,11 @@ import build_site as B
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 AUDIT = ROOT / "data" / "checkout-audit.json"
 SAMPLE = ROOT / "data" / "checkout-sample.json"
+# Written by `build_checkout_pitch.py --emit-decomposition` in the operator repo, which
+# owns the ONLY implementation of the split. The press pitch that links this page quotes
+# these same figures; recomputing them here with second code is how a page and the letter
+# pointing at it come to disagree by a rounding.
+DECOMP = ROOT / "data" / "checkout-decomposition.json"
 PAGE = f"{B.SITE}/checkout.html"
 
 # Our own store, so "it happens to us too" is a row in the table rather than a claim in a
@@ -156,6 +161,34 @@ def build(t):
     tax_labels = sorted({(r.get("checkout") or {}).get("tax_label")
                          for _, r in read if (r.get("checkout") or {}).get("tax_label")})
 
+    # WHERE THE DIFFERENCE ACTUALLY COMES FROM. The obvious reading of the headline figure
+    # is "that is just VAT", and it is wrong: a statutory rate applied to the ADVERTISED
+    # price would land on the rate. The itemised tax over the itemised SUBTOTAL does land
+    # on it — because the subtotal is not the price the page showed. Publishing the
+    # headline without the split invites a reader to a conclusion the records refute.
+    split = ""
+    if DECOMP.exists():
+        dc = json.loads(DECOMP.read_text())
+        v, dr = dc["vat"], dc["drift"]
+        split = f"""
+<h2>Where the difference comes from, and it is not one thing</h2>
+<p>The headline figure looks like a tax rate and is not one. The pay step itemises a
+<em>subtotal</em> as well as a tax, and the subtotal is not the price the page advertised.
+Two effects stack:</p>
+<ul>
+<li><strong>Tax on the subtotal: median {v['median']}%, range {v['min']}%&ndash;{v['max']}%
+across {v['n']} readings.</strong> Tight enough to read as a single statutory rate.</li>
+<li><strong>A drift between the advertised price and the amount actually taxed: median
+{dr['median']}%, range {dr['min']}%&ndash;{dr['max']}% across {dr['n']} readings.</strong>
+The displayed price is converted for the visitor and the charged one is rounded separately,
+so the number being taxed is not the number that was quoted.</li>
+</ul>
+<p class=fine>Both figures use only readings where the page and the pay step quoted the same
+currency &mdash; across a currency change the difference is an exchange rate, not a drift.
+Excluded from both: {B.esc(dc.get("excluded", ""))}. Neither component is hidden and neither
+is large alone; the compounded number is the one a buyer meets.</p>
+"""
+
     return B.head(title, desc, PAGE) + f"""
 <h1>{B.esc(title)}</h1>
 <p class=lede>Every product page below was loaded logged out from London, then its own
@@ -184,6 +217,7 @@ is not a measurement.</p>
 <table><thead><tr><th>Store</th><th colspan=4>Why the walk produced no comparable pair</th></tr>
 </thead><tbody>{unread_rows}</tbody></table>
 
+{split}
 <h2>Method, in full</h2>
 <ul>
 <li><strong>{len(recs)} stores walked, {len(read)} read, {len(unread)} not read.</strong>
@@ -239,6 +273,14 @@ def assert_page(html, recs):
         problems.append("the attribution to Gumroad is missing from the page")
     if "not an accusation" not in html:
         problems.append("the no-fault sentence is missing")
+    # The split is the paragraph a later edit shortens first, because it is the only one
+    # that complicates the headline. If the data file is there, the page must carry it.
+    if DECOMP.exists():
+        dc = json.loads(DECOMP.read_text())
+        for figure in (f"{dc['vat']['median']}%", f"{dc['drift']['median']}%"):
+            if figure not in html:
+                problems.append(f"the decomposition figure {figure} is missing — the page "
+                                "would imply the headline gap is a statutory rate")
     for r in recs:
         if store_of(r["url"]) not in html:
             problems.append(f"store {store_of(r['url'])} was walked but is not on the page")

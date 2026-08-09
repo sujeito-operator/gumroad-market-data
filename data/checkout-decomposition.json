@@ -1,0 +1,15 @@
+{
+ "vat": {
+  "median": 20.0,
+  "min": 18.7,
+  "max": 20.9,
+  "n": 28
+ },
+ "drift": {
+  "median": 0.9,
+  "min": -3.6,
+  "max": 7.7,
+  "n": 29
+ },
+ "excluded": "the one store published as our own misread \u2014 its page price was read wrong here, so its page-to-subtotal difference is our error and not a drift"
+}
