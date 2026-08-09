@@ -142,8 +142,9 @@ calculator, all generated from the CSVs below.</span></li>
 <li><a href="https://doi.org/{build_site.DOI}"><b>Cite it &mdash; DOI {build_site.DOI}</b></a>
 <span>Archived on Zenodo. This is the concept DOI: it always resolves to the current
 version, so a citation made today does not go stale.</span></li>
-<li><a href="{build_site.FREE_MIRROR}"><b>All four CSVs as a single free download</b></a>
-<span>Mirrored on Gumroad at $0 with a $0 minimum. Typing zero is expected.</span></li>
+<li><a href="{build_site.FREE_GET}"><b>All four CSVs as a single free download</b></a>
+<span>Mirrored on Gumroad at $0. The link is the checkout itself: an email address and
+nothing else, total $0.</span></li>
 </ul>
 
 {carry_vsx_block()}

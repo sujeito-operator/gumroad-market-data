@@ -145,8 +145,8 @@ numbers stay citable after the site changes.
 
 - **[Browse the derived pages]({build_site.SITE}/)** — category, seller and guide pages built
   from the CSVs, with the working shown.
-- **[Download the CSVs]({build_site.FREE_MIRROR})** — four tables, $0, pay what you want
-  (including nothing). Gumroad asks for an email at checkout.
+- **[Download the CSVs]({build_site.FREE_GET})** — four tables, $0. The link is the checkout
+  itself: an email address and nothing else, total $0.
 - **[Raw data and build scripts]({build_site.REPO})** — the same CSVs straight from the repo
   with no checkout at all, and every figure on every page reproducible from them.
 

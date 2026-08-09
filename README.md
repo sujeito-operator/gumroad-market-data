@@ -226,8 +226,8 @@ which is the point: check the work rather than trust it.
 No email wall, no account, no "request access". Use it for anything, with or without credit.
 
 **Prefer a one-click download?** The same CSV is mirrored as a free Gumroad product:
-[**Gumroad Market Data 2026 — free CSV**](https://sujeitooperator.gumroad.com/l/gumroad-market-data). $0 with a $0 minimum; the suggested
-amount is optional and typing zero is the expected case.
+[**Gumroad Market Data 2026 — free CSV**](https://gumroad.com/checkout?product=docef&quantity=1). That link is the checkout itself, so it
+asks for an email address and nothing else — no price to name, total $0.
 
 **Citing this?** `main` moves as the data is corrected, so cite the archive, not this repo. Use
 the **concept DOI** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103), which always resolves to the newest version;

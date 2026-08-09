@@ -112,6 +112,25 @@ BUY = "https://sujeitooperator.gumroad.com/l/bylafq"
 # lead magnet: gumroad.com already ranks where this site does not, so it is a download
 # location that search engines will actually find. Keep it $0 with a $0 minimum.
 FREE_MIRROR = "https://sujeitooperator.gumroad.com/l/gumroad-market-data"
+# WHERE A HUMAN IS SENT TO ACTUALLY GET IT, AND WHY IT IS NOT THE LINE ABOVE.
+# On 2026-08-09 the product page was rendered as a stranger on a phone for the first
+# time. The buy control is `Name a fair price: £ [ 2.23+ ]` over an EMPTY REQUIRED box —
+# `2.23+` is a placeholder, not a value — and tapping "I want this!" does not go to a
+# checkout. It answers `You must input an amount` as a banner at the TOP of the page,
+# several screens from the button on a 390px viewport. Gumroad will not let this be
+# turned off either: the editor disables the checkbox and says "Free products require a
+# pay what they want price." So the box is permanent for as long as the mirror is free,
+# and the mirror stays free.
+#
+# The checkout URL skips it entirely: US$0, one email field, a `Get` button — and it
+# renders the paid report underneath as "customers who bought this item also bought".
+# So every link a PERSON clicks points here, and FREE_MIRROR is kept for the places that
+# mean "the product's page" rather than "get the file": structured data and citations.
+#
+# The account says why this matters rather than a theory: 0 customer records across ~21
+# lifetime views of the free product (`gumroad_customers.py` in the operator repo,
+# cross-checked against the presenter's own count and the rendered empty state).
+FREE_GET = "https://gumroad.com/checkout?product=docef&quantity=1"
 
 # The free SAMPLE of the paid report: three of its ten sections, sliced unedited out of the
 # report itself by `scripts/build_report_sample.py` in the operator repo, which refuses to
@@ -223,7 +242,7 @@ def buy_block(scope):
 repository. If the data is all you wanted, take it and skip this.
 <br><a href="{BUY}">Read the report — {PRICE}</a>
 <a class=alt href="{SAMPLE_PAGE}">Read three sections free first</a>
-<a class=alt href="{FREE_MIRROR}">Or take all four CSVs free</a>
+<a class=alt href="{FREE_GET}">Or take all four CSVs free</a>
 <br><span class=fine>The sample is the method sections lifted unedited out of the report — what was
 measured, the background rate, and the limits in full. Every section that says what to do is in the
 paid one. The free mirror is $0 with a $0 minimum and asks for an email at checkout. The
@@ -558,8 +577,8 @@ page is reproducible from those files, which is the point: check the work rather
 wall, no account, no "request access". Prefer a quick look first?
 <a href="sample-50-rows.csv">Download a 50-row sample</a>.</p>
 <p><strong>Also mirrored on Gumroad</strong> for anyone who would rather click one button than
-clone a repo: <a href="{FREE_MIRROR}">the same CSV, free</a>. It is $0 with a $0 minimum — the
-suggested amount is optional and typing zero is the expected case.</p>
+clone a repo: <a href="{FREE_GET}">the same CSV, free</a>. That link is the checkout itself, so it
+asks for an email address and nothing else — no price to name, total $0.</p>
 <p><strong>Citing a fixed version?</strong> <code>main</code> moves as the data is corrected, so cite the
 versioned DOI <a href="https://doi.org/{ZENODO_VERSION_DOI}">{ZENODO_VERSION_DOI}</a> — version
 {ZENODO_VERSION} of the archive, the exact bytes every figure on this page was computed from, at a
@@ -964,7 +983,7 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
         "",
         f"- [What Actually Sells on Gumroad]({BUY}): paid report, {PRICE}. The analysis, "
         f"not the data — the data above is free and complete.",
-        f"- [Free CSV mirror on Gumroad]({FREE_MIRROR}): the same file, $0.",
+        f"- [Free CSV mirror on Gumroad]({FREE_GET}): the same file, $0.",
         "",
     ]
     return "\n".join(lines)
@@ -1173,8 +1192,8 @@ which is the point: check the work rather than trust it.
 No email wall, no account, no "request access". Use it for anything, with or without credit.
 
 **Prefer a one-click download?** The same CSV is mirrored as a free Gumroad product:
-[**Gumroad Market Data 2026 — free CSV**]({FREE_MIRROR}). $0 with a $0 minimum; the suggested
-amount is optional and typing zero is the expected case.
+[**Gumroad Market Data 2026 — free CSV**]({FREE_GET}). That link is the checkout itself, so it
+asks for an email address and nothing else — no price to name, total $0.
 
 **Citing this?** `main` moves as the data is corrected, so cite the archive, not this repo. Use
 the **concept DOI** [{DOI}](https://doi.org/{DOI}), which always resolves to the newest version;

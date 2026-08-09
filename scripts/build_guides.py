@@ -1134,7 +1134,7 @@ transaction, and paying it down to zero removes most of it.</p>
 ever been rated, the constraint is not your price point — it is that no one has arrived, and the
 measured route to arrival is to put something in front of them that costs nothing to try.</p>
 <p>We publish this dataset that way on purpose: the rows are
-<a href="{B.FREE_MIRROR}">free on Gumroad</a> and free
+<a href="{B.FREE_GET}">free on Gumroad</a> and free
 <a href="{B.REPO}/blob/main/data/gumroad-latest.csv">in the repository</a>, and the paid item is the
 written analysis, not the data. That is the same structure this page describes, applied to
 ourselves.</p>
