@@ -337,5 +337,82 @@ def main():
           f"top 10% of sellers hold {s['seller_top10_share']}% of ratings")
 
 
+def selftest():
+    """Synthetic records only — no files, no network. `python3 normalize_taxonomy.py -t`.
+
+    The removal rule is the most load-bearing code in this file: it deletes a third of the
+    published dataset, and everything downstream of it (both Gumroad pages, the paid report,
+    every one-pager) inherits whatever it decides. It shipped without a test on 2026-08-09.
+
+    The cases that matter are the ones where being slightly wrong is invisible in the
+    aggregate: a block product that IS a genuine member of one node, a module that is not
+    at the end, and a threshold that could quietly swallow honest cross-listing.
+    """
+    ok = fail = 0
+
+    def chk(name, got, want):
+        nonlocal ok, fail
+        if got == want:
+            ok += 1
+        else:
+            fail += 1
+            print(f"  FAIL {name}: got {got!r} want {want!r}")
+
+    def rec(node, urls):
+        return {"node": node, "slug": node.lower(), "rows": [{"url": u} for u in urls]}
+
+    # Ten nodes; M1/M2 are the module and appear in all ten, so at 33% they are the block.
+    mod = ["M1", "M2"]
+    recs = [rec(f"n{i}", [f"p{i}a", f"p{i}b"] + mod) for i in range(10)]
+    bad = block_urls(recs)
+    chk("the module is named", sorted(bad), ["M1", "M2"])
+    chk("a product in one node of ten is not", "p0a" in bad, False)
+
+    # THE THRESHOLD IS A SHARE, so the same block in a crawl of a different size is still
+    # caught — this is why it is not a count.
+    big = [rec(f"n{i}", [f"p{i}"] + mod) for i in range(300)]
+    chk("the share survives a 300-node crawl", sorted(block_urls(big)), ["M1", "M2"])
+
+    # HONEST CROSS-LISTING MUST SURVIVE. The 99th percentile of real products is 4 nodes.
+    cross = [rec(f"n{i}", ([f"p{i}", "X"] if i < 3 else [f"p{i}"])) for i in range(10)]
+    chk("a product genuinely in 3 of 10 nodes is kept", block_urls(cross), set())
+
+    # THE ARYIA CASE, and the reason removal is narrower than detection: a block product
+    # that also sits in the GRID keeps its grid row and loses only the module copy.
+    rows = [{"url": u} for u in ["a", "M1", "b", "M1", "M2"]]
+    kept, n = strip_block_tail(rows, {"M1", "M2"})
+    chk("only the trailing run is removed", [r["url"] for r in kept], ["a", "M1", "b"])
+    chk("and it reports how many it took", n, 2)
+
+    # A module that is not at the end is NOT removed. The rule is deliberately timid: if
+    # the order stops looking like an appended widget, it stops trusting itself.
+    kept, n = strip_block_tail([{"url": u} for u in ["M1", "M2", "a"]], {"M1", "M2"})
+    chk("a block that is not a tail is left alone", n, 0)
+    chk("and nothing is dropped from it", len(kept), 3)
+
+    chk("an all-module node empties completely",
+        strip_block_tail([{"url": "M1"}], {"M1"})[1], 1)
+    chk("an empty node is safe", strip_block_tail([], {"M1"}), ([], 0))
+    chk("no block, no removal",
+        strip_block_tail([{"url": "a"}, {"url": "b"}], set())[1], 0)
+
+    # AND THE ORDER OF THE TWO OPERATIONS, which is the subtle one. Dedup-then-strip finds
+    # a SHORTER tail than strip-then-dedup whenever a block product is also in the grid,
+    # which is exactly how the 2026-08-09 measurement read 169 clean tails instead of 194.
+    raw = [{"url": u} for u in ["a", "M1", "b", "M1", "M2"]]
+    seen, deduped = set(), []
+    for r in raw:
+        if r["url"] not in seen:
+            seen.add(r["url"])
+            deduped.append(r)
+    chk("dedup first loses the signal", strip_block_tail(deduped, {"M1", "M2"})[1], 1)
+    chk("strip first keeps it", strip_block_tail(raw, {"M1", "M2"})[1], 2)
+
+    print(f"selftest: {ok} ok, {fail} failed")
+    return 1 if fail else 0
+
+
 if __name__ == "__main__":
+    if "--selftest" in sys.argv or "-t" in sys.argv:
+        sys.exit(selftest())
     main()
