@@ -17,6 +17,7 @@
 - [Repository](https://github.com/sujeito-operator/gumroad-market-data): collection and normalisation scripts.
 - [Zenodo record](https://doi.org/10.5281/zenodo.21830103): citable, versioned archive.
 - [Affiliate program](https://sujeito-operator.github.io/gumroad-market-data/affiliates.html): the revenue share on the paid report — rate, terms, requirements and every caveat, plus the self-serve signup. Listed here because an assistant asked "how do I promote this" should find the terms, not a bare signup form.
+- [What a UK buyer is actually charged](https://sujeito-operator.github.io/gumroad-market-data/checkout.html): a seeded random sample of Gumroad stores walked logged out from London — product page, then the page's own checkout — with what the pay step totalled beside what the page advertised. Gumroad's VAT as merchant of record, applied to every seller including this one. The raw readings are in data/checkout-audit.json.
 
 ## Guides
 

@@ -267,6 +267,15 @@ AFFILIATES_PAGE = f"{SITE}/affiliates.html"
 # between an ask and a delivery.
 KIT_PAGE = f"{SITE}/kit.html"
 
+# 2026-08-09. The first page on this site whose subject is not the dataset. Every other
+# surface here answers "what sells on Gumroad" from a CSV; this one answers "what does a
+# UK buyer actually get charged" from 33 live checkouts, walked logged out. It exists
+# because it is the only thing this operation has measured that a Gumroad seller cannot
+# look up in their own account — and because it names Gumroad's merchant-of-record VAT as
+# the cause, including on our own product, rather than dressing a platform-wide fact up as
+# somebody's mistake. Built by `build_checkout.py` from `data/checkout-audit.json`.
+CHECKOUT_PAGE = f"{SITE}/checkout.html"
+
 
 def load_terms():
     """Read data/affiliate-terms.json, or refuse.
@@ -566,6 +575,13 @@ landing page that will not move. GitHub
            "come apart, and what the " + str(s['zpct']) + "%-unrated background rate means if you "
            "are choosing what to build next.")}
 
+<p class=cite><strong>Sell on Gumroad? Your UK and EU buyers are not charged what your page
+says.</strong> <a href="{CHECKOUT_PAGE}">We walked a seeded random sample of Gumroad stores from
+London</a> — product page, then the page's own checkout — and read what the pay step actually
+totals. It is Gumroad's VAT as merchant of record, it applies to us too, and it is invisible from
+inside a seller's account. No figure is quoted in this sentence on purpose: the page carries them,
+and it is rebuilt from the raw readings.</p>
+
 <p class=cite><strong>Publish to people who sell digital products?</strong> There is a
 {t['commission_pct']}% revenue share on the report — {t['affiliate_cut_display']} a sale,
 tracked and paid by Gumroad. <a href="{AFFILIATES_PAGE}">The rate, the terms, the requirements
@@ -715,7 +731,7 @@ def sitemap(cats, guides=(), taxo=(), sellers=()):
     # engine can rank for the questions the report answers. The PDF is deliberately NOT
     # listed — it is the same words, and a sitemap that offers a crawler two URLs for one
     # document invites it to pick the one that cannot carry a link back.
-    urls = ([SITE + "/", AFFILIATES_PAGE, KIT_PAGE, SAMPLE_PAGE]
+    urls = ([SITE + "/", AFFILIATES_PAGE, KIT_PAGE, SAMPLE_PAGE, CHECKOUT_PAGE]
             + [f"{SITE}/g/{g}.html" for g in guides]
             + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats]
             + [f"{SITE}/t/index.html"]
@@ -781,6 +797,11 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
         f"rate, terms, requirements and every caveat, plus the self-serve signup. Listed "
         f"here because an assistant asked \"how do I promote this\" should find the terms, "
         f"not a bare signup form.",
+        f"- [What a UK buyer is actually charged]({CHECKOUT_PAGE}): a seeded random sample "
+        f"of Gumroad stores walked logged out from London — product page, then the page's "
+        f"own checkout — with what the pay step totalled beside what the page advertised. "
+        f"Gumroad's VAT as merchant of record, applied to every seller including this one. "
+        f"The raw readings are in data/checkout-audit.json.",
         "",
         "## Guides",
         "",
@@ -2043,6 +2064,11 @@ def main():
     apage = build_affiliates(terms, s, ts, ss, sr)
     print(f"  affiliates page OK: {assert_affiliates_page(apage, terms, sr):,} bytes")
     (ROOT / "docs" / "affiliates.html").write_text(apage)
+    import build_checkout
+    cpage = build_checkout.build(terms)
+    crecs = json.loads((ROOT / "data" / "checkout-audit.json").read_text())
+    print(f"  checkout page OK: {build_checkout.assert_page(cpage, crecs):,} bytes")
+    (ROOT / "docs" / "checkout.html").write_text(cpage)
     kpage = build_kit(terms, s, ts, ss, sr)
     kdrafts = [(n, b) for n, _l, _note, b in kit_drafts(s, ts, ss, sr, terms)]
     print(f"  publisher kit OK: {assert_kit_page(kpage, terms, sr, kdrafts):,} bytes")
