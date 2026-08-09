@@ -11,7 +11,7 @@
 
 ## Data
 
-- [Citable archive, version 2.7](https://doi.org/10.5281/zenodo.21848047): the exact bytes every figure here was computed from. `main` moves; this DOI does not.
+- [Citable archive, version 2.8](https://doi.org/10.5281/zenodo.21865447): the exact bytes every figure here was computed from. `main` moves; this DOI does not.
 - [50-row sample](https://sujeito-operator.github.io/gumroad-market-data/sample-50-rows.csv): the column shape, no download.
 - [summary.json](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/summary.json): every published figure as JSON.
 - [Repository](https://github.com/sujeito-operator/gumroad-market-data): collection and normalisation scripts.

@@ -231,7 +231,7 @@ asks for an email address and nothing else — no price to name, total $0.
 
 **Citing this?** `main` moves as the data is corrected, so cite the archive, not this repo. Use
 the **concept DOI** [10.5281/zenodo.21830103](https://doi.org/10.5281/zenodo.21830103), which always resolves to the newest version;
-its record page shows the versioned DOI for the exact bytes, currently version 2.7.
+its record page shows the versioned DOI for the exact bytes, currently version 2.8.
 This file is itself archived in that deposit, which is why it names the concept DOI and not a
 version — a README pinned to one version DOI is wrong the moment it is archived under the next.
 GitHub [release v1.1](https://github.com/sujeito-operator/gumroad-market-data/releases/tag/v1.1) is an older snapshot kept for provenance; it is **not**
