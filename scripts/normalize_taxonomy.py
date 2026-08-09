@@ -20,13 +20,53 @@ the 8,325 figure here is an exact count, not an estimate.
 WHAT A ROW IS, AND THE CAP THAT GOVERNS EVERY PER-NODE FIGURE
 --------------------------------------------------------------
 A row is a **listing observation**: one product under one taxonomy node. A product that
-Gumroad files under three nodes produces three rows, which is data rather than noise —
+Gumroad *files* under three nodes produces three rows, which is data rather than noise —
 being classified broadly is itself a property of a product. Every market-wide figure
 therefore counts DISTINCT URLS; only per-node figures count observations.
 
+**THAT SENTENCE USED TO STOP AT "files under three nodes", AND IT IS WHY 5,238 BAD ROWS
+GOT PUBLISHED.** It is true of a product Gumroad *files* under three nodes and false of a
+product a recommendations widget *printed* under 194, and this file had no way to tell
+those apart because it never looked at row ORDER. It does now — see the next section. Any
+future reader tempted to treat "appears under many nodes" as a property of the product
+should read `data/taxonomy-correction-2026-08-09.md` first.
+
+THE RECOMMENDATIONS STRIP, AND THE ORDER THAT PROVES IT
+-------------------------------------------------------
+`collect_taxonomy.parse_cards()` takes every product card in the DOM after `load_more()`,
+and the "you might also like" module *below* the grid is made of product cards. It is the
+same module on every page, so the same 27 products were recorded as members of 194 of the
+261 non-empty nodes: 5,238 observations, **34.7% of the raw file**, including a Notion
+productivity template filed under `3D > 3D Assets > Accessories > Jewelry`.
+
+`block_urls()` names them — a product observed in >= `BLOCK_SHARE` of the crawled nodes is
+furniture, not a member. It is a *share* and not a count so it survives a crawl of a
+different size, and it sits far above honest cross-listing: the 99th percentile of real
+products is 4 nodes and the block sits at 194.
+
+`strip_block_tail()` is what actually removes them, and it is deliberately narrower than
+the detector. It drops only the **contiguous run of block products at the END of a node's
+raw row list**, because that is the module's position in the DOM, and the evidence that
+this is the right cut is that the per-node tail length has no middle: **165 nodes carry 0
+and 194 carry exactly 27.** Nothing in between, in any node.
+
+The narrowness matters and it is not cosmetic. `mimiiu/l/ARYIA` is a VRChat avatar; in
+node `3D`'s raw rows it sits at index 3 *and* again at index 54. Index 3 is the grid —
+a real membership — and index 54 is the strip. Dropping the URL wholesale would have
+deleted a true row; dropping the tail keeps it. **24 of the 27 keep at least one genuine
+observation this way.** The other 3 were never seen outside the strip, so the crawl has no
+evidence of what category they are in and they leave the file rather than be guessed at.
+
+STRIPPING HAPPENS BEFORE THE WITHIN-NODE DEDUP, WHICH IS THE ONLY ORDER THAT WORKS.
+The dedup keeps the first observation, so on the deduped list `ARYIA`'s strip copy is
+already gone and node `3D`'s tail reads 26 long instead of 27 — the tail stops being a
+clean signal. On raw rows every affected node reads exactly 27.
+
 **The per-node sample is capped by the crawl, not by the category.** The collector took
 up to three pages per node and 192 of the 261 non-empty nodes came back at exactly 71
-listings, which is the cap. So a node's figures describe *the listings Gumroad ranks
+cards. **27 of those 71 were the recommendations module, so the real cap is 44 listings a
+node and 191 of the 261 nodes sit on it** — the published `cap`/`nodes_at_cap` read 71/166
+before the correction and 44/191 after. So a node's figures describe *the listings Gumroad ranks
 first in that category*, not its full population. That is a real limitation and it is
 stated on every generated page: it makes nodes comparable to each other and it does not
 support any claim about category size. Never publish a per-node count as "how many
@@ -71,6 +111,41 @@ OUT_SUMMARY = ROOT / "data" / "taxonomy-summary.json"
 FIELDS = ["node", "slug", "url", "seller", "cur", "price", "price_usd",
           "nrat", "n", "stars", "recurring", "t"]
 
+# A product on more than a third of every category in the tree is not cross-listed, it is
+# furniture. Kept identical to scripts/taxonomy_contamination.py's SHARE in the operator
+# repo, which is the detector that has to agree with this file.
+BLOCK_SHARE = 0.33
+
+
+def block_urls(records, share=BLOCK_SHARE):
+    """-> the set of product URLs observed in >= `share` of the crawled non-empty nodes.
+
+    Counted on DISTINCT nodes, so a product listed twice inside one node still counts once
+    toward its own node total and cannot inflate itself into the block.
+    """
+    nodes = {d["node"] for d in records if d.get("rows")}
+    if not nodes:
+        return set()
+    seen = collections.defaultdict(set)
+    for d in records:
+        for u in {r["url"] for r in d.get("rows") or []}:
+            seen[u].add(d["node"])
+    floor = share * len(nodes)
+    return {u for u, nd in seen.items() if len(nd) >= floor}
+
+
+def strip_block_tail(rows, bad):
+    """-> (rows without the trailing recommendations module, how many were dropped).
+
+    Only the contiguous run of block products at the END is removed. A block product
+    sitting anywhere earlier is in the grid and is a real observation; see the module
+    docstring for the `ARYIA` case that this distinction exists to protect.
+    """
+    i = len(rows)
+    while i and rows[i - 1]["url"] in bad:
+        i -= 1
+    return rows[:i], len(rows) - i
+
 
 def pctile(sorted_vals, q):
     if not sorted_vals:
@@ -81,11 +156,21 @@ def pctile(sorted_vals, q):
 def load():
     """One record per (node, product). Exact duplicates within a node are a crawl
     artifact — the same card seen on page 1 and again after 'Load more' — and dropped."""
-    obs, empty = [], []
-    for line in RAW.open():
-        d = json.loads(line)
+    records = [json.loads(line) for line in RAW.open()]
+    bad = block_urls(records)
+    obs, empty, stripped, tails = [], [], 0, collections.Counter()
+    for d in records:
         rows = d.get("rows") or []
+        rows, n_tail = strip_block_tail(rows, bad)
+        stripped += n_tail
+        if n_tail or any(r["url"] in bad for r in rows):
+            tails[n_tail] += 1
         if not rows:
+            # A node the crawl returned nothing for and a node the strip emptied are
+            # different claims. Only the first is an `empty` node.
+            if n_tail:
+                sys.exit(f"{d['node']!r} is nothing but the recommendations module "
+                         f"({n_tail} rows) — the strip rule is wrong or the crawl is")
             empty.append(d["slug"])
             continue
         seen = set()
@@ -103,7 +188,8 @@ def load():
                 "stars": r.get("stars") if r.get("stars") is not None else "",
                 "recurring": bool(r.get("recurring")), "t": scrub(r["t"].strip()),
             })
-    return obs, empty
+    return obs, empty, {"block": sorted(bad), "rows_removed": stripped,
+                        "tail_lengths": dict(sorted(tails.items()))}
 
 
 def distinct(obs):
@@ -151,7 +237,7 @@ def node_stats(obs):
     return nodes
 
 
-def summarise(obs, nodes, empty):
+def summarise(obs, nodes, empty, strip=None):
     prod = distinct(obs)
     prices = sorted(r["price_usd"] for r in prod if r["price_usd"] > 0)
     ratings = sorted((r["n"] for r in prod), reverse=True)
@@ -216,20 +302,35 @@ def summarise(obs, nodes, empty):
         "fx_source": FX_SOURCE,
         "fx_rates_to_usd": {k: round(v, 5) for k, v in TO_USD.items()},
         "empty_nodes": sorted(empty),
+        # The correction, carried in the summary so that every one of the 44 files that
+        # reads this JSON can state it rather than have to rediscover it.
+        "block_correction": {
+            "rule": f"a product observed in >= {BLOCK_SHARE:.0%} of crawled nodes is the "
+                    "recommendations module, and only its contiguous run at the end of a "
+                    "node's raw rows is removed",
+            "products": len((strip or {}).get("block", [])),
+            "rows_removed": (strip or {}).get("rows_removed", 0),
+            "tail_lengths": (strip or {}).get("tail_lengths", {}),
+            "block_urls": (strip or {}).get("block", []),
+            "found": "2026-08-09",
+            "note": "data/taxonomy-correction-2026-08-09.md",
+        },
         "by_node": nodes,
     }
 
 
 def main():
-    obs, empty = load()
+    obs, empty, strip = load()
     with OUT_CSV.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=FIELDS)
         w.writeheader()
         for r in obs:
             w.writerow(r)
     nodes = node_stats(obs)
-    s = summarise(obs, nodes, empty)
+    s = summarise(obs, nodes, empty, strip)
     OUT_SUMMARY.write_text(json.dumps(s, indent=1) + "\n")
+    print(f"recommendations module removed: {len(strip['block'])} products, "
+          f"{strip['rows_removed']:,} rows, node tail lengths {strip['tail_lengths']}")
     print(f"{s['n']:,} distinct products / {s['obs']:,} observations / "
           f"{s['sellers']:,} sellers / {s['nodes']} non-empty nodes "
           f"({s['nodes_empty']} empty, excluded) / paid median ${s['med']} / "

@@ -191,11 +191,40 @@ ul.next span{color:var(--mut);font-size:.9rem}
 a.home{font-family:system-ui,sans-serif;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
 p.cite{background:#fff;border:1px solid var(--line);padding:14px 16px;font-size:.88rem;margin:16px 0}
 pre.draft{background:#fff;border:1px solid var(--line);border-left:4px solid var(--acc);padding:18px 20px;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0}
-.slot{background:#fdf3d0;border-bottom:1px solid #c9a227;padding:0 3px;font-weight:600}"""
+.slot{background:#fdf3d0;border-bottom:1px solid #c9a227;padding:0 3px;font-weight:600}
+.corr{background:#fff;border:2px solid #a33;padding:16px 20px;margin:26px 0;font-size:.95rem}
+.corr b{font-family:system-ui,sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;color:#a33;display:block;margin-bottom:6px}"""
 
 
 def slug(topic):
     return re.sub(r"[^a-z0-9]+", "-", topic.lower()).strip("-")
+
+
+def correction_note(ts):
+    """The 2026-08-09 correction, stated on the page rather than quietly applied.
+
+    Every number is read from `taxonomy-summary.json`'s `block_correction`, which
+    `normalize_taxonomy.py` writes at the moment it removes the rows — so the banner
+    cannot survive the correction being reverted, and cannot drift from it either. It
+    renders only while there is something to declare.
+    """
+    c = ts.get("block_correction") or {}
+    if not c.get("rows_removed"):
+        return ""
+    # tail_lengths is {rows removed from a node: how many nodes}, JSON-keyed as strings.
+    tails = c.get("tail_lengths") or {}
+    n = c["products"]
+    nodes = sum(v for k, v in tails.items() if int(k))
+    return f"""<div class=corr><b>Correction &mdash; {c['found']}</b>
+Gumroad renders a recommendations module below every category grid out of the same markup
+as a category result, and this crawl read it as membership: <strong>the same {n} products
+were filed in {nodes} of the {ts['nodes']} categories</strong>, {c['rows_removed']:,}
+listing observations. They have been removed, and the figures on this page are the
+corrected ones. Distinct products, sellers and categories barely move &mdash; the {n} are
+real products, counted once, attributed wrongly &mdash; but thin categories were inflated
+badly, and the per-node sample cap was {ts['cap']}, not 71.
+<a href="{REPO}/blob/main/data/taxonomy-correction-2026-08-09.md">What was wrong, how it
+was found, and every figure before and after &rarr;</a></div>"""
 
 
 def esc(s):
@@ -491,6 +520,8 @@ def build_index(s, mix, ts, ss, sr, t):
 <h1>What actually sells on Gumroad</h1>
 <div class=sub>{ts['n']:,} products &middot; {ts['sellers']:,} sellers &middot; {ts['nodes']} categories
 &middot; {sr['disclosing']} with a real unit-sales count &middot; free, CC BY 4.0</div>
+
+{correction_note(ts)}
 
 <div class=lede>In the first of the samples below — <strong>{s['n']:,} products drawn from
 {s['cats']} Discover searches</strong> — <strong>{s['zero']} of them, {s['zpct']}%, have no

@@ -1,11 +1,11 @@
 # What actually sells on Gumroad — measured
 
-**8,325 live Gumroad products from 4,545 sellers across 261
+**8,322 live Gumroad products from 4,543 sellers across 261
 categories of Gumroad's own category tree — plus a separate 1,344-product sample across
 42 Discover searches. Collected August 2026, and
 [kept apart on purpose](#two-samples-published-side-by-side).**
 
-> **3,562 of the 8,325 products in the category-tree sample — 43% — have
+> **3,562 of the 8,322 products in the category-tree sample — 43% — have
 > no ratings at all.** They are listed, priced, and selling nothing. In the 42-search
 > sample the same figure is 34%, and the gap between categories where it happens and
 > ones where it doesn't runs from **100% of listings rated** at the top to
@@ -28,9 +28,9 @@ numbers matching neither.
 | | Discover searches | Gumroad's category tree |
 |---|---:|---:|
 | Sampling frame | 42 chosen search terms | 359 published categories |
-| Distinct products | 1,344 | **8,325** |
-| Listing observations | 1,509 | 15,077 |
-| Distinct sellers | not recorded | **4,545** |
+| Distinct products | 1,344 | **8,322** |
+| Listing observations | 1,509 | 9,878 |
+| Distinct sellers | not recorded | **4,543** |
 | Identity key | card text | **product URL** |
 | Median paid asking price | $36.99 | $18.03 |
 | Products with no ratings | 34% | 43% |
@@ -39,13 +39,13 @@ numbers matching neither.
 **Where they disagree, the disagreement is the finding.** The taxonomy walk reaches parts
 of the catalogue that popular search terms never surface, and those parts are cheaper and
 sell less. It is also the first version of this dataset that records **who** is selling:
-3,263 of the 4,545 sellers have exactly one product in
+3,262 of the 4,543 sellers have exactly one product in
 the sample, while the top 10% of sellers hold **89.2% of every
 rating measured**.
 
 **One caveat governs every per-category figure in the taxonomy sample.** Each node was
-crawled up to three pages deep, which caps it at 71 listings, and
-166 of the 261 categories hit that cap. A category's listing
+crawled up to three pages deep, which caps it at 44 listings, and
+191 of the 261 categories hit that cap. A category's listing
 count is therefore a **crawl depth, not a category size** — never quote it as the number
 of products in a category. 98 nodes returned nothing and are excluded
 rather than reported as zeroes.
@@ -62,16 +62,16 @@ list. No other field is altered, and no count in any summary changes.
 
 Attributing every listing to its storefront gives a third unit of observation and the
 strongest finding in the dataset. Every other public Gumroad dataset is a list of products;
-this one has **4,545 sellers behind 8,325 products**.
+this one has **4,543 sellers behind 8,322 products**.
 
 > **The top 1% of sellers — 45 of them — hold 52.5% of all
-> 205,250 ratings measured. The median seller inside that 1% has
+> 204,971 ratings measured. The median seller inside that 1% has
 > 2 products, and 14 of them have exactly one.**
 
 - **Concentration is not a catalogue effect.** Rank correlation between catalogue size and
-  demand is **0.284** — real, weak, and not the mechanism.
-- **3,263 of 4,545 sellers (71.8%) have a
-  single product**, and as a class hold 31.2% of all ratings.
+  demand is **0.283** — real, weak, and not the mechanism.
+- **3,262 of 4,543 sellers (71.8%) have a
+  single product**, and as a class hold 31.1% of all ratings.
 - **1,710 sellers (38%)
   have no ratings at all** across their entire measured catalogue. That is the modal outcome.
 - Top 10% of sellers: 89.2% of ratings. Bottom half: 0.3%.
@@ -85,7 +85,7 @@ Data: [`data/gumroad-sellers.csv`](data/gumroad-sellers.csv) (one row per seller
 [`scripts/normalize_sellers.py`](scripts/normalize_sellers.py) from the listing table, so
 the two can never disagree.
 
-→ [**All 4,545 sellers, ranked**](https://sujeito-operator.github.io/gumroad-market-data/s/index.html)
+→ [**All 4,543 sellers, ranked**](https://sujeito-operator.github.io/gumroad-market-data/s/index.html)
 
 ## A fourth view: real unit sales, and what a rating is worth
 
@@ -239,7 +239,7 @@ this data and should not be cited for these figures.
 
 Cite it as:
 
-> Sujeito Operator (2026). *What Actually Sells on Gumroad: 8,325 live products from 4,545 sellers, with real unit sales for 316 (August 2026)* [Data set]. Zenodo.
+> Sujeito Operator (2026). *What Actually Sells on Gumroad: 8,322 live products from 4,543 sellers, with real unit sales for 316 (August 2026)* [Data set]. Zenodo.
 > https://doi.org/10.5281/zenodo.21830103
 
 **Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See [`LICENSE`](LICENSE).
