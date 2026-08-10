@@ -17,6 +17,18 @@ counts and categories. Every seller is still in `data/gumroad-sellers.csv` and e
 seller with a rating is still on the ranked table in the index — the cut governs pages,
 never data.
 
+WHY THE INDEX ROWS CARRY `id="s-<slug>"` ANCHORS, ADDED 2026-08-10. The cut above means
+8 of the 10 sellers in the outreach queue that day had NO page — they were rows 38, 75,
+102, 116, 140, 191, 223 and 284 of this table and nothing more. A cold message that says
+"you are #284 of 4,543" is an unverifiable claim about the recipient; the same sentence
+with `s/index.html#s-uiprep` after it is a public page they can open and check. That is
+the difference between an assertion and evidence, and it is the only click-through lever
+available on a rail that is capped at 8 messages a day. The anchor is derived from
+`seller_slug()`, the same function that names the page files, so a seller who later
+crosses MIN_PRODUCTS keeps the same identifier and no queued link goes stale. 300 rows,
+300 unique anchors — asserted, because two sellers colliding on a slug would silently
+point one seller's message at another seller's row.
+
 WHAT EVERY PAGE MUST SAY, AND WHY. A seller's product count here is *products found in
 this crawl*, not their catalogue: the collector took three pages per category node, so a
 seller whose listings rank deep is under-counted. This biases catalogue size DOWN for
@@ -219,7 +231,7 @@ work?</a> &middot; <a href="index.html">seller concentration</a> &middot;
 def index_page(rows, s, ts, has_page):
     shown = [r for r in rows if r["ratings_total"] > 0][:INDEX_ROWS]
     body = "".join(
-        f"<tr><td class=n>{r['ratings_rank']:,}</td><td>"
+        f'<tr id="s-{seller_slug(r["seller"])}"><td class=n>{r["ratings_rank"]:,}</td><td>'
         + (f'<a href="{seller_slug(r["seller"])}.html">{B.esc(r["seller"])}</a>'
            if r["seller"] in has_page else B.esc(r["seller"]))
         + f"</td><td class=n>{r['products']}</td>"
@@ -408,5 +420,17 @@ def build(ts, trows, outdir):
         page = seller_page(r, by_seller[r["seller"]], s, ts, neighbours)
         (outdir / f"{seller_slug(r['seller'])}.html").write_text(page)
         written.append(seller_slug(r["seller"]))
-    (outdir / "index.html").write_text(index_page(rows, s, ts, has_page))
+    index = index_page(rows, s, ts, has_page)
+
+    # Two sellers colliding on a slug would give one anchor to two rows, and every queued
+    # message linking the loser would land the recipient on somebody else's numbers. That
+    # is a silent, personalised wrong answer, so it fails the build instead.
+    anchors = re.findall(r'<tr id="(s-[a-z0-9-]+)">', index)
+    dupes = [a for a, n in collections.Counter(anchors).items() if n > 1]
+    if dupes:
+        raise SystemExit(f"seller index: duplicate row anchors {dupes[:5]} — a linked "
+                         "message would point at the wrong seller's row")
+    print(f"  seller index OK: {len(anchors)} rows, {len(anchors)} unique anchors")
+
+    (outdir / "index.html").write_text(index)
     return written

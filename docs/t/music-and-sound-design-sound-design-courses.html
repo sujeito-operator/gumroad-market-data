@@ -55,6 +55,8 @@ th{text-align:left;border-bottom:2px solid var(--ink);padding:9px 7px;font-famil
 td{padding:8px 7px;border-bottom:1px solid var(--line)}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 tbody tr:hover{background:#f7f5ef}
+tbody tr:target{background:#fbf3d3;outline:2px solid var(--acc);scroll-margin-top:24px}
+tbody tr:target td:first-child::before{content:"\25B8 ";color:var(--acc)}
 .buy{background:#fff;border:2px solid var(--ink);padding:22px 24px;margin:34px 0;border-radius:3px}
 .buy a{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;padding:11px 22px;border-radius:3px;font-family:system-ui,sans-serif;font-size:.92rem;margin-top:10px}
 .buy a.alt{background:#fff;color:var(--ink);border:1px solid var(--ink);margin-left:8px}
