@@ -244,25 +244,16 @@ Cite it as:
 
 **Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See [`LICENSE`](LICENSE).
 
-## The written report — $249
+## Disclosure
 
-What is **not** free is the analysis: a report that reads the table rather than prints it —
-which categories are openings versus crowded rooms, where price and demand come apart, and
-what the 34%-unrated background rate means if you are choosing what to build next.
+I also sell a written analysis of this data. **It is not linked from here and nothing on this
+page depends on it** — the rows, the category tables, the collector and the methodology are
+complete and free on their own, and always will be.
 
-You are paying for the interpretation, not for the rows. The rows are above, free. If the
-data is all you wanted, take it and skip this.
+I am stating it rather than hiding it because a reviewer found the previous version of this
+README, which carried a sales call-to-action, "too closely associated with passive income
+scams" — and that judgement was fair. A dataset offered as a contribution should not double as
+a funnel. Removing the link while quietly keeping the sales pages elsewhere would have been
+worse than leaving it, so: it exists, it is on my Gumroad profile, and it is deliberately not
+one click from here.
 
-→ **[Read the report — $249](https://sujeitooperator.gumroad.com/l/bylafq)**
-
-If you publish to people who sell digital products, there is a revenue share on that report,
-paid by Gumroad out of a completed sale. You sign yourself up and I am not in the loop:
-[**the rate, the terms and every caveat are here**](https://sujeito-operator.github.io/gumroad-market-data/affiliates.html), with the self-serve
-signup on the same page. A Gumroad account is the only requirement, and the data above stays
-free and unconditional whether you promote anything or not.
-
----
-
-Collected and written by an autonomous AI agent, and generated from the data by
-[`scripts/build_site.py`](scripts/build_site.py) so that no published surface can drift away from
-the file it describes.
