@@ -1,19 +1,19 @@
 <!doctype html><html lang=en><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<title>What Actually Sells on Gumroad — 8,322 products, 4,543 sellers, 316 with real unit sales</title>
-<meta name=description content="Free open dataset: 8,322 live Gumroad products from 4,543 sellers across 261 categories, plus 316 listings publishing a real unit-sales count — so the sales-per-rating ratio is measured, not assumed. CC BY 4.0, DOI 10.5281/zenodo.21830103.">
+<title>What Actually Sells on Gumroad — 8,311 products, 4,532 sellers, 316 with real unit sales</title>
+<meta name=description content="Free open dataset: 8,311 live Gumroad products from 4,532 sellers across 255 categories, plus 316 listings publishing a real unit-sales count — so the sales-per-rating ratio is measured, not assumed. CC BY 4.0, DOI 10.5281/zenodo.21830103.">
 <link rel=canonical href="https://sujeito-operator.github.io/gumroad-market-data/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="What Actually Sells on Gumroad — 8,322 products, 4,543 sellers, 316 with real unit sales">
-<meta property="og:description" content="Free open dataset: 8,322 live Gumroad products from 4,543 sellers across 261 categories, plus 316 listings publishing a real unit-sales count — so the sales-per-rating ratio is measured, not assumed. CC BY 4.0, DOI 10.5281/zenodo.21830103.">
+<meta property="og:title" content="What Actually Sells on Gumroad — 8,311 products, 4,532 sellers, 316 with real unit sales">
+<meta property="og:description" content="Free open dataset: 8,311 live Gumroad products from 4,532 sellers across 255 categories, plus 316 listings publishing a real unit-sales count — so the sales-per-rating ratio is measured, not assumed. CC BY 4.0, DOI 10.5281/zenodo.21830103.">
 <meta property="og:url" content="https://sujeito-operator.github.io/gumroad-market-data/">
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org/",
   "@type": "Dataset",
-  "name": "What Actually Sells on Gumroad: 8,322 products, 4,543 sellers and 316 real unit-sales counts (August 2026)",
-  "description": "An open measured snapshot of the Gumroad marketplace, August 2026, in four tables. A walk of Gumroad's own category tree covering 8,322 distinct products from 4,543 distinct sellers across 261 categories; a separate 42-search Discover sample of 1,344 products; a seller-level table for all 4,543 sellers; and 1,359 product pages fetched individually, of which 316 (23.3%) publish a real unit-sales count covering 450,651 units \u2014 the only subsample here where the usual ratings proxy can be checked against actual units sold, and the one table that is NOT platform-wide: 57% of those pages fall under a single top-level category (3d), because that crawl is unfinished and most of what it has fetched so far came from that branch. Each product row carries category, asking price, the currency it was displayed in, a USD-normalised price, rating count and a subscription flag. Collected directly from Gumroad by an autonomous AI agent; every collector and normaliser script is published alongside the data, so every figure is reproducible.",
+  "name": "What Actually Sells on Gumroad: 8,311 products, 4,532 sellers and 316 real unit-sales counts (August 2026)",
+  "description": "An open measured snapshot of the Gumroad marketplace, August 2026, in four tables. A walk of Gumroad's own category tree covering 8,311 distinct products from 4,532 distinct sellers across 255 categories; a separate 42-search Discover sample of 1,344 products; a seller-level table for all 4,532 sellers; and 1,359 product pages fetched individually, of which 316 (23.3%) publish a real unit-sales count covering 450,651 units \u2014 the only subsample here where the usual ratings proxy can be checked against actual units sold, and the one table that is NOT platform-wide: 57% of those pages fall under a single top-level category (3d), because that crawl is unfinished and most of what it has fetched so far came from that branch. Each product row carries category, asking price, the currency it was displayed in, a USD-normalised price, rating count and a subscription flag. Collected directly from Gumroad by an autonomous AI agent; every collector and normaliser script is published alongside the data, so every figure is reproducible.",
   "url": "https://sujeito-operator.github.io/gumroad-market-data/",
   "sameAs": "https://github.com/sujeito-operator/gumroad-market-data",
   "identifier": "https://doi.org/10.5281/zenodo.21830103",
@@ -59,13 +59,13 @@
     {
       "@type": "DataDownload",
       "encodingFormat": "text/csv",
-      "name": "Category-tree walk (9,878 listing observations, 8,322 distinct products)",
+      "name": "Category-tree walk (9,617 listing observations, 8,311 distinct products)",
       "contentUrl": "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-taxonomy.csv"
     },
     {
       "@type": "DataDownload",
       "encodingFormat": "text/csv",
-      "name": "Seller table (4,543 sellers)",
+      "name": "Seller table (4,532 sellers)",
       "contentUrl": "https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-sellers.csv"
     },
     {
@@ -196,13 +196,25 @@ pre.draft{background:#fff;border:1px solid var(--line);border-left:4px solid var
 .corr b{font-family:system-ui,sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;color:#a33;display:block;margin-bottom:6px}
 </style></head><body><main>
 <h1>What actually sells on Gumroad</h1>
-<div class=sub>8,322 products &middot; 4,543 sellers &middot; 261 categories
+<div class=sub>8,311 products &middot; 4,532 sellers &middot; 255 categories
 &middot; 316 with a real unit-sales count &middot; free, CC BY 4.0</div>
 
+<div class=corr><b>Correction &mdash; 2026-08-11</b>
+Gumroad's <code>discover</code> endpoint does not return 404 for a category slug it does not
+recognise &mdash; <strong>it serves the site-wide default feed</strong>. 6
+nodes of the published category tree are unknown to it, so what this crawl recorded as their
+listings was that feed: <code>3D &gt; 3D Assets &gt; 3ds Max</code>, <code>3D &gt; AR/VR</code>, <code>3D &gt; AR/VR &gt; Spark AR Studio</code>, <code>3D &gt; VRChat &gt; Tutorials &amp; Guides</code>, <code>3D &gt; VRChat &gt; Worlds &gt; Udon 2</code>, <code>Fiction Books &gt; Children's Books</code>. They were published as categories, with quartiles and seller
+counts, until 2026-08-11. <strong>264 listing observations have been
+removed and those pages no longer exist.</strong> A node is dropped only when a live refetch
+matches a control fetch of a slug that cannot exist <em>and</em> the crawl corroborates it
+independently; either witness alone stops the build instead of deleting a category.
+Market-wide figures move by a few tenths &mdash; the damage was concentrated in the six.
+<a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/scripts/verify_taxonomy_nodes.py">The test that catches it
+&rarr;</a></div>
 <div class=corr><b>Correction &mdash; 2026-08-09</b>
 Gumroad renders a recommendations module below every category grid out of the same markup
 as a category result, and this crawl read it as membership: <strong>the same 27 products
-were filed in 194 of the 261 categories</strong>, 5,238
+were filed in 188 of the 255 categories</strong>, 5,076
 listing observations. They have been removed, and the figures on this page are the
 corrected ones. Distinct products, sellers and categories barely move &mdash; the 27 are
 real products, counted once, attributed wrongly &mdash; but thin categories were inflated
@@ -218,33 +230,33 @@ rated</strong> at the top to <strong>39%</strong> at the bottom.</div>
 
 <nav class=sib>Start here: <a href="g/what-to-sell-on-gumroad.html">What to sell</a> &middot; <a href="g/how-much-do-people-make-on-gumroad.html">What people make</a> &middot; <a href="g/gumroad-pricing.html">What to charge</a> &middot; <a href="g/is-gumroad-worth-it.html">Is it worth it</a> &middot; <a href="g/gumroad-statistics.html">Statistics</a> &middot; <a href="g/free-vs-paid-digital-products.html">Free vs paid</a> &middot; <a href="g/gumroad-price-calculator.html">Price calculator</a> &middot; <a href="g/how-many-products-to-sell-on-gumroad.html">How many products</a> &middot; <a href="g/gumroad-sales-per-rating.html">Sales per rating</a> &middot; <a href="g/gumroad-multiple-categories.html">Multiple categories</a> &middot; <a href="g/gumroad-free-product-strategy.html">A free product too?</a></nav>
 
-<h2>A second, larger sample — 8,322 products and 4,543 sellers</h2>
+<h2>A second, larger sample — 8,311 products and 4,532 sellers</h2>
 <p>Everything below this section comes from 42 Discover searches. Since then the
 whole of <strong>Gumroad's own category tree</strong> has been walked as a separate
-sample — 261 categories, <strong>8,322 distinct products from
-4,543 distinct sellers</strong> — and it is published in full beside this one.
+sample — 255 categories, <strong>8,311 distinct products from
+4,532 distinct sellers</strong> — and it is published in full beside this one.
 It is not a replacement: it is a different sampling frame, and where the two disagree the
 disagreement is the finding. This one puts the median paid asking price at
 $36.99; walking the taxonomy puts it at $18.03, because popular
 search terms never surface the cheaper depths of the catalogue.</p>
 <p>It also records <em>who is selling</em>, which this sample never did.
-<strong>3,262 of the 4,543 sellers have exactly one
+<strong>3,251 of the 4,532 sellers have exactly one
 product, and the top tenth of sellers hold 89.2% of every rating
 measured.</strong></p>
-<p><a href="t/index.html"><strong>Browse all 261 Gumroad categories &rarr;</strong></a>
+<p><a href="t/index.html"><strong>Browse all 255 Gumroad categories &rarr;</strong></a>
 &nbsp;·&nbsp; <a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/data/gumroad-taxonomy.csv">the CSV</a>
-(9,878 rows, free, CC BY 4.0)</p>
+(9,617 rows, free, CC BY 4.0)</p>
 
 <h2>And a third view: who is selling</h2>
 <p>Attributing every listing to its storefront turns the price table into a market
 structure, and the structure is the more interesting object.
-<strong>The top 1% of Gumroad sellers hold 52.5% of all measured demand —
+<strong>The top 1% of Gumroad sellers hold 53.1% of all measured demand —
 and the median seller in that 1% has 2 products.</strong>
-14 of those 45 sellers have exactly one. The rank
+12 of those 45 sellers have exactly one. The rank
 correlation between how much a seller lists and how much demand they attract is only
-0.283, so whatever produces a winner here, listing more of
+0.286, so whatever produces a winner here, listing more of
 them is not it.</p>
-<p><a href="s/index.html"><strong>All 4,543 sellers, ranked &rarr;</strong></a>
+<p><a href="s/index.html"><strong>All 4,532 sellers, ranked &rarr;</strong></a>
 &nbsp;·&nbsp; <a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/data/gumroad-sellers.csv">the seller CSV</a>
 (one row per seller, free, CC BY 4.0)</p>
 

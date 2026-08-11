@@ -361,10 +361,14 @@ recurring.</li>
 
 <h2>Method, and the one thing this cannot tell you</h2>
 <p>The sampling frame is <strong>Gumroad's own published category tree</strong>, read out
-of the category picker rather than invented here: {s['nodes_crawled']} nodes were
+of the category picker rather than invented here: {s['nodes_frame']} nodes were
 crawled, {s['nodes']} returned listings and {s['nodes_empty']} returned none and are
 excluded rather than reported as zeroes — "we found nothing" and "there is nothing" are
-different claims and only the first is evidenced. Each node was taken up to three pages
+different claims and only the first is evidenced. A further
+<strong>{s['nodes_unrecognised']} are excluded because Gumroad's discover endpoint does not
+recognise them</strong> and answers with the site-wide default feed instead of saying so;
+they were published as categories until 2026-08-11 and the six are named, with the test
+that catches them, in <code>data/taxonomy-summary.json</code>. Each node was taken up to three pages
 deep, which caps a node at {s['cap']} listings; {s['nodes_at_cap']} nodes hit that cap.
 <strong>So a category's listing count here is a crawl depth, not a category size</strong>,
 and no figure on this site should be read as "how many products are in this category".
@@ -480,6 +484,43 @@ effect.</p>
 """ + B.FOOTER
 
 
+def retraction_page(node, slug, c):
+    """The page that replaces a category we published and then withdrew.
+
+    A URL that was public for four days does not get to become a 404. Somebody may have
+    it open, linked or bookmarked, and "page not found" tells them nothing about why the
+    numbers they read are gone — it reads as a broken site rather than as a correction.
+
+    `noindex` because the intent is to retire the URL, not to rank it, and it is left out
+    of the sitemap for the same reason. It is generated, not hand-written, so a rebuild
+    reproduces it rather than resurrecting the category.
+    """
+    slug = flat(slug)
+    title = f"{node}: withdrawn 2026-08-11 — this was not a category"
+    desc = ("This page published price quartiles for a Gumroad category that Gumroad's "
+            "discover endpoint does not recognise. The listings on it were the site-wide "
+            "default feed. Withdrawn 2026-08-11.")
+    return B.head(title, desc, f"{B.SITE}/t/{slug}.html",
+                  '<meta name="robots" content="noindex">\n') + f"""
+<p><a href="index.html">&larr; Every Gumroad category, measured</a></p>
+<h1>{B.esc(node)}</h1>
+<div class=corr><b>Withdrawn &mdash; {c['found']}</b>
+This page carried a median price, a 90th percentile, a seller count and a rating share for
+<code>{B.esc(node)}</code>. <strong>All of it was wrong, and the whole page has been
+removed rather than corrected.</strong>
+<p>Gumroad's <code>discover</code> endpoint does not return 404 for a category slug it does
+not recognise &mdash; it answers 200 and serves the site-wide default feed. This node is one
+of {len(c['nodes'])} in the published category tree that it does not recognise, so the
+listings recorded here were never in this category. They were other people's products,
+identical from one of these pages to the next.</p>
+<p>The categories Gumroad does recognise are unaffected and are
+<a href="index.html">all here</a>. What went wrong, and the test that now catches it, is in
+<a href="{B.REPO}/blob/main/scripts/verify_taxonomy_nodes.py"><code>verify_taxonomy_nodes.py</code></a>;
+the six are named in <a href="{B.REPO}/blob/main/data/taxonomy-summary.json"><code>taxonomy-summary.json</code></a>
+under <code>unrecognised_node_correction</code>.</p></div>
+</main></body></html>"""
+
+
 def build(s, obs, outdir):
     """Write docs/t/. Returns the flattened slugs that got a page, for the sitemap."""
     outdir.mkdir(parents=True, exist_ok=True)
@@ -498,4 +539,11 @@ def build(s, obs, outdir):
         (outdir / f"{flat(x['slug'])}.html").write_text(page)
         written.append(flat(x["slug"]))
     (outdir / "index.html").write_text(index_page(s, has_page))
+
+    # The withdrawn six. NOT returned for the sitemap — a retraction is a courtesy to a
+    # reader who already has the URL, not a page to get indexed.
+    c = s.get("unrecognised_node_correction") or {}
+    for node in c.get("nodes", []):
+        sl = c["slugs"][node]
+        (outdir / f"{flat(sl)}.html").write_text(retraction_page(node, sl, c))
     return written

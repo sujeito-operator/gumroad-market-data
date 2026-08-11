@@ -13,7 +13,7 @@ is how the drift starts; edit this file instead and re-run:
 
     python3 scripts/normalize.py && python3 scripts/build_site.py
 """
-import collections, csv, json, pathlib, re, textwrap, urllib.parse
+import collections, csv, datetime as _dt, json, pathlib, re, textwrap, urllib.parse
 
 import build_guides
 import build_sellers
@@ -227,6 +227,33 @@ real products, counted once, attributed wrongly &mdash; but thin categories were
 badly, and the per-node sample cap was {ts['cap']}, not 71.
 <a href="{REPO}/blob/main/data/taxonomy-correction-2026-08-09.md">What was wrong, how it
 was found, and every figure before and after &rarr;</a></div>"""
+
+
+def unrecognised_note(ts):
+    """The 2026-08-11 correction. Same contract as `correction_note`: every figure is read
+    from the summary at the moment the rows are removed, so the banner cannot outlive the
+    correction and cannot drift from it.
+
+    It is a separate banner rather than an extension of the first one because the two are
+    different mistakes. The first read a widget as data. This one read the WRONG PAGE as
+    data, and the page answered 200 while doing it.
+    """
+    c = ts.get("unrecognised_node_correction") or {}
+    if not c.get("nodes"):
+        return ""
+    named = ", ".join(f"<code>{esc(n)}</code>" for n in c["nodes"])
+    return f"""<div class=corr><b>Correction &mdash; {c['found']}</b>
+Gumroad's <code>discover</code> endpoint does not return 404 for a category slug it does not
+recognise &mdash; <strong>it serves the site-wide default feed</strong>. {len(c['nodes'])}
+nodes of the published category tree are unknown to it, so what this crawl recorded as their
+listings was that feed: {named}. They were published as categories, with quartiles and seller
+counts, until {c['found']}. <strong>{c['rows_removed']:,} listing observations have been
+removed and those pages no longer exist.</strong> A node is dropped only when a live refetch
+matches a control fetch of a slug that cannot exist <em>and</em> the crawl corroborates it
+independently; either witness alone stops the build instead of deleting a category.
+Market-wide figures move by a few tenths &mdash; the damage was concentrated in the six.
+<a href="{REPO}/blob/main/scripts/verify_taxonomy_nodes.py">The test that catches it
+&rarr;</a></div>"""
 
 
 def esc(s):
@@ -528,6 +555,7 @@ def build_index(s, mix, ts, ss, sr, t):
 <div class=sub>{ts['n']:,} products &middot; {ts['sellers']:,} sellers &middot; {ts['nodes']} categories
 &middot; {sr['disclosing']} with a real unit-sales count &middot; free, CC BY 4.0</div>
 
+{unrecognised_note(ts)}
 {correction_note(ts)}
 
 <div class=lede>In the first of the samples below — <strong>{s['n']:,} products drawn from
@@ -795,7 +823,12 @@ def sitemap(cats, guides=(), taxo=(), sellers=()):
             + [f"{SITE}/t/{t}.html" for t in taxo]
             + [f"{SITE}/s/index.html"]
             + [f"{SITE}/s/{x}.html" for x in sellers])
-    body = "".join(f"<url><loc>{u}</loc><lastmod>2026-08-07</lastmod></url>\n" for u in urls)
+    # `lastmod` was a hardcoded 2026-08-07 and stayed there through four days of rebuilds,
+    # so the sitemap told every crawler that nothing had changed on days when every page
+    # did. It is the build date now — which is what the field means, and the only value
+    # this generator can state truthfully about a file it is writing right now.
+    stamp = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d")
+    body = "".join(f"<url><loc>{u}</loc><lastmod>{stamp}</lastmod></url>\n" for u in urls)
     return ('<?xml version="1.0" encoding="UTF-8"?>\n'
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n")
 
@@ -899,8 +932,12 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
             f"Each node was taken up to three pages deep, capping it at {ts['cap']} "
             f"listings; {ts['nodes_at_cap']} of {ts['nodes']} nodes hit that cap. Never "
             f"quote it as the number of products in a category.",
-            f"- {ts['nodes_empty']} of the {ts['nodes_crawled']} crawled nodes returned no "
-            f"listings and are excluded rather than reported as zeroes.",
+            f"- {ts['nodes_empty']} of the {ts['nodes_frame']} crawled nodes returned no "
+            f"listings and are excluded rather than reported as zeroes. A further "
+            f"{ts['nodes_unrecognised']} are excluded because `discover` does not recognise "
+            f"their slug and answers with the site-wide default feed rather than a 404 — "
+            f"they were published as categories until 2026-08-11; see "
+            f"`unrecognised_node_correction` in `data/taxonomy-summary.json`.",
             f"- Seller concentration, measurable here for the first time: the top 1% of "
             f"sellers hold {ts['seller_top1_share']}% of all ratings and the top 10% hold "
             f"{ts['seller_top10_share']}%. {ts['sellers_one_product']:,} of the "

@@ -82,27 +82,24 @@ One page per category with the price distribution, rating spread and subscriptio
 
 ## Second sample: Gumroad's own category taxonomy
 
-> A larger, independently collected sample whose frame is Gumroad's published category tree rather than 42 chosen search terms: **8,322 distinct products from 4,543 distinct sellers across 261 categories**, in 9,878 listing observations. Median paid asking price $18.03; 43% of products carry no ratings.
+> A larger, independently collected sample whose frame is Gumroad's published category tree rather than 42 chosen search terms: **8,311 distinct products from 4,532 distinct sellers across 255 categories**, in 9,617 listing observations. Median paid asking price $18.03; 43% of products carry no ratings.
 
 Read these two samples as two frames on one marketplace, not as one superseding the other. They disagree, and the disagreement is the finding: the search-term sample puts the median paid price at $36.99 and the taxonomy walk at $18.03, because popular search terms never surface the cheaper depths of the catalogue.
 
-- Products are keyed on product URL, an exact identity key. 1,556 products are filed by Gumroad under more than one category.
-- **A category's listing count is a crawl depth, not a category size.** Each node was taken up to three pages deep, capping it at 44 listings; 191 of 261 nodes hit that cap. Never quote it as the number of products in a category.
-- 98 of the 359 crawled nodes returned no listings and are excluded rather than reported as zeroes.
-- Seller concentration, measurable here for the first time: the top 1% of sellers hold 52.5% of all ratings and the top 10% hold 89.2%. 3,262 of the 4,543 sellers have exactly one product in the sample.
+- Products are keyed on product URL, an exact identity key. 1,306 products are filed by Gumroad under more than one category.
+- **A category's listing count is a crawl depth, not a category size.** Each node was taken up to three pages deep, capping it at 44 listings; 187 of 255 nodes hit that cap. Never quote it as the number of products in a category.
+- 98 of the 359 crawled nodes returned no listings and are excluded rather than reported as zeroes. A further 6 are excluded because `discover` does not recognise their slug and answers with the site-wide default feed rather than a 404 — they were published as categories until 2026-08-11; see `unrecognised_node_correction` in `data/taxonomy-summary.json`.
+- Seller concentration, measurable here for the first time: the top 1% of sellers hold 53.1% of all ratings and the top 10% hold 89.2%. 3,251 of the 4,532 sellers have exactly one product in the sample.
 
 - Product titles are published verbatim with **one exception**: a few sellers put an email address in their own title, and those are replaced with `[email removed]` by [`scripts/redact.py`](https://github.com/sujeito-operator/gumroad-market-data/blob/main/scripts/redact.py). The addresses are public on Gumroad, but a downloadable CSV is a mailing list and a search page is not. No other field is altered and no count changes.
 
-- [Taxonomy CSV](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-taxonomy.csv): 9,878 rows with category, product URL, seller, price, currency, USD price, rating count, star rating, subscription flag, title.
+- [Taxonomy CSV](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-taxonomy.csv): 9,617 rows with category, product URL, seller, price, currency, USD price, rating count, star rating, subscription flag, title.
 - [taxonomy-summary.json](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/taxonomy-summary.json): every per-category figure as JSON.
-- [All 261 categories, ranked](https://sujeito-operator.github.io/gumroad-market-data/t/index.html)
+- [All 255 categories, ranked](https://sujeito-operator.github.io/gumroad-market-data/t/index.html)
 
 - [3D > 3D Assets > Blender](https://sujeito-operator.github.io/gumroad-market-data/t/3d-3d-assets-blender.html)
 - [3D > VRChat](https://sujeito-operator.github.io/gumroad-market-data/t/3d-vrchat.html)
 - [3D > VRChat > Avatar Systems](https://sujeito-operator.github.io/gumroad-market-data/t/3d-vrchat-avatar-systems.html)
-- [3D > VRChat > Worlds > Udon 2](https://sujeito-operator.github.io/gumroad-market-data/t/3d-vrchat-worlds-udon-2.html)
-- [3D > AR/VR > Spark AR Studio](https://sujeito-operator.github.io/gumroad-market-data/t/3d-ar-vr-spark-ar-studio.html)
-- [3D > AR/VR](https://sujeito-operator.github.io/gumroad-market-data/t/3d-ar-vr.html)
 - [3D](https://sujeito-operator.github.io/gumroad-market-data/t/3d.html)
 - [3D > Avatars](https://sujeito-operator.github.io/gumroad-market-data/t/3d-avatars.html)
 - [3D > 3D Assets > Avatar Components](https://sujeito-operator.github.io/gumroad-market-data/t/3d-3d-assets-avatar-components.html)
@@ -110,12 +107,9 @@ Read these two samples as two frames on one marketplace, not as one superseding 
 - [Drawing & Painting > Digital Illustration](https://sujeito-operator.github.io/gumroad-market-data/t/drawing-and-painting-digital-illustration.html)
 - [Drawing & Painting > Digital Illustration > Illustration Brushes](https://sujeito-operator.github.io/gumroad-market-data/t/drawing-and-painting-digital-illustration-illustration-brushes.html)
 - [3D > 3D Assets](https://sujeito-operator.github.io/gumroad-market-data/t/3d-3d-assets.html)
-- [3D > 3D Assets > 3ds Max](https://sujeito-operator.github.io/gumroad-market-data/t/3d-3d-assets-3ds-max.html)
-- [Fiction Books > Children's Books](https://sujeito-operator.github.io/gumroad-market-data/t/fiction-books-children-s-books.html)
 - [3D > VRChat > Worlds](https://sujeito-operator.github.io/gumroad-market-data/t/3d-vrchat-worlds.html)
 - [3D > 3D Assets > Props > Plushies](https://sujeito-operator.github.io/gumroad-market-data/t/3d-3d-assets-props-plushies.html)
 - [Drawing & Painting](https://sujeito-operator.github.io/gumroad-market-data/t/drawing-and-painting.html)
-- [3D > VRChat > Tutorials & Guides](https://sujeito-operator.github.io/gumroad-market-data/t/3d-vrchat-tutorials-and-guides.html)
 - [3D > 3D Modeling](https://sujeito-operator.github.io/gumroad-market-data/t/3d-3d-modeling.html)
 - [Gaming](https://sujeito-operator.github.io/gumroad-market-data/t/gaming.html)
 - [Drawing & Painting > Digital Illustration > Illustration Brushes > Procreate](https://sujeito-operator.github.io/gumroad-market-data/t/drawing-and-painting-digital-illustration-illustration-brushes-procreate.html)
@@ -312,14 +306,14 @@ Read these two samples as two frames on one marketplace, not as one superseding 
 
 ## Third view: who is selling
 
-> Derived from the same taxonomy file, one row per seller instead of one per listing: **4,543 distinct Gumroad sellers behind 8,322 products**. The top 1% (45 sellers) hold **52.5% of all 204,971 ratings measured**; the top 10% hold 89.2%.
+> Derived from the same taxonomy file, one row per seller instead of one per listing: **4,532 distinct Gumroad sellers behind 8,311 products**. The top 1% (45 sellers) hold **53.1% of all 201,554 ratings measured**; the top 10% hold 89.2%.
 
-- **The concentration is not a catalogue effect.** Rank correlation between catalogue size and demand is only 0.283. The median seller inside the top 1% has 2 products and 14 of the 45 have exactly one.
-- 3,262 of 4,543 sellers (71.8%) have a single product in the sample; as a class they hold 31.1% of all ratings.
+- **The concentration is not a catalogue effect.** Rank correlation between catalogue size and demand is only 0.286. The median seller inside the top 1% has 2 products and 12 of the 45 have exactly one.
+- 3,251 of 4,532 sellers (71.7%) have a single product in the sample; as a class they hold 30.0% of all ratings.
 - 1,710 sellers (38%) have no ratings at all across their whole measured catalogue.
 - **A seller's product count is a crawl lower bound, not a catalogue.** The collector took three pages per category node, so sellers whose listings rank deep are under-counted. Never quote it as catalogue size.
 
-- [Seller CSV](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-sellers.csv): all 4,543 sellers with product count, categories, rating total, demand rank, share of all ratings, price median and range, and their most-rated listing.
+- [Seller CSV](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/gumroad-sellers.csv): all 4,532 sellers with product count, categories, rating total, demand rank, share of all ratings, price median and range, and their most-rated listing.
 - [sellers-summary.json](https://raw.githubusercontent.com/sujeito-operator/gumroad-market-data/main/data/sellers-summary.json): every figure above as JSON.
 - [Seller concentration, ranked](https://sujeito-operator.github.io/gumroad-market-data/s/index.html)
 

@@ -1,35 +1,37 @@
 {
- "n": 8322,
- "obs": 9878,
- "multi": 1556,
- "nodes": 261,
+ "n": 8311,
+ "obs": 9617,
+ "multi": 1306,
+ "nodes": 255,
  "nodes_empty": 98,
- "nodes_crawled": 359,
- "sellers": 4543,
+ "nodes_crawled": 353,
+ "nodes_frame": 359,
+ "nodes_unrecognised": 6,
+ "sellers": 4532,
  "zero": 3562,
  "zpct": 43,
  "med": 18.03,
  "med_all": 15.03,
  "p25": 8.01,
- "p75": 41.44,
+ "p75": 41.53,
  "p90": 100.18,
  "free": 644,
- "subs": 175,
- "ratings_total": 204971,
+ "subs": 170,
+ "ratings_total": 201554,
  "med_ratings_all": 1,
  "med_ratings_rated": 5,
- "top1_share": 51.9,
- "top5_share": 78.8,
- "top10_share": 88.0,
+ "top1_share": 52.1,
+ "top5_share": 78.7,
+ "top10_share": 87.9,
  "top_product_ratings": 10800,
- "seller_top1_share": 52.5,
- "seller_top5_share": 79.7,
+ "seller_top1_share": 53.1,
+ "seller_top5_share": 79.9,
  "seller_top10_share": 89.2,
- "sellers_one_product": 3262,
+ "sellers_one_product": 3251,
  "seller_max_products": 89,
  "med_products_per_seller": 1,
  "cap": 44,
- "nodes_at_cap": 191,
+ "nodes_at_cap": 187,
  "currency": "USD",
  "fx_date": "2026-08-06",
  "fx_source": "European Central Bank reference rates via frankfurter.dev",
@@ -142,9 +144,9 @@
  "block_correction": {
   "rule": "a product observed in >= 33% of crawled nodes is the recommendations module, and only its contiguous run at the end of a node's raw rows is removed",
   "products": 27,
-  "rows_removed": 5238,
+  "rows_removed": 5076,
   "tail_lengths": {
-   "27": 194
+   "27": 188
   },
   "block_urls": [
    "https://afyafarm.gumroad.com/l/fxoabu",
@@ -177,6 +179,30 @@
   ],
   "found": "2026-08-09",
   "note": "data/taxonomy-correction-2026-08-09.md"
+ },
+ "unrecognised_node_correction": {
+  "rule": "a node is dropped only when a live refetch matches >= 80% of a control fetch of an impossible slug AND the node's grid rows end in a run shared with another dropped node; either witness alone stops the build instead of dropping anything",
+  "nodes": [
+   "3D > 3D Assets > 3ds Max",
+   "3D > AR/VR",
+   "3D > AR/VR > Spark AR Studio",
+   "3D > VRChat > Tutorials & Guides",
+   "3D > VRChat > Worlds > Udon 2",
+   "Fiction Books > Children's Books"
+  ],
+  "slugs": {
+   "3D > 3D Assets > 3ds Max": "3d/3d-assets/3ds-max",
+   "3D > AR/VR": "3d/ar-vr",
+   "3D > AR/VR > Spark AR Studio": "3d/ar-vr/spark-ar-studio",
+   "3D > VRChat > Tutorials & Guides": "3d/vrchat/tutorials-and-guides",
+   "3D > VRChat > Worlds > Udon 2": "3d/vrchat/worlds/udon-2",
+   "Fiction Books > Children's Books": "fiction-books/children-s-books"
+  },
+  "rows_removed": 264,
+  "verified_live": "2026-08-11T11:32:24Z",
+  "found": "2026-08-11",
+  "instrument": "scripts/verify_taxonomy_nodes.py",
+  "machine_record": "data/node-verification.json"
  },
  "by_node": [
   {
@@ -264,73 +290,6 @@
    "ratings_total": 8,
    "top10_share": 62.5,
    "currencies": [
-    "\u00a3"
-   ]
-  },
-  {
-   "slug": "3d/vrchat/worlds/udon-2",
-   "node": "3D > VRChat > Worlds > Udon 2",
-   "depth": 3,
-   "n": 44,
-   "sellers": 42,
-   "median": 32.05,
-   "p25": 10.02,
-   "p75": 57.09,
-   "p90": 100.14,
-   "free": 0,
-   "subs": 11,
-   "rated_share": 98,
-   "med_ratings": 67,
-   "top_n": 1300,
-   "ratings_total": 7192,
-   "top10_share": 49.4,
-   "currencies": [
-    "$",
-    "\u00a3",
-    "\u20ac"
-   ]
-  },
-  {
-   "slug": "3d/ar-vr/spark-ar-studio",
-   "node": "3D > AR/VR > Spark AR Studio",
-   "depth": 2,
-   "n": 44,
-   "sellers": 40,
-   "median": 35.05,
-   "p25": 11.54,
-   "p75": 50.07,
-   "p90": 100.14,
-   "free": 1,
-   "subs": 9,
-   "rated_share": 98,
-   "med_ratings": 66,
-   "top_n": 2000,
-   "ratings_total": 9976,
-   "top10_share": 54.0,
-   "currencies": [
-    "$",
-    "\u00a3"
-   ]
-  },
-  {
-   "slug": "3d/ar-vr",
-   "node": "3D > AR/VR",
-   "depth": 1,
-   "n": 42,
-   "sellers": 40,
-   "median": 35.05,
-   "p25": 11.54,
-   "p75": 68.09,
-   "p90": 125.18,
-   "free": 0,
-   "subs": 11,
-   "rated_share": 98,
-   "med_ratings": 65,
-   "top_n": 1300,
-   "ratings_total": 6262,
-   "top10_share": 53.3,
-   "currencies": [
-    "$",
     "\u00a3"
    ]
   },
@@ -491,50 +450,6 @@
    ]
   },
   {
-   "slug": "3d/3d-assets/3ds-max",
-   "node": "3D > 3D Assets > 3ds Max",
-   "depth": 2,
-   "n": 44,
-   "sellers": 41,
-   "median": 35.05,
-   "p25": 11.0,
-   "p75": 68.09,
-   "p90": 149.22,
-   "free": 0,
-   "subs": 10,
-   "rated_share": 95,
-   "med_ratings": 49,
-   "top_n": 1300,
-   "ratings_total": 5887,
-   "top10_share": 55.0,
-   "currencies": [
-    "$",
-    "\u00a3"
-   ]
-  },
-  {
-   "slug": "fiction-books/children-s-books",
-   "node": "Fiction Books > Children's Books",
-   "depth": 1,
-   "n": 44,
-   "sellers": 42,
-   "median": 32.05,
-   "p25": 10.02,
-   "p75": 59.95,
-   "p90": 134.85,
-   "free": 0,
-   "subs": 11,
-   "rated_share": 95,
-   "med_ratings": 49,
-   "top_n": 1300,
-   "ratings_total": 5944,
-   "top10_share": 54.5,
-   "currencies": [
-    "$",
-    "\u00a3"
-   ]
-  },
-  {
    "slug": "3d/vrchat/worlds",
    "node": "3D > VRChat > Worlds",
    "depth": 2,
@@ -593,28 +508,6 @@
    "top_n": 3300,
    "ratings_total": 12011,
    "top10_share": 59.6,
-   "currencies": [
-    "$",
-    "\u00a3"
-   ]
-  },
-  {
-   "slug": "3d/vrchat/tutorials-and-guides",
-   "node": "3D > VRChat > Tutorials & Guides",
-   "depth": 2,
-   "n": 43,
-   "sellers": 40,
-   "median": 32.05,
-   "p25": 10.02,
-   "p75": 59.95,
-   "p90": 100.14,
-   "free": 0,
-   "subs": 11,
-   "rated_share": 93,
-   "med_ratings": 60,
-   "top_n": 1300,
-   "ratings_total": 6308,
-   "top10_share": 56.2,
    "currencies": [
     "$",
     "\u00a3"

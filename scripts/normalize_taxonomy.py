@@ -72,6 +72,38 @@ stated on every generated page: it makes nodes comparable to each other and it d
 support any claim about category size. Never publish a per-node count as "how many
 products are in this category".
 
+THE SECOND CONTAMINATION, AND IT IS A WHOLE NODE RATHER THAN A STRIP
+---------------------------------------------------------------------
+The strip rule above removes the "you might also like" module from the BOTTOM of a page.
+It cannot see a page that is nothing BUT recommendations, and there were six of those.
+
+`https://gumroad.com/discover?taxonomy=<slug>` does not 404 on a slug it does not know.
+**It silently serves the default discover feed.** Measured 2026-08-11, plain HTTP:
+
+    ?taxonomy=fiction-books/children-s-books        -> 36 permalinks
+    ?taxonomy=3d/3d-assets/3ds-max                  -> the SAME 36, in the same order
+    ?taxonomy=zzz-not-a-real-category-xyz           -> the SAME 36, in the same order
+    ?taxonomy=design/graphics/assets-and-templates  -> a different 36  (a node it knows)
+
+The tree is read out of the category picker on a product's EDIT page, and that tree is
+not the same tree `discover` routes on. Six nodes in it are unknown to `discover`, so
+what got recorded as their listings is the site-wide feed. `Fiction Books > Children's
+Books` was published with a $32.05 median and a $134.85 90th percentile computed from a
+NinjaTrader indicator, a peptide book and a sales-funnel course. Not one children's book.
+
+**A node is dropped only when two independent witnesses agree**, because a live feed that
+rotates must never be able to delete a real category on its own:
+
+  1. LIVE — `scripts/verify_taxonomy_nodes.py` refetches the node and finds >= 80% of it
+     in a control fetch of a slug that cannot exist. Written to `data/node-verification.json`.
+  2. IN THE CRAWL ITSELF — the node's grid rows end in a run shared with another dropped
+     node. The feed's head rotates per request and its tail does not, so the six read a
+     common suffix of exactly 36 of their 44 rows, and no other node pair shares five.
+
+`unrecognised_nodes()` requires both and `sys.exit`s on a disagreement rather than
+guessing. There is no threshold to tune: witness 1 is a positive match against a control
+and witness 2 is an exact shared suffix.
+
 98 of the 359 nodes returned zero rows. They are deep leaves, mostly under
 `recorded-music/singles/*` and `films/movie/*`, and the pattern is consistent with
 genuinely empty categories but has NOT been confirmed. They are excluded from
@@ -134,6 +166,55 @@ def block_urls(records, share=BLOCK_SHARE):
     return {u for u, nd in seen.items() if len(nd) >= floor}
 
 
+# The live half of the two-witness rule. Produced by scripts/verify_taxonomy_nodes.py.
+VERIFICATION = ROOT / "data" / "node-verification.json"
+
+# Witness 2. The default feed's tail is stable across requests while its head rotates, so
+# two nodes that are both the feed share a long ordered SUFFIX. Measured: the six share 36
+# of 44 and no other pair in 261 nodes shares as many as 5. Anywhere in 5..36 gives the
+# same answer, which is the point — it is a gap, not a knob.
+SUFFIX_WITNESS = 5
+
+
+def common_suffix(a, b):
+    """-> how many trailing items `a` and `b` share."""
+    n = 0
+    while n < len(a) and n < len(b) and a[-1 - n] == b[-1 - n]:
+        n += 1
+    return n
+
+
+def unrecognised_nodes(grids, verdicts, suffix=SUFFIX_WITNESS):
+    """-> the set of nodes that are the default discover feed wearing a category's name.
+
+    `grids`    {node: [url, ...]} AFTER the tail strip, in crawl order.
+    `verdicts` {node: "default_feed" | "real" | "empty" | "error"} from the live refetch.
+
+    Both witnesses are required. A node the live check accuses but the crawl does not
+    corroborate is an ERROR, not a judgement call: it means the feed has rotated into
+    something this rule cannot read, and the safe move is to stop rather than to delete a
+    category on one witness. The reverse — corroborated in the crawl, live says real — is
+    the same stop, because it means a node that WAS the feed is now a category, and the
+    published rows still came from the feed.
+    """
+    live = {n for n, v in verdicts.items() if v == "default_feed"}
+    corroborated = set()
+    for a in grids:
+        for b in grids:
+            if a != b and common_suffix(grids[a], grids[b]) >= suffix:
+                corroborated.add(a)
+                break
+    if live != corroborated:
+        only_live = sorted(live - corroborated)
+        only_crawl = sorted(corroborated - live)
+        sys.exit(
+            "the two witnesses disagree and neither one may drop a node alone.\n"
+            f"  live-only (refetch says default feed, crawl does not corroborate): {only_live}\n"
+            f"  crawl-only (crawl corroborates, refetch says it is a real node): {only_crawl}\n"
+            "  re-run scripts/verify_taxonomy_nodes.py and read both before publishing.")
+    return live
+
+
 def strip_block_tail(rows, bad):
     """-> (rows without the trailing recommendations module, how many were dropped).
 
@@ -158,8 +239,27 @@ def load():
     artifact — the same card seen on page 1 and again after 'Load more' — and dropped."""
     records = [json.loads(line) for line in RAW.open()]
     bad = block_urls(records)
+
+    # The tail strip first, because the whole-node rule reads the GRID's suffix and the
+    # recommendations module would otherwise be the suffix every node shares.
+    grids = {}
+    for d in records:
+        rows, _ = strip_block_tail(d.get("rows") or [], bad)
+        if rows:
+            grids[d["node"]] = [r["url"] for r in rows]
+
+    if not VERIFICATION.exists():
+        sys.exit(f"{VERIFICATION} is missing. Six nodes in this crawl are the default "
+                 "discover feed rather than a category, and without the live half of the "
+                 "two-witness rule this file would publish them again. Run:\n"
+                 "  python3 scripts/verify_taxonomy_nodes.py --out data/node-verification.json")
+    ver = json.loads(VERIFICATION.read_text())
+    unreal = unrecognised_nodes(grids, {r["node"]: r["verdict"] for r in ver["nodes"]})
+
     obs, empty, stripped, tails = [], [], 0, collections.Counter()
     for d in records:
+        if d["node"] in unreal:
+            continue
         rows = d.get("rows") or []
         rows, n_tail = strip_block_tail(rows, bad)
         stripped += n_tail
@@ -189,7 +289,12 @@ def load():
                 "recurring": bool(r.get("recurring")), "t": scrub(r["t"].strip()),
             })
     return obs, empty, {"block": sorted(bad), "rows_removed": stripped,
-                        "tail_lengths": dict(sorted(tails.items()))}
+                        "tail_lengths": dict(sorted(tails.items())),
+                        "unrecognised": sorted(unreal),
+                        "unrecognised_slugs": {d["node"]: d["slug"] for d in records
+                                               if d["node"] in unreal},
+                        "unrecognised_rows": sum(len(grids[n]) for n in unreal),
+                        "verification_checked": ver.get("checked")}
 
 
 def distinct(obs):
@@ -270,7 +375,13 @@ def summarise(obs, nodes, empty, strip=None):
         "multi": len(obs) - len(prod),
         "nodes": len(nodes),
         "nodes_empty": len(empty),
+        # `nodes_crawled` is what SURVIVED, and it used to equal the frame because nothing
+        # was ever discarded for a third reason. Six now are, so the frame is carried
+        # separately: a node that leaves the sample must leave a hole a reader can see,
+        # not shrink the denominator and disappear.
         "nodes_crawled": len(nodes) + len(empty),
+        "nodes_frame": len(nodes) + len(empty) + len((strip or {}).get("unrecognised", [])),
+        "nodes_unrecognised": len((strip or {}).get("unrecognised", [])),
         "sellers": len(per_seller),
         "zero": zero,
         "zpct": round(100 * zero / len(prod)),
@@ -314,6 +425,22 @@ def summarise(obs, nodes, empty, strip=None):
             "block_urls": (strip or {}).get("block", []),
             "found": "2026-08-09",
             "note": "data/taxonomy-correction-2026-08-09.md",
+        },
+        # The SECOND correction. A whole node rather than a strip: `discover` serves the
+        # site-wide feed for a taxonomy slug it does not recognise, so six nodes were
+        # published as categories holding 44 listings of unrelated products.
+        "unrecognised_node_correction": {
+            "rule": "a node is dropped only when a live refetch matches >= 80% of a "
+                    "control fetch of an impossible slug AND the node's grid rows end in "
+                    "a run shared with another dropped node; either witness alone stops "
+                    "the build instead of dropping anything",
+            "nodes": (strip or {}).get("unrecognised", []),
+            "slugs": (strip or {}).get("unrecognised_slugs", {}),
+            "rows_removed": (strip or {}).get("unrecognised_rows", 0),
+            "verified_live": (strip or {}).get("verification_checked"),
+            "found": "2026-08-11",
+            "instrument": "scripts/verify_taxonomy_nodes.py",
+            "machine_record": "data/node-verification.json",
         },
         "by_node": nodes,
     }
@@ -407,6 +534,47 @@ def selftest():
             deduped.append(r)
     chk("dedup first loses the signal", strip_block_tail(deduped, {"M1", "M2"})[1], 1)
     chk("strip first keeps it", strip_block_tail(raw, {"M1", "M2"})[1], 2)
+
+    # ---- THE WHOLE-NODE RULE. Two witnesses, and neither may act alone. ----
+    chk("common_suffix: shared tail", common_suffix(list("xxabc"), list("yyabc")), 3)
+    chk("common_suffix: nothing shared", common_suffix(list("abc"), list("xyz")), 0)
+    chk("common_suffix: a shared HEAD is not a tail",
+        common_suffix(list("abcx"), list("abcy")), 0)
+    chk("common_suffix: empty", common_suffix([], list("abc")), 0)
+
+    # The real shape: the feed's head rotates per request, its tail does not.
+    feed_tail = [f"F{i}" for i in range(9)]
+    G = {"A": ["a1", "a2"] + feed_tail,      # both witnesses
+         "B": ["b1"] + feed_tail,            # both witnesses
+         "C": ["c1", "c2", "c3"],            # a real category
+         "D": ["d1", "d2"]}                  # a real category
+    V = {"A": "default_feed", "B": "default_feed", "C": "real", "D": "empty"}
+    chk("both witnesses agree -> dropped", unrecognised_nodes(G, V), {"A", "B"})
+    chk("a real node is untouched", "C" in unrecognised_nodes(G, V), False)
+
+    # ONE WITNESS MUST NOT BE ENOUGH, IN EITHER DIRECTION. A rotating live feed that
+    # could delete a category by itself is a worse defect than the one being fixed.
+    def exits(g, v):
+        try:
+            unrecognised_nodes(g, v)
+            return False
+        except SystemExit:
+            return True
+
+    chk("live accuses a node the crawl does not corroborate -> stop",
+        exits(G, dict(V, C="default_feed")), True)
+    chk("crawl corroborates a node the live check calls real -> stop",
+        exits(G, dict(V, B="real")), True)
+    chk("live check missing for a corroborated node -> stop",
+        exits(G, {"A": "default_feed", "C": "real"}), True)
+    chk("no node accused and none corroborated is fine",
+        unrecognised_nodes({"C": ["c1"], "D": ["d1"]}, {"C": "real", "D": "real"}), set())
+
+    # The threshold sits in a gap, not on a slope: the six share 36 and no other pair
+    # shares 5, so any value in between gives the same answer. Assert the gap exists
+    # rather than the constant, because the constant is not the claim.
+    chk("suffix witness lands in the gap for 5..9", all(
+        unrecognised_nodes(G, V, suffix=k) == {"A", "B"} for k in range(2, 10)), True)
 
     print(f"selftest: {ok} ok, {fail} failed")
     return 1 if fail else 0

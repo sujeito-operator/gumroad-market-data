@@ -1,0 +1,1851 @@
+{
+ "checked": "2026-08-11T11:32:24Z",
+ "controls": [
+  36,
+  36,
+  36,
+  36,
+  36,
+  36,
+  36,
+  36,
+  36,
+  36,
+  36
+ ],
+ "match_threshold": 0.8,
+ "tally": {
+  "real": 240,
+  "default_feed": 6,
+  "empty": 15
+ },
+ "nodes": [
+  {
+   "node": "3D",
+   "slug": "3d",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets",
+   "slug": "3d/3d-assets",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > 3ds Max",
+   "slug": "3d/3d-assets/3ds-max",
+   "n": 36,
+   "verdict": "default_feed",
+   "control_overlap": 1.0
+  },
+  {
+   "node": "3D > 3D Assets > Accessories",
+   "slug": "3d/3d-assets/accessories",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Accessories > Bags",
+   "slug": "3d/3d-assets/accessories/bags",
+   "n": 10,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Accessories > Belts",
+   "slug": "3d/3d-assets/accessories/belts",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Accessories > Chokers",
+   "slug": "3d/3d-assets/accessories/chokers",
+   "n": 25,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Accessories > Gloves",
+   "slug": "3d/3d-assets/accessories/gloves",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Accessories > Harnesses",
+   "slug": "3d/3d-assets/accessories/harnesses",
+   "n": 18,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Accessories > Jewelry",
+   "slug": "3d/3d-assets/accessories/jewelry",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Accessories > Masks",
+   "slug": "3d/3d-assets/accessories/masks",
+   "n": 28,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Accessories > Wings",
+   "slug": "3d/3d-assets/accessories/wings",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Avatar Components",
+   "slug": "3d/3d-assets/avatar-components",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Avatar Components > Bases",
+   "slug": "3d/3d-assets/avatar-components/bases",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Avatar Components > Ears",
+   "slug": "3d/3d-assets/avatar-components/ears",
+   "n": 26,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Avatar Components > Feet",
+   "slug": "3d/3d-assets/avatar-components/feet",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Avatar Components > Hair",
+   "slug": "3d/3d-assets/avatar-components/hair",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Avatar Components > Heads",
+   "slug": "3d/3d-assets/avatar-components/heads",
+   "n": 13,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Avatar Components > Horns",
+   "slug": "3d/3d-assets/avatar-components/horns",
+   "n": 25,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Avatar Components > Tails",
+   "slug": "3d/3d-assets/avatar-components/tails",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Blender",
+   "slug": "3d/3d-assets/blender",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Cinema 4D",
+   "slug": "3d/3d-assets/cinema-4d",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing",
+   "slug": "3d/3d-assets/clothing",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Bodysuits",
+   "slug": "3d/3d-assets/clothing/bodysuits",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Bottoms",
+   "slug": "3d/3d-assets/clothing/bottoms",
+   "n": 2,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Bras",
+   "slug": "3d/3d-assets/clothing/bras",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Dresses",
+   "slug": "3d/3d-assets/clothing/dresses",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Jackets",
+   "slug": "3d/3d-assets/clothing/jackets",
+   "n": 29,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Lingerie",
+   "slug": "3d/3d-assets/clothing/lingerie",
+   "n": 4,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Outfits",
+   "slug": "3d/3d-assets/clothing/outfits",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Pants",
+   "slug": "3d/3d-assets/clothing/pants",
+   "n": 26,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Shirts",
+   "slug": "3d/3d-assets/clothing/shirts",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Shorts",
+   "slug": "3d/3d-assets/clothing/shorts",
+   "n": 7,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Skirts",
+   "slug": "3d/3d-assets/clothing/skirts",
+   "n": 10,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Sweaters",
+   "slug": "3d/3d-assets/clothing/sweaters",
+   "n": 22,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Swimsuits",
+   "slug": "3d/3d-assets/clothing/swimsuits",
+   "n": 18,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Tops",
+   "slug": "3d/3d-assets/clothing/tops",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Clothing > Underwear",
+   "slug": "3d/3d-assets/clothing/underwear",
+   "n": 18,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Footwear",
+   "slug": "3d/3d-assets/footwear",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Footwear > Boots",
+   "slug": "3d/3d-assets/footwear/boots",
+   "n": 14,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Footwear > Leggings",
+   "slug": "3d/3d-assets/footwear/leggings",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Footwear > Shoes",
+   "slug": "3d/3d-assets/footwear/shoes",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Footwear > Socks",
+   "slug": "3d/3d-assets/footwear/socks",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Headwear",
+   "slug": "3d/3d-assets/headwear",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Headwear > Hats",
+   "slug": "3d/3d-assets/headwear/hats",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Houdini",
+   "slug": "3d/3d-assets/houdini",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Maya",
+   "slug": "3d/3d-assets/maya",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Modo",
+   "slug": "3d/3d-assets/modo",
+   "n": 12,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Props",
+   "slug": "3d/3d-assets/props",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Props > Companions",
+   "slug": "3d/3d-assets/props/companions",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Props > Handheld",
+   "slug": "3d/3d-assets/props/handheld",
+   "n": 17,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Props > Plushies",
+   "slug": "3d/3d-assets/props/plushies",
+   "n": 23,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Props > Prefabs",
+   "slug": "3d/3d-assets/props/prefabs",
+   "n": 21,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Props > Weapons",
+   "slug": "3d/3d-assets/props/weapons",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > SketchUp",
+   "slug": "3d/3d-assets/sketchup",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Unity",
+   "slug": "3d/3d-assets/unity",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Unity > Animations",
+   "slug": "3d/3d-assets/unity/animations",
+   "n": 25,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Unity > Particle Systems",
+   "slug": "3d/3d-assets/unity/particle-systems",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Unity > Shaders",
+   "slug": "3d/3d-assets/unity/shaders",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > Unreal Engine",
+   "slug": "3d/3d-assets/unreal-engine",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Assets > ZBrush",
+   "slug": "3d/3d-assets/zbrush",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > 3D Modeling",
+   "slug": "3d/3d-modeling",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Animating",
+   "slug": "3d/animating",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > AR/VR",
+   "slug": "3d/ar-vr",
+   "n": 36,
+   "verdict": "default_feed",
+   "control_overlap": 1.0
+  },
+  {
+   "node": "3D > AR/VR > Spark AR Studio",
+   "slug": "3d/ar-vr/spark-ar-studio",
+   "n": 36,
+   "verdict": "default_feed",
+   "control_overlap": 1.0
+  },
+  {
+   "node": "3D > Avatars",
+   "slug": "3d/avatars",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Avatars > Female",
+   "slug": "3d/avatars/female",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Avatars > Male",
+   "slug": "3d/avatars/male",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Avatars > Non-Binary",
+   "slug": "3d/avatars/non-binary",
+   "n": 5,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Avatars > Optimized",
+   "slug": "3d/avatars/optimized",
+   "n": 34,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Avatars > Quest",
+   "slug": "3d/avatars/quest",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Avatars > Species",
+   "slug": "3d/avatars/species",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Character Design",
+   "slug": "3d/character-design",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Rigging",
+   "slug": "3d/rigging",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Textures",
+   "slug": "3d/textures",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Textures > Base",
+   "slug": "3d/textures/base",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Textures > Eyes",
+   "slug": "3d/textures/eyes",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Textures > Face",
+   "slug": "3d/textures/face",
+   "n": 25,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Textures > Icons",
+   "slug": "3d/textures/icons",
+   "n": 6,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Textures > MatCap",
+   "slug": "3d/textures/matcap",
+   "n": 10,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Textures > PBR",
+   "slug": "3d/textures/pbr",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > Textures > Tattoos",
+   "slug": "3d/textures/tattoos",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat",
+   "slug": "3d/vrchat",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Avatar Systems",
+   "slug": "3d/vrchat/avatar-systems",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Followers",
+   "slug": "3d/vrchat/followers",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > OSC",
+   "slug": "3d/vrchat/osc",
+   "n": 19,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Setup Scripts",
+   "slug": "3d/vrchat/setup-scripts",
+   "n": 8,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Spring Joints",
+   "slug": "3d/vrchat/spring-joints",
+   "n": 2,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Tools",
+   "slug": "3d/vrchat/tools",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Tutorials & Guides",
+   "slug": "3d/vrchat/tutorials-and-guides",
+   "n": 36,
+   "verdict": "default_feed",
+   "control_overlap": 1.0
+  },
+  {
+   "node": "3D > VRChat > World Constraints",
+   "slug": "3d/vrchat/world-constraints",
+   "n": 12,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Worlds",
+   "slug": "3d/vrchat/worlds",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Worlds > Assets",
+   "slug": "3d/vrchat/worlds/assets",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Worlds > MIDI",
+   "slug": "3d/vrchat/worlds/midi",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Worlds > Quest",
+   "slug": "3d/vrchat/worlds/quest",
+   "n": 2,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Worlds > Tools",
+   "slug": "3d/vrchat/worlds/tools",
+   "n": 12,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Worlds > Udon",
+   "slug": "3d/vrchat/worlds/udon",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "3D > VRChat > Worlds > Udon 2",
+   "slug": "3d/vrchat/worlds/udon-2",
+   "n": 36,
+   "verdict": "default_feed",
+   "control_overlap": 1.0
+  },
+  {
+   "node": "3D > VRChat > Worlds > Udon System",
+   "slug": "3d/vrchat/worlds/udon-system",
+   "n": 4,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Audio",
+   "slug": "audio",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Audio > ASMR",
+   "slug": "audio/asmr",
+   "n": 6,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Audio > Healing",
+   "slug": "audio/healing",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Audio > Hypnosis",
+   "slug": "audio/hypnosis",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Audio > Sleep & Meditation",
+   "slug": "audio/sleep-and-meditation",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Audio > Subliminal Messages",
+   "slug": "audio/subliminal-messages",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Audio > Voiceover",
+   "slug": "audio/voiceover",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money",
+   "slug": "business-and-money",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Accounting",
+   "slug": "business-and-money/accounting",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Entrepreneurship",
+   "slug": "business-and-money/entrepreneurship",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Entrepreneurship > Courses",
+   "slug": "business-and-money/entrepreneurship/courses",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Entrepreneurship > Podcasts",
+   "slug": "business-and-money/entrepreneurship/podcasts",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Entrepreneurship > Resources",
+   "slug": "business-and-money/entrepreneurship/resources",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Gigs & Side Projects",
+   "slug": "business-and-money/gigs-and-side-projects",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Investing",
+   "slug": "business-and-money/investing",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Management & Leadership",
+   "slug": "business-and-money/management-and-leadership",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Marketing & Sales",
+   "slug": "business-and-money/marketing-and-sales",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Marketing & Sales > Analytics",
+   "slug": "business-and-money/marketing-and-sales/analytics",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Marketing & Sales > Email",
+   "slug": "business-and-money/marketing-and-sales/email",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Marketing & Sales > Social Media",
+   "slug": "business-and-money/marketing-and-sales/social-media",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Networking, Careers & Jobs",
+   "slug": "business-and-money/networking-careers-and-jobs",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Personal Finance",
+   "slug": "business-and-money/personal-finance",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Business & Money > Real Estate",
+   "slug": "business-and-money/real-estate",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Comics & Graphic Novels",
+   "slug": "comics-and-graphic-novels",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design",
+   "slug": "design",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Architecture",
+   "slug": "design/architecture",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Branding",
+   "slug": "design/branding",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Branding > Business Cards",
+   "slug": "design/branding/business-cards",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Branding > Logos",
+   "slug": "design/branding/logos",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Branding > Social Media",
+   "slug": "design/branding/social-media",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Entertainment Design",
+   "slug": "design/entertainment-design",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Fashion Design",
+   "slug": "design/fashion-design",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Fonts",
+   "slug": "design/fonts",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics",
+   "slug": "design/graphics",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics > Assets & Templates",
+   "slug": "design/graphics/assets-and-templates",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics > Marketing & Social",
+   "slug": "design/graphics/marketing-and-social",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics > Mockups",
+   "slug": "design/graphics/mockups",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics > Mockups > Canva",
+   "slug": "design/graphics/mockups/canva",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics > Mockups > Illustrator",
+   "slug": "design/graphics/mockups/illustrator",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics > Mockups > InDesign",
+   "slug": "design/graphics/mockups/indesign",
+   "n": 4,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics > Mockups > Photoshop",
+   "slug": "design/graphics/mockups/photoshop",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics > Textures & Patterns (2D)",
+   "slug": "design/graphics/textures-and-patterns-2d",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Graphics > Vector Graphics",
+   "slug": "design/graphics/vector-graphics",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Icons",
+   "slug": "design/icons",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Icons > 3D Icons",
+   "slug": "design/icons/3d-icons",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Icons > iOS Customization",
+   "slug": "design/icons/ios-customization",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Icons > Vector Icons",
+   "slug": "design/icons/vector-icons",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Industrial Design",
+   "slug": "design/industrial-design",
+   "n": 15,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Interior Design",
+   "slug": "design/interior-design",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Print & Packaging",
+   "slug": "design/print-and-packaging",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Print & Packaging > Canva",
+   "slug": "design/print-and-packaging/canva",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Print & Packaging > Illustrator",
+   "slug": "design/print-and-packaging/illustrator",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Print & Packaging > InDesign",
+   "slug": "design/print-and-packaging/indesign",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Print & Packaging > Powerpoint",
+   "slug": "design/print-and-packaging/powerpoint",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > UI & Web",
+   "slug": "design/ui-and-web",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > UI & Web > Adobe",
+   "slug": "design/ui-and-web/adobe",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > UI & Web > Figma",
+   "slug": "design/ui-and-web/figma",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > UI & Web > HTML",
+   "slug": "design/ui-and-web/html",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > UI & Web > XD",
+   "slug": "design/ui-and-web/xd",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Design > Wallpapers",
+   "slug": "design/wallpapers",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting",
+   "slug": "drawing-and-painting",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Artwork & Commissions",
+   "slug": "drawing-and-painting/artwork-and-commissions",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Digital Illustration",
+   "slug": "drawing-and-painting/digital-illustration",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Digital Illustration > Courses",
+   "slug": "drawing-and-painting/digital-illustration/courses",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Digital Illustration > Illustration Brushes",
+   "slug": "drawing-and-painting/digital-illustration/illustration-brushes",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Digital Illustration > Illustration Brushes > Blender",
+   "slug": "drawing-and-painting/digital-illustration/illustration-brushes/blender",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Digital Illustration > Illustration Brushes > Photoshop",
+   "slug": "drawing-and-painting/digital-illustration/illustration-brushes/photoshop",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Digital Illustration > Illustration Brushes > Procreate",
+   "slug": "drawing-and-painting/digital-illustration/illustration-brushes/procreate",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Digital Illustration > Illustration Kits",
+   "slug": "drawing-and-painting/digital-illustration/illustration-kits",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Digital Illustration > Illustration Textures & Patterns",
+   "slug": "drawing-and-painting/digital-illustration/illustration-textures-and-patterns",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Drawing & Painting > Traditional Art",
+   "slug": "drawing-and-painting/traditional-art",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education",
+   "slug": "education",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Classroom",
+   "slug": "education/classroom",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > English",
+   "slug": "education/english",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > History",
+   "slug": "education/history",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Math",
+   "slug": "education/math",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Science",
+   "slug": "education/science",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Science > Medicine",
+   "slug": "education/science/medicine",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Social Studies",
+   "slug": "education/social-studies",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Social Studies > History",
+   "slug": "education/social-studies/history",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Social Studies > Law",
+   "slug": "education/social-studies/law",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Social Studies > Politics",
+   "slug": "education/social-studies/politics",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Specialties",
+   "slug": "education/specialties",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Education > Test Prep",
+   "slug": "education/test-prep",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fiction Books",
+   "slug": "fiction-books",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fiction Books > Children's Books",
+   "slug": "fiction-books/children-s-books",
+   "n": 36,
+   "verdict": "default_feed",
+   "control_overlap": 1.0
+  },
+  {
+   "node": "Fiction Books > Fantasy",
+   "slug": "fiction-books/fantasy",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fiction Books > Mystery",
+   "slug": "fiction-books/mystery",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fiction Books > Romance",
+   "slug": "fiction-books/romance",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fiction Books > Science Fiction",
+   "slug": "fiction-books/science-fiction",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fiction Books > Teen & Young Adult",
+   "slug": "fiction-books/teen-and-young-adult",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films",
+   "slug": "films",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Comedy",
+   "slug": "films/comedy",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Comedy > Sketch",
+   "slug": "films/comedy/sketch",
+   "n": 4,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Comedy > Standup",
+   "slug": "films/comedy/standup",
+   "n": 11,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Dance",
+   "slug": "films/dance",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Documentary",
+   "slug": "films/documentary",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie",
+   "slug": "films/movie",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Action & Adventure",
+   "slug": "films/movie/action-and-adventure",
+   "n": 32,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Animation",
+   "slug": "films/movie/animation",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Anime",
+   "slug": "films/movie/anime",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Black Voices",
+   "slug": "films/movie/black-voices",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Classics",
+   "slug": "films/movie/classics",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Drama",
+   "slug": "films/movie/drama",
+   "n": 32,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Faith & Spirituality",
+   "slug": "films/movie/faith-and-spirituality",
+   "n": 21,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Foreign Language & International",
+   "slug": "films/movie/foreign-language-and-international",
+   "n": 32,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Horror",
+   "slug": "films/movie/horror",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Indian Cinema & Bollywood",
+   "slug": "films/movie/indian-cinema-and-bollywood",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Indie & Art House",
+   "slug": "films/movie/indie-and-art-house",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Kids & Family",
+   "slug": "films/movie/kids-and-family",
+   "n": 4,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > LGBTQ",
+   "slug": "films/movie/lgbtq",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Music Videos & Concerts",
+   "slug": "films/movie/music-videos-and-concerts",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Romance",
+   "slug": "films/movie/romance",
+   "n": 0,
+   "verdict": "empty",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Science Fiction",
+   "slug": "films/movie/science-fiction",
+   "n": 2,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Movie > Western",
+   "slug": "films/movie/western",
+   "n": 3,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Performance",
+   "slug": "films/performance",
+   "n": 21,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Short Film",
+   "slug": "films/short-film",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Sports Events",
+   "slug": "films/sports-events",
+   "n": 34,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Theater",
+   "slug": "films/theater",
+   "n": 20,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Video Production & Editing",
+   "slug": "films/video-production-and-editing",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Video Production & Editing > Courses",
+   "slug": "films/video-production-and-editing/courses",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Video Production & Editing > LUTs",
+   "slug": "films/video-production-and-editing/luts",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Video Production & Editing > Stock",
+   "slug": "films/video-production-and-editing/stock",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Video Production & Editing > Video Assets & Loops",
+   "slug": "films/video-production-and-editing/video-assets-and-loops",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Video Production & Editing > Video Assets & Loops > After Effects",
+   "slug": "films/video-production-and-editing/video-assets-and-loops/after-effects",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Video Production & Editing > Video Assets & Loops > Cinema 4D",
+   "slug": "films/video-production-and-editing/video-assets-and-loops/cinema-4d",
+   "n": 29,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Video Production & Editing > Video Assets & Loops > Premiere Pro",
+   "slug": "films/video-production-and-editing/video-assets-and-loops/premiere-pro",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Films > Videography",
+   "slug": "films/videography",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fitness & Health",
+   "slug": "fitness-and-health",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fitness & Health > Exercise & Workout",
+   "slug": "fitness-and-health/exercise-and-workout",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fitness & Health > Running",
+   "slug": "fitness-and-health/running",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fitness & Health > Sports",
+   "slug": "fitness-and-health/sports",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fitness & Health > Weight Loss & Dieting",
+   "slug": "fitness-and-health/weight-loss-and-dieting",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Fitness & Health > Yoga",
+   "slug": "fitness-and-health/yoga",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Gaming",
+   "slug": "gaming",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Gaming > Streaming",
+   "slug": "gaming/streaming",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design",
+   "slug": "music-and-sound-design",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Dance & Theater",
+   "slug": "music-and-sound-design/dance-and-theater",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Dance & Theater > Dance",
+   "slug": "music-and-sound-design/dance-and-theater/dance",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Dance & Theater > Theater",
+   "slug": "music-and-sound-design/dance-and-theater/theater",
+   "n": 32,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Instruments",
+   "slug": "music-and-sound-design/instruments",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Instruments > Guitar",
+   "slug": "music-and-sound-design/instruments/guitar",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Instruments > Piano",
+   "slug": "music-and-sound-design/instruments/piano",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Sound Design",
+   "slug": "music-and-sound-design/sound-design",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Sound Design > Courses",
+   "slug": "music-and-sound-design/sound-design/courses",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Sound Design > Plugins",
+   "slug": "music-and-sound-design/sound-design/plugins",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Sound Design > Plugins > Ableton Live",
+   "slug": "music-and-sound-design/sound-design/plugins/ableton-live",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Sound Design > Plugins > FL Studio",
+   "slug": "music-and-sound-design/sound-design/plugins/fl-studio",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Sound Design > Plugins > Logic Pro",
+   "slug": "music-and-sound-design/sound-design/plugins/logic-pro",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Sound Design > Samples",
+   "slug": "music-and-sound-design/sound-design/samples",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Sound Design > Sheet Music",
+   "slug": "music-and-sound-design/sound-design/sheet-music",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Music & Sound Design > Vocal",
+   "slug": "music-and-sound-design/vocal",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Other",
+   "slug": "other",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.2777777777777778
+  },
+  {
+   "node": "Photography",
+   "slug": "photography",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Photography > Cosplay",
+   "slug": "photography/cosplay",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Photography > Photo Courses",
+   "slug": "photography/photo-courses",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Photography > Photo Presets & Actions",
+   "slug": "photography/photo-presets-and-actions",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Photography > Reference Photos",
+   "slug": "photography/reference-photos",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Photography > Stock Photos",
+   "slug": "photography/stock-photos",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Recorded Music",
+   "slug": "recorded-music",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Recorded Music > Albums",
+   "slug": "recorded-music/albums",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  },
+  {
+   "node": "Recorded Music > Singles",
+   "slug": "recorded-music/singles",
+   "n": 36,
+   "verdict": "real",
+   "control_overlap": 0.0
+  }
+ ]
+}
