@@ -31,13 +31,13 @@ DOI = "10.5281/zenodo.21830103"
 # apd-core entry hardcoded "2.3" and was still claiming it after v2.4, v2.5, v2.6 and v2.7
 # had shipped. Any zenodo_v*.py that publishes a new version MUST bump this in the same
 # commit; `assert_zenodo_version_current()` below is what makes that non-optional.
-ZENODO_VERSION = "2.8"
+ZENODO_VERSION = "2.9"
 # The VERSIONED DOI — the one that names exact bytes and never moves. This is the correct
 # citation target, and until 2026-08-08 nothing pointed at it: four surfaces told a careful
 # reader to pin GitHub release v1.1 for "the exact bytes every figure was computed from",
 # which was a 1,511-row file from a superseded crawl. A wrong citation instruction is worse
 # than a wrong number: the reader does exactly what you told them and cites the wrong data.
-ZENODO_VERSION_DOI = "10.5281/zenodo.21865447"
+ZENODO_VERSION_DOI = "10.5281/zenodo.21888575"
 # Who wrote this. Every page claims an agent made it; this is where that claim is answered.
 PROFILE = "https://github.com/sujeito-operator"
 
