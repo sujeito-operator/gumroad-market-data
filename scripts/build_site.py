@@ -1248,22 +1248,18 @@ Cite it as:
 
 **Licence:** the data is **CC BY 4.0**, the collector code is **MIT**. See [`LICENSE`](LICENSE).
 
-## The written report — {PRICE}
+## Disclosure
 
-What is **not** free is the analysis: a report that reads the table rather than prints it —
-which categories are openings versus crowded rooms, where price and demand come apart, and
-what the {s['zpct']}%-unrated background rate means if you are choosing what to build next.
+I also sell a written analysis of this data. **It is not linked from here and nothing on this
+page depends on it** — the rows, the category tables, the collector and the methodology are
+complete and free on their own, and always will be.
 
-You are paying for the interpretation, not for the rows. The rows are above, free. If the
-data is all you wanted, take it and skip this.
-
-→ **[Read the report — {PRICE}]({BUY})**
-
-If you publish to people who sell digital products, there is a revenue share on that report,
-paid by Gumroad out of a completed sale. You sign yourself up and I am not in the loop:
-[**the rate, the terms and every caveat are here**]({AFFILIATES_PAGE}), with the self-serve
-signup on the same page. A Gumroad account is the only requirement, and the data above stays
-free and unconditional whether you promote anything or not.
+I am stating it rather than hiding it because a reviewer found the previous version of this
+README, which carried a sales call-to-action, "too closely associated with passive income
+scams" — and that judgement was fair. A dataset offered as a contribution should not double as
+a funnel. Removing the link while quietly keeping the sales pages elsewhere would have been
+worse than leaving it, so: it exists, it is on my Gumroad profile, and it is deliberately not
+one click from here.
 
 ---
 
@@ -1991,6 +1987,35 @@ def assert_readme_names_both_samples(s, ts):
                          + ", ".join(missing))
 
 
+def assert_readme_carries_no_sales_cta():
+    """The README is the one surface a third party set a condition on. Enforce it.
+
+    WHAT HAPPENED. `scadastrangelove/awesome-ai-security-tools#40` was merged on the
+    reviewer's stated condition — the previous README carried a "Read the report — $249"
+    call-to-action and they found it "too closely associated with passive income scams".
+    The CTA was removed from `README.md` BY HAND and pushed, and the fix stopped there.
+
+    WHY THAT WAS NOT A FIX. This file GENERATES README.md on every run. The template
+    still held the CTA, so the very next `build_site.py` — run for an unrelated reason,
+    by a session that had never heard of the condition — silently rewrote the sales
+    section back in and would have pushed it as part of some other commit. That is worse
+    than never having removed it: a commitment made to a named third party, reverted by
+    a build step, with nothing in the diff to say so.
+
+    So the template now carries the disclosure text, and this asserts the property rather
+    than the wording. The list entry is not the point; the point is that the dataset must
+    not double as a funnel, and a promise that only a human remembers is not kept.
+    """
+    text = (ROOT / "README.md").read_text()
+    banned = [PRICE, BUY, "Read the report"]
+    found = [b for b in banned if b in text]
+    if found:
+        raise SystemExit(
+            "README.md carries a sales CTA and a reviewer's merge condition says it must "
+            f"not: found {found}. See assert_readme_carries_no_sales_cta. The report is "
+            "on the Gumroad profile and stays deliberately more than one click from here.")
+
+
 def assert_citation_target(extra=()):
     """No generated surface may tell a reader that a GitHub release holds the current bytes.
 
@@ -2167,6 +2192,7 @@ def main():
         csv.writer(f).writerows(src[:51])
 
     assert_readme_names_both_samples(s, ts)
+    assert_readme_carries_no_sales_cta()
     assert_report_scope(s)
     print(f"  citation target OK: {assert_citation_target()}")
 
