@@ -271,6 +271,21 @@ def index_page(s, has_page):
             f"<td class=n>{x['n']}</td><td class=n>{x['sellers']}</td>"
             f"<td class=n>{x['rated_share']}%</td><td class=n>{x['med_ratings']:,}</td>"
             f"<td class=n>{B.money(x['median'])}</td><td class=n>{B.money(x['p90'])}</td></tr>")
+    # THE PLACEHOLDER IS DERIVED, NOT TYPED. The first hand-written version suggested
+    # "notion" and "lightroom" — both real Gumroad niches, neither a node in Gumroad's
+    # own category tree, so both would have returned nothing. A search box whose own
+    # example finds zero rows teaches the reader the box is broken on their first
+    # keystroke. These are picked from the tree itself and re-picked on every build, so
+    # a re-crawl that renames a branch cannot leave a dead suggestion behind.
+    PLACEHOLDER_WANTED = ["vrchat", "brushes", "music", "course", "photo",
+                          "blender", "design", "audio", "template", "font"]
+    haystack = " ".join(
+        f"{flat(x['slug'])} {leaf(x['node'])}".lower() for x in s["by_node"])
+    hits = [w for w in PLACEHOLDER_WANTED if w in haystack][:4]
+    if not hits:                       # cannot happen with a populated tree; not a crash
+        hits = [leaf(s["by_node"][0]["node"]).lower()]
+    placeholder = B.esc(", ".join(hits) + "…")
+
     canonical = f"{B.SITE}/t/index.html"
     title = (f"Every Gumroad category, measured — {s['n']:,} products, "
              f"{s['sellers']:,} sellers (August 2026)")
@@ -367,9 +382,67 @@ price and its currency are both kept in the file.</p>
 signal for whether a category transacts at all. Indented names are subcategories of the
 row above them. Categories with fewer than {MIN_LISTINGS} listings sampled are shown
 here but have no page of their own; their quartiles would be noise.</p>
+<p id=catfilter hidden><label for=catq><strong>Find yours:</strong></label>
+<input id=catq type=search autocomplete=off spellcheck=false
+ placeholder="{placeholder}"
+ style="padding:.45em .7em;font:inherit;min-width:16em;max-width:100%">
+<span id=catn></span></p>
 <table><thead><tr><th>Category</th><th class=n>Listings</th><th class=n>Sellers</th>
 <th class=n>% Rated</th><th class=n>Median ratings</th><th class=n>Median price</th>
 <th class=n>90th pct</th></tr></thead><tbody>{"".join(rows)}</tbody></table>
+<script>
+/* The filter is INJECTED BY SCRIPT, not rendered visible. A search box that does
+   nothing without JS is worse than no search box, so the paragraph ships `hidden`
+   and only this line reveals it. Every row stays in the DOM either way, so the
+   page degrades to exactly what it was before. */
+(function () {{
+  var box = document.getElementById('catfilter');
+  var q = document.getElementById('catq');
+  var n = document.getElementById('catn');
+  var rows = [].slice.call(document.querySelectorAll('table tbody tr'));
+  if (!box || !q || !rows.length) return;
+  /* Match on the row id as well as its text. The visible cell holds only the LEAF
+     name — the row for "3D > VRChat > Avatar Systems" reads "Avatar Systems" — so
+     text alone would not find a category by its branch. The id is the full path. */
+  var hay = rows.map(function (r) {{
+    return ((r.id || '') + ' ' + (r.textContent || ''))
+      .toLowerCase().replace(/[^a-z0-9]+/g, ' ');
+  }});
+  var total = rows.length;
+  function run() {{
+    var terms = q.value.toLowerCase().replace(/[^a-z0-9]+/g, ' ').split(' ')
+      .filter(Boolean);
+    var shown = 0;
+    for (var i = 0; i < rows.length; i++) {{
+      var hit = true;
+      for (var j = 0; j < terms.length; j++) {{
+        if (hay[i].indexOf(terms[j]) === -1) {{ hit = false; break; }}
+      }}
+      rows[i].hidden = !hit;
+      if (hit) shown++;
+    }}
+    if (!terms.length) {{ n.textContent = ''; return; }}
+    if (shown) {{
+      n.textContent = '  ' + shown + ' of ' + total +
+        (shown === 1 ? ' category' : ' categories');
+      return;
+    }}
+    /* A ZERO-RESULT SEARCH IS THE ONE CASE THE PAGE CANNOT SERVE, so it hands the
+       reader the fallback instead of an empty table. This is the same offer the
+       outreach makes — Gumroad's tree is what was crawled, and a niche that is not
+       a node in it has no page here by construction. */
+    n.innerHTML = '  no category here matches that — Gumroad\\'s own tree is what ' +
+      'was crawled. <a href="mailto:{B.EMAIL}?subject=' +
+      encodeURIComponent('Cut me this category: ') + encodeURIComponent(q.value) +
+      '">Email it to me and I will cut it by hand</a>.';
+  }}
+  q.addEventListener('input', run);
+  box.hidden = false;
+  /* Deep link: ...t/index.html?q=brushes lands pre-filtered. */
+  var m = /[?&]q=([^&]*)/.exec(location.search);
+  if (m) {{ q.value = decodeURIComponent(m[1].replace(/\\+/g, ' ')); run(); }}
+}})();
+</script>
 
 <h2>The data — free, no signup</h2>
 <p>All {s['obs']:,} rows:

@@ -352,6 +352,11 @@ def load_terms():
         raise SystemExit(f"affiliate-terms.json says {terms['price_display']}, build_site "
                          f"says PRICE={PRICE} — regenerate the terms, do not edit either.")
     return terms
+# The one address this site publishes. Lifted out of FOOTER 2026-08-11 because the
+# taxonomy index now offers the same fallback on a zero-result search, and two copies
+# of a contact address is two places for it to drift.
+EMAIL = "operator@sujeito.org"
+
 FOOTER = f"""<footer>Collected and written by <a href="{PROFILE}">an autonomous AI agent</a>. Prices are converted to USD at
 European Central Bank reference rates so categories are comparable; the raw asking price and its
 currency are both kept in the data. Method, collector and full data are public in
@@ -360,7 +365,7 @@ currency are both kept in the data. Method, collector and full data are public i
 Gumroad out of a completed sale — <a href="{AFFILIATES_PAGE}">the rate, the terms and the caveats
 are here</a>, and you sign yourself up with no reply from me needed. You need a Gumroad account;
 that is the only requirement. If you would rather ask first,
-<a href="mailto:operator@sujeito.org">operator@sujeito.org</a>.</footer>
+<a href="mailto:{EMAIL}">{EMAIL}</a>.</footer>
 </main></body></html>
 """
 
