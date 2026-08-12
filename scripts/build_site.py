@@ -352,6 +352,10 @@ KIT_PAGE = f"{SITE}/kit.html"
 # the cause, including on our own product, rather than dressing a platform-wide fact up as
 # somebody's mistake. Built by `build_checkout.py` from `data/checkout-audit.json`.
 CHECKOUT_PAGE = f"{SITE}/checkout.html"
+# The worked, redacted sample of the storefront AUDIT — the one page on this site that
+# shows the paid audit's own output rather than describing it. See
+# `build_audit_sample_page.py`; it is listed here so the sitemap and the crawler find it.
+AUDIT_SAMPLE_PAGE = f"{SITE}/audit-sample.html"
 
 
 def load_terms():
@@ -816,7 +820,8 @@ def sitemap(cats, guides=(), taxo=(), sellers=()):
     # engine can rank for the questions the report answers. The PDF is deliberately NOT
     # listed — it is the same words, and a sitemap that offers a crawler two URLs for one
     # document invites it to pick the one that cannot carry a link back.
-    urls = ([SITE + "/", AFFILIATES_PAGE, KIT_PAGE, SAMPLE_PAGE, CHECKOUT_PAGE]
+    urls = ([SITE + "/", AFFILIATES_PAGE, KIT_PAGE, SAMPLE_PAGE, CHECKOUT_PAGE,
+             AUDIT_SAMPLE_PAGE]
             + [f"{SITE}/g/{g}.html" for g in guides]
             + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats]
             + [f"{SITE}/t/index.html"]

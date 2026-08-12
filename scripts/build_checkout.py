@@ -275,7 +275,15 @@ you are reading their pre-tax number and your buyer is paying a post-tax one.</l
 
 {B.buy_block("It reads " + f"{B.REPORT_CATS:,}" + " Gumroad categories the same way this page reads checkouts: from what the platform actually shows, not from what it says about itself.")}
 
+<h2>What one storefront's full audit looks like</h2>
+<p>This page reads one product from each of many stores. The other half of the same
+measurement is every product on <em>one</em> store, walked the same way and placed against
+what comparable products in its own category charge. That report is a paid product, and
+<a href="{B.AUDIT_SAMPLE_PAGE}">a complete worked sample of it is published here</a> —
+one real storefront, nine products, the seller's name removed and not one figure altered.</p>
+
 <nav class=sib><a href="./">The free data and the full method</a> ·
+<a href="{B.AUDIT_SAMPLE_PAGE}">A full storefront audit, worked</a> ·
 <a href="g/">The guides</a> · <a href="s/">By seller</a> · <a href="{B.REPO}">Repository</a></nav>
 """ + B.FOOTER
 

@@ -1,0 +1,86 @@
+<!doctype html><html lang=en><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>A worked sample of the Gumroad storefront audit — nine products, every checkout read at the pay step</title>
+<meta name=description content="The full report a buyer receives, run against one real Gumroad storefront and redacted. What each product's page advertises, what the checkout actually charges a UK buyer, and where each price sits against comparable products in the same category. Every figure is the figure that was measured.">
+<link rel=canonical href="https://sujeito-operator.github.io/gumroad-market-data/audit-sample.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="A worked sample of the Gumroad storefront audit — nine products, every checkout read at the pay step">
+<meta property="og:description" content="The full report a buyer receives, run against one real Gumroad storefront and redacted. What each product's page advertises, what the checkout actually charges a UK buyer, and where each price sits against comparable products in the same category. Every figure is the figure that was measured.">
+<meta property="og:url" content="https://sujeito-operator.github.io/gumroad-market-data/audit-sample.html">
+<meta name="twitter:card" content="summary">
+<style>
+:root{--ink:#1a1a1a;--mut:#666;--line:#ddd;--acc:#8a7a5c;--bg:#faf9f6}
+*{box-sizing:border-box}
+body{font:17px/1.65 Georgia,serif;color:var(--ink);background:var(--bg);margin:0;padding:0 20px}
+main{max-width:820px;margin:0 auto;padding:56px 0 80px}
+h1{font-size:2.3rem;line-height:1.15;margin:0 0 8px;letter-spacing:-.5px}
+.sub{color:var(--mut);font-size:1rem;margin-bottom:34px}
+h2{font-size:1.25rem;margin:44px 0 12px;border-bottom:2px solid var(--ink);padding-bottom:6px}
+.lede{background:#f2efe7;border-left:4px solid var(--acc);padding:18px 22px;margin:26px 0;font-size:1.05rem}
+table{border-collapse:collapse;width:100%;font-size:.86rem;margin:14px 0;background:#fff}
+th{text-align:left;border-bottom:2px solid var(--ink);padding:9px 7px;font-family:system-ui,sans-serif;font-size:.7rem;text-transform:uppercase;letter-spacing:.5px}
+td{padding:8px 7px;border-bottom:1px solid var(--line)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover{background:#f7f5ef}
+tbody tr:target{background:#fbf3d3;outline:2px solid var(--acc);scroll-margin-top:24px}
+tbody tr:target td:first-child::before{content:"\25B8 ";color:var(--acc)}
+.buy{background:#fff;border:2px solid var(--ink);padding:22px 24px;margin:34px 0;border-radius:3px}
+.buy a{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;padding:11px 22px;border-radius:3px;font-family:system-ui,sans-serif;font-size:.92rem;margin-top:10px}
+.buy a.alt{background:#fff;color:var(--ink);border:1px solid var(--ink);margin-left:8px}
+.buy .fine{display:block;margin-top:12px;font-size:.85rem;color:#555}
+.buy .fine a{display:inline;background:none;color:inherit;padding:0;margin:0;text-decoration:underline;font-family:inherit;font-size:inherit}
+code{background:#eee;padding:1px 5px;border-radius:3px;font-size:.85em}
+footer{color:var(--mut);font-size:.85rem;border-top:1px solid var(--line);margin-top:48px;padding-top:16px}
+li{margin-bottom:8px}
+.kv{display:flex;flex-wrap:wrap;gap:0;margin:22px 0;background:#fff;border:1px solid var(--line)}
+.kv div{flex:1 1 33%;padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.kv b{display:block;font:600 1.5rem/1.2 system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.kv span{color:var(--mut);font-size:.78rem;font-family:system-ui,sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.bar{background:var(--acc);height:11px;display:inline-block;vertical-align:middle}
+nav.sib{font-size:.85rem;color:var(--mut);margin:30px 0 0}
+nav.sib a{color:var(--ink)}
+ul.next{list-style:none;padding:0;margin:0}
+ul.next li{border-top:1px solid var(--line);padding:14px 0}
+ul.next li:last-child{border-bottom:1px solid var(--line)}
+ul.next b{display:block;font-size:1.02rem}
+ul.next span{color:var(--mut);font-size:.9rem}
+a.home{font-family:system-ui,sans-serif;font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;color:var(--mut)}
+p.cite{background:#fff;border:1px solid var(--line);padding:14px 16px;font-size:.88rem;margin:16px 0}
+pre.draft{background:#fff;border:1px solid var(--line);border-left:4px solid var(--acc);padding:18px 20px;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;margin:14px 0}
+.slot{background:#fdf3d0;border-bottom:1px solid #c9a227;padding:0 3px;font-weight:600}
+.corr{background:#fff;border:2px solid #a33;padding:16px 20px;margin:26px 0;font-size:.95rem}
+.corr b{font-family:system-ui,sans-serif;font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;color:#a33;display:block;margin-bottom:6px}
+</style></head><body><main><h1>a-real-storefront.gumroad.com — what a UK/EU buyer is actually charged</h1>
+<div class=lede><p><strong>This is a worked sample of the report, not a report about you.</strong></p><p>It was produced by running the audit against one real Gumroad storefront on 2026-08-12 — nine products, walked logged out from a UK address, each page loaded cold and each checkout read at the pay step. <strong>Every figure below is the figure that was measured.</strong> No price, gap, percentage, median, peer count or range has been adjusted.</p><p>What has been removed is the seller. Their name and their product titles are replaced with <code>Product 1</code>, <code>Product 2</code> and so on, because they did not ask to be an advertisement. Your report names your products.</p></div>
+<p>Walked 2026-08-12 06:04 UTC, logged out, from a UK address, as an ordinary buyer: each product page loaded cold, the buy control clicked, the pay step read and nothing submitted. No order was placed and no form was filled in.</p>
+<p><strong>9 product(s) on the storefront. 9 gave a page price the pay step confirms. 9 of those charge the buyer more than the page says.</strong></p>
+<p>The widest gap is <strong>Product 1</strong> — the page shows £71.82, the buyer pays £87.40, 21.7% more.</p>
+<table><thead><tr><th>product</th><th>page says</th><th>buyer pays</th><th>gap</th><th>what the pay step itemised</th></tr></thead><tbody><tr><td>Product 1</td><td>£71.82</td><td>£87.40</td><td>21.7% more</td><td>£14.52 added at the pay step. page shows £71.82, pay step totals £87.40</td></tr><tr><td>Product 2</td><td>£71.82</td><td>£87.40</td><td>21.7% more</td><td>£14.52 added at the pay step. page shows £71.82, pay step totals £87.40</td></tr><tr><td>Product 3</td><td>£71.82</td><td>£87.40</td><td>21.7% more</td><td>£14.52 added at the pay step. page shows £71.82, pay step totals £87.40</td></tr><tr><td>Product 4</td><td>£71.82</td><td>£87.40</td><td>21.7% more</td><td>£14.52 added at the pay step. page shows £71.82, pay step totals £87.40</td></tr><tr><td>Product 5</td><td>£71.82</td><td>£87.40</td><td>21.7% more</td><td>£14.52 added at the pay step. page shows £71.82, pay step totals £87.40</td></tr><tr><td>Product 6</td><td>£21.47</td><td>£25.80</td><td>20.2% more</td><td>£4.34 added at the pay step. page shows £21.47, pay step totals £25.80</td></tr><tr><td>Product 7</td><td>£200.65</td><td>£243.20</td><td>21.2% more</td><td>£40.57 added at the pay step. page shows £200.65, pay step totals £243.20</td></tr><tr><td>Product 8</td><td>£51.83</td><td>£63.00</td><td>21.6% more</td><td>£10.48 added at the pay step. page shows £51.83, pay step totals £63.00</td></tr><tr><td>Product 9</td><td>£70.34</td><td>£85.00</td><td>20.8% more</td><td>£14.22 added at the pay step. page shows £70.34, pay step totals £85.00</td></tr></tbody></table><div class=buy><strong>This is the report, not a summary of it.</strong><br>
+The page above is one storefront's audit end to end — the same document a buyer receives,
+with the seller's name and product titles removed and not one figure altered. Yours names
+your products, walks every product on your storefront, and is run the day the order lands.
+<a href="https://sujeitooperator.gumroad.com/l/xlvfeb">See the price and order on Gumroad &rarr;</a>
+<span class=fine>Prefer to look at the underlying data first? The category crawl behind the
+price comparison is <a href="https://sujeito-operator.github.io/gumroad-market-data/">free and openly licensed</a>.</span></div>
+<h2>How to read this</h2>
+<p>Gumroad is the merchant of record and adds VAT on top of the advertised price for UK and EU buyers rather than inside it. That is not a fault of yours and there is nothing to fix in your account — the number is set by where the buyer is, not by you. What you control is whether the page says so. A line in the description saying tax is added at checkout costs nothing and removes the surprise at the moment of paying.</p>
+<p>You cannot see any of this from inside your own account: the dashboard reports in your own currency and your own visits are localised to where you are.</p>
+<p>A row with no figure is a row where nothing in the pay step confirmed the price on the page — usually a page priced in one currency that the pay step converts. Rather than quote a comparison between two different currencies, it is left blank. Every number above was confirmed against the checkout subtotal.</p>
+<h2>What comparable products in your own category charge</h2>
+<p><strong>4 product(s) could be compared. 0 are priced below the median of products in the same category with comparable demand.</strong></p>
+<table><thead><tr><th>product</th><th>you charge</th><th>comparable median</th><th>difference</th><th>peers</th><th>your ratings</th><th>range</th></tr></thead><tbody><tr><td>Product 2</td><td>$97.00</td><td>$59.59</td><td>$-37.41</td><td>6</td><td>36</td><td>$12.01–$500.00</td></tr><tr><td>Product 5</td><td>$97.00</td><td>$59.59</td><td>$-37.41</td><td>6</td><td>32</td><td>$12.01–$500.00</td></tr><tr><td>Product 1</td><td>$97.00</td><td>$45.06</td><td>$-51.94</td><td>11</td><td>11</td><td>$8.01–$500.00</td></tr><tr><td>Product 3</td><td>$97.00</td><td>$19.02</td><td>$-77.97</td><td>6</td><td>22</td><td>$8.01–$500.00</td></tr></tbody></table>
+<h3>How this comparison is built, and what it is not</h3>
+<p>Peers are products in <strong>your own leaf category</strong> whose rating count is between half and double the rating count of the product being compared. The demand window is what makes it a comparison rather than a list of prices: a category median on its own is dominated by products nobody buys.</p>
+<p><strong>Ratings are a lower bound on units sold, not a sales count.</strong> An unknown share of buyers leave one. They order products by demand; they cannot size a market, and nothing here multiplies a price by a rating count.</p>
+<p><strong>This is not advice to raise your price to the median.</strong> It is the distribution you are priced inside. A product can be deliberately cheap. What the number tells you is whether the position is one you chose.</p>
+<p>Your own price and rating count above were read from your live product page while this report was being written, not from the category crawl the peers come from — so they are what your page says today even if you changed the price this morning.</p>
+<p><strong>Why some of your products are here and others are not.</strong> The peer set comes from a crawl of Gumroad's own category listings, which rank by popularity, so a product of yours appears above only if it was ranking in its category when that crawl ran. Gumroad publishes no category on the product page itself, so for anything outside the crawl there is no honest way to say what it should be compared against — and it is left out rather than compared against a set it may not belong to. The practical effect is that this section covers your better-selling products and is quiet about the long tail.</p>
+<h3>The 5 product(s) with no comparison, and why</h3>
+<ul><li><strong>Product 4</strong> — not in the 2026-08-05 category crawl, so it has no known category or peers</li><li><strong>Product 6</strong> — not in the 2026-08-05 category crawl, so it has no known category or peers</li><li><strong>Product 7</strong> — no comparable set: the category is too broad, or fewer than 5 products in it have within half to double this product's rating count, or it is under 10 ratings and has not yet shown the demand that would make its price evidence of anything</li><li><strong>Product 8</strong> — not in the 2026-08-05 category crawl, so it has no known category or peers</li><li><strong>Product 9</strong> — not in the 2026-08-05 category crawl, so it has no known category or peers</li></ul>
+<p>These are listed rather than dropped. A report that quietly shows fewer rows than your storefront has products is making a claim it did not measure.</p>
+<h2>Sources</h2>
+<ul><li><a href="https://a-real-storefront.gumroad.com/l/product-1">https://a-real-storefront.gumroad.com/l/product-1</a> — read 2026-08-12T06:00:28+00:00</li><li><a href="https://a-real-storefront.gumroad.com/l/product-2">https://a-real-storefront.gumroad.com/l/product-2</a> — read 2026-08-12T06:00:40+00:00</li><li><a href="https://a-real-storefront.gumroad.com/l/product-3">https://a-real-storefront.gumroad.com/l/product-3</a> — read 2026-08-12T06:00:52+00:00</li><li><a href="https://a-real-storefront.gumroad.com/l/product-4">https://a-real-storefront.gumroad.com/l/product-4</a> — read 2026-08-12T06:01:04+00:00</li><li><a href="https://a-real-storefront.gumroad.com/l/product-5">https://a-real-storefront.gumroad.com/l/product-5</a> — read 2026-08-12T06:01:16+00:00</li><li><a href="https://a-real-storefront.gumroad.com/l/product-6">https://a-real-storefront.gumroad.com/l/product-6</a> — read 2026-08-12T06:01:28+00:00</li><li><a href="https://a-real-storefront.gumroad.com/l/product-7">https://a-real-storefront.gumroad.com/l/product-7</a> — read 2026-08-12T06:01:40+00:00</li><li><a href="https://a-real-storefront.gumroad.com/l/product-8">https://a-real-storefront.gumroad.com/l/product-8</a> — read 2026-08-12T06:01:51+00:00</li><li><a href="https://a-real-storefront.gumroad.com/l/product-9">https://a-real-storefront.gumroad.com/l/product-9</a> — read 2026-08-12T06:02:03+00:00</li></ul><nav class=sib><a href="https://sujeito-operator.github.io/gumroad-market-data/checkout.html">How widespread this is
+across 32 stores</a> &middot; <a href="https://sujeito-operator.github.io/gumroad-market-data/">The free dataset</a></nav>
+<footer>Walked and published 2026-08-12 by the operator of
+<a href="https://sujeito-operator.github.io/gumroad-market-data/">gumroad-market-data</a>. Nothing was ordered and no form was
+submitted; every reading stops at the pay step.</footer></main></body></html>
