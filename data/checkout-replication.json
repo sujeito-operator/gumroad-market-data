@@ -1,0 +1,2786 @@
+{
+ "summary": {
+  "cohort": "non-random replication",
+  "stores": 71,
+  "read": 68,
+  "higher": 61,
+  "agree": 5,
+  "lower": 0,
+  "currency": 2,
+  "unread": 3,
+  "median_pct": 21.4,
+  "min_pct": 17.1,
+  "max_pct": 23.4,
+  "walked_from": "2026-08-11",
+  "walked_to": "2026-08-12",
+  "dropped": {
+   "an earlier or second reading of a store already counted": 32,
+   "our own store": 1,
+   "already in the published random sample": 1
+  },
+  "selection": "Not a random sample. These stores were assembled to be written to, so each one passed filters a random draw does not apply: it sits in a ratings-ranked band of the seller index, it publishes a contact address on its product page (about 17.5% of sellers do), its top-rated product is not free, and it has a published category page. Reported as a replication of the random sample, never as an estimate of the platform.",
+  "method": "Identical to the sample: two page loads per store from London, GB — the product page, then the gumroad.com/checkout URL its own buy control carries. No order completed, no form submitted, no account touched. One product per store, the most recent reading where a store was walked more than once."
+ },
+ "records": [
+  {
+   "url": "https://107sidehustles.gumroad.com/l/ruevr",
+   "title": "Beginners Guide to Becoming a Independent Work From Home Trucking Dispatcher",
+   "page_money": [
+    "£23.69",
+    "£23.69"
+   ],
+   "page_price": [
+    "GBP",
+    23.69,
+    "£23.69"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=ruevr&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     23.61,
+     "£23.61"
+    ],
+    "tax": [
+     "GBP",
+     4.79,
+     "£4.79"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     28.4,
+     "£28.40"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 19.9,
+   "why": "page shows £23.69, pay step totals £28.40",
+   "read_at": "2026-08-11T17:51:25+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  },
+  {
+   "url": "https://a222111935gmail.gumroad.com/l/vdrei",
+   "title": "蝦餅 酷酷剪輯工具包 ２ / Pr剪輯特效包 + 綜藝字卡包 Shriimp7 Premiere Text Style & Effect Toolkit Pack",
+   "page_money": [
+    "£17.22",
+    "£17.22",
+    "$550",
+    "$750"
+   ],
+   "page_price": [
+    "GBP",
+    17.22,
+    "£17.22"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=vdrei&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     17.44,
+     "£17.44"
+    ],
+    "tax": [
+     "GBP",
+     3.48,
+     "£3.48"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     20.92,
+     "£20.92"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.5,
+   "why": "page shows £17.22, pay step totals £20.92",
+   "read_at": "2026-08-11T23:32:22+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://anotherxlife.gumroad.com/l/shake-flstudio-visualizer-template",
+   "title": "Shake - FL Studio audio visualizer template",
+   "page_money": [
+    "£11.84",
+    "£11.84"
+   ],
+   "page_price": [
+    "GBP",
+    11.84,
+    "£11.84"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=Iyeov&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     11.81,
+     "£11.81"
+    ],
+    "tax": [
+     "GBP",
+     2.39,
+     "£2.39"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     14.2,
+     "£14.20"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 19.9,
+   "why": "page shows £11.84, pay step totals £14.20",
+   "read_at": "2026-08-12T00:49:29+00:00",
+   "_source": "seller-audit-e8-2026-08-12.json"
+  },
+  {
+   "url": "https://byhuy.gumroad.com/l/contenthub",
+   "title": "Content Creation Hub",
+   "page_money": [
+    "£18.50",
+    "£18.50",
+    "$20",
+    "$500",
+    "$20"
+   ],
+   "page_repeated": [
+    [
+     "GBP",
+     18.5,
+     "£18.50"
+    ],
+    [
+     "USD",
+     20.0,
+     "$20"
+    ]
+   ],
+   "page_price": [
+    "GBP",
+    18.5,
+    "£18.50"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=absaif&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     18.25,
+     "£18.25"
+    ],
+    "tax": [
+     "GBP",
+     3.74,
+     "£3.74"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     21.99,
+     "£21.99"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 18.9,
+   "why": "page shows £18.50, pay step totals £21.99",
+   "read_at": "2026-08-12T07:54:53+00:00",
+   "_source": "seller-audit-byhuy-2026-08-12.json"
+  },
+  {
+   "url": "https://ceco.gumroad.com/l/GuShH",
+   "title": "Human Zbuilder v3",
+   "page_money": [
+    "£22.21",
+    "£22.21"
+   ],
+   "page_price": [
+    "GBP",
+    22.21,
+    "£22.21"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=GuShH&option=1rG90SZZvprqq_QeUhezCg%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     22.51,
+     "£22.51"
+    ],
+    "tax": [
+     "GBP",
+     4.49,
+     "£4.49"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     27.0,
+     "£27.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £22.21, pay step totals £27.00",
+   "read_at": "2026-08-11T15:18:11+00:00",
+   "_source": "seller-audit-2026-08-11.json"
+  },
+  {
+   "url": "https://cgkode.gumroad.com/l/frigger",
+   "title": "Frigger v5 - Auto facial rigger for Maya",
+   "page_money": [
+    "£62.93",
+    "£62.93"
+   ],
+   "page_price": [
+    "GBP",
+    62.93,
+    "£62.93"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=xifu&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     63.28,
+     "£63.28"
+    ],
+    "tax": [
+     "GBP",
+     12.72,
+     "£12.72"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     76.0,
+     "£76.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.8,
+   "why": "page shows £62.93, pay step totals £76.00",
+   "read_at": "2026-08-11T20:19:41+00:00",
+   "_source": "seller-audit-e6-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://cgmasters.gumroad.com/l/3d-cars",
+   "title": "3D Cars: Inside and Out in Blender",
+   "page_money": [
+    "£44.42",
+    "£44.42"
+   ],
+   "page_price": [
+    "GBP",
+    44.42,
+    "£44.42"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=cgzfo&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     45.02,
+     "£45.02"
+    ],
+    "tax": [
+     "GBP",
+     8.98,
+     "£8.98"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     54.0,
+     "£54.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £44.42, pay step totals £54.00",
+   "read_at": "2026-08-11T15:18:39+00:00",
+   "_source": "seller-audit-2026-08-11.json"
+  },
+  {
+   "url": "https://chordwatch.gumroad.com/l/midi",
+   "title": "Chordwatch",
+   "page_money": [
+    "$24",
+    "$24"
+   ],
+   "page_price": [
+    "USD",
+    24.0,
+    "$24"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=IWOwk&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "USD",
+     24.0,
+     "$24"
+    ],
+    "tax": [
+     "USD",
+     4.8,
+     "$4.80"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "USD",
+     28.8,
+     "$28.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.0,
+   "why": "page shows $24, pay step totals $28.80",
+   "read_at": "2026-08-11T18:55:23+00:00",
+   "_source": "seller-audit-e4-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://cinephilefromparis.gumroad.com/l/deveniracteur",
+   "title": "Le Guide de l'Acteur",
+   "page_money": [
+    "£17.08",
+    "£17.08"
+   ],
+   "page_price": [
+    "GBP",
+    17.08,
+    "£17.08"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=ucoym&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     17.24,
+     "£17.24"
+    ],
+    "tax": [
+     "GBP",
+     3.46,
+     "£3.46"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     20.7,
+     "£20.70"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.2,
+   "why": "page shows £17.08, pay step totals £20.70",
+   "read_at": "2026-08-12T00:48:09+00:00",
+   "_source": "seller-audit-e8-2026-08-12.json"
+  },
+  {
+   "url": "https://coachwayne.gumroad.com/l/coachingcoursenow",
+   "title": "The Coaching Course Sport Needs Now",
+   "page_money": [
+    "£36.27",
+    "£36.27",
+    "£221.35"
+   ],
+   "page_price": [
+    "GBP",
+    36.27,
+    "£36.27"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=agelra&option=36uoI59QVpiEGe3mIdCs2w%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     36.46,
+     "£36.46"
+    ],
+    "tax": [
+     "GBP",
+     7.34,
+     "£7.34"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     43.8,
+     "£43.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.8,
+   "why": "page shows £36.27, pay step totals £43.80",
+   "read_at": "2026-08-11T20:21:19+00:00",
+   "_source": "seller-audit-e6b-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://cole487.gumroad.com/l/byjco",
+   "title": "Coles Pencil Pack (PROCREATE)",
+   "page_money": [
+    "£3.70",
+    "£3.70"
+   ],
+   "page_price": [
+    "GBP",
+    3.7,
+    "£3.70"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=byjco&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     3.74,
+     "£3.74"
+    ],
+    "tax": [
+     "GBP",
+     0.75,
+     "£0.75"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     4.49,
+     "£4.49"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.4,
+   "why": "page shows £3.70, pay step totals £4.49",
+   "read_at": "2026-08-11T18:54:56+00:00",
+   "_source": "seller-audit-e4-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://davvstore.gumroad.com/l/svgmotion",
+   "title": "SVG Motion (Plugin for Figma)",
+   "page_money": [
+    "£28.88",
+    "£28.88",
+    "£28.88",
+    "£28.88",
+    "£28.88",
+    "£28.88",
+    "£3.70",
+    "£733.01"
+   ],
+   "page_price": [
+    "GBP",
+    28.88,
+    "£28.88"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=pjtoJ&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     28.96,
+     "£28.96"
+    ],
+    "tax": [
+     "GBP",
+     5.84,
+     "£5.84"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     34.8,
+     "£34.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.5,
+   "why": "page shows £28.88, pay step totals £34.80",
+   "read_at": "2026-08-11T17:50:49+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  },
+  {
+   "url": "https://dibrushes.gumroad.com/l/brush_pack",
+   "title": "Over 3000+ Procreate Brushes by Di | Whole Store Bundle (Textures, Stamps, Brushes)",
+   "page_money": [
+    "£25.92",
+    "£25.92",
+    "$120"
+   ],
+   "page_price": [
+    "GBP",
+    25.92,
+    "£25.92"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=gsvwti&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     25.76,
+     "£25.76"
+    ],
+    "tax": [
+     "GBP",
+     5.24,
+     "£5.24"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     31.0,
+     "£31.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 19.6,
+   "why": "page shows £25.92, pay step totals £31.00",
+   "read_at": "2026-08-11T18:54:00+00:00",
+   "_source": "seller-audit-e4-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://dillongoo.gumroad.com/l/emily-anime-rig",
+   "title": "Cyberpunk Anime Girl Blender Rig - EMILY",
+   "page_money": [
+    "£37.02",
+    "£37.02"
+   ],
+   "page_price": [
+    "GBP",
+    37.02,
+    "£37.02"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=mityt&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     37.51,
+     "£37.51"
+    ],
+    "tax": [
+     "GBP",
+     7.49,
+     "£7.49"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     45.0,
+     "£45.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £37.02, pay step totals £45.00",
+   "read_at": "2026-08-11T17:51:14+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  },
+  {
+   "url": "https://emanuelblanco.gumroad.com/l/faaah",
+   "title": "Gospel Jazz Progressions Course by Emanuel Blanco",
+   "page_money": [
+    "£51.82",
+    "$80",
+    "£51.82",
+    "£59.22"
+   ],
+   "page_price": [
+    "GBP",
+    51.82,
+    "£51.82"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=faaah&option=3N2O0eXoAYquQUsiBD9jRQ%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     52.52,
+     "£52.52"
+    ],
+    "tax": [
+     "GBP",
+     10.48,
+     "£10.48"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     63.0,
+     "£63.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £51.82, pay step totals £63.00",
+   "read_at": "2026-08-11T20:20:31+00:00",
+   "_source": "seller-audit-e6-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://figterate.gumroad.com/l/FigmaPlugin-VariablesPro",
+   "title": "Variables Pro | Swap, Import & Export Variables",
+   "page_money": [
+    "£36.27",
+    "£36.27",
+    "$49,"
+   ],
+   "page_price": [
+    "GBP",
+    36.27,
+    "£36.27"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=twmsuu&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     36.47,
+     "£36.47"
+    ],
+    "tax": [
+     "GBP",
+     7.33,
+     "£7.33"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     43.8,
+     "£43.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.8,
+   "why": "page shows £36.27, pay step totals £43.80",
+   "read_at": "2026-08-11T23:32:34+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://finntropy.gumroad.com/l/substack_control_center",
+   "title": "Substack Control Center",
+   "page_money": [
+    "£18.50",
+    "£18.50"
+   ],
+   "page_price": [
+    "GBP",
+    18.5,
+    "£18.50"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=wbudm&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     18.26,
+     "£18.26"
+    ],
+    "tax": [
+     "GBP",
+     3.74,
+     "£3.74"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     22.0,
+     "£22.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 18.9,
+   "why": "page shows £18.50, pay step totals £22.00",
+   "read_at": "2026-08-11T23:33:49+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://ghostly.gumroad.com/l/mamagen",
+   "title": "Ghostly [ Mama-Gen ]",
+   "page_money": [
+    "£29.60",
+    "£29.60",
+    "£37.00",
+    "£48.09"
+   ],
+   "page_price": [
+    "GBP",
+    29.6,
+    "£29.60"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=cbalU&option=_pfYUYk35xPO-XXgCVhyew%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     30.01,
+     "£30.01"
+    ],
+    "tax": [
+     "GBP",
+     5.99,
+     "£5.99"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     36.0,
+     "£36.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £29.60, pay step totals £36.00",
+   "read_at": "2026-08-11T16:55:41+00:00",
+   "_source": "seller-audit-e1-2026-08-11.json"
+  },
+  {
+   "url": "https://gluelab.gumroad.com/l/GLUELP02",
+   "title": "Gatefold Vinyl Mockup Pack",
+   "page_money": [
+    "€24",
+    "€24",
+    "€35",
+    "€99",
+    "€24",
+    "€9",
+    "€24",
+    "€24"
+   ],
+   "page_repeated": [
+    [
+     "EUR",
+     9.0,
+     "€9"
+    ],
+    [
+     "EUR",
+     24.0,
+     "€24"
+    ]
+   ],
+   "page_price": null,
+   "checkout_href": "https://gumroad.com/checkout?product=ilkzg&option=SdKNujVwZEXoxjp7Nhl-MA%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "USD",
+     27.7,
+     "$27.70"
+    ],
+    "tax": [
+     "USD",
+     5.54,
+     "$5.54"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "USD",
+     33.24,
+     "$33.24"
+    ]
+   },
+   "verdict": "currency",
+   "delta_pct": null,
+   "why": "the page prices in EUR and the pay step charges $33.24; no page figure is in the pay step's currency, so no gap is quoted",
+   "read_at": "2026-08-12T01:31:17+00:00",
+   "_source": "seller-audit-fixcheck-2026-08-12.json"
+  },
+  {
+   "url": "https://hatchery1.gumroad.com/l/QZemE",
+   "title": "Handgun for Video games Tutorial | Complete edition",
+   "page_money": [
+    "£22.21",
+    "£22.21"
+   ],
+   "page_price": [
+    "GBP",
+    22.21,
+    "£22.21"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=QZemE&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     22.51,
+     "£22.51"
+    ],
+    "tax": [
+     "GBP",
+     4.49,
+     "£4.49"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     27.0,
+     "£27.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £22.21, pay step totals £27.00",
+   "read_at": "2026-08-11T17:51:37+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  },
+  {
+   "url": "https://imbeemo.gumroad.com/l/Spellbound",
+   "title": "Spellbound Sanctuary (VRChat World) (PC & Quest)",
+   "page_money": [
+    "£22.21",
+    "£22.21"
+   ],
+   "page_price": [
+    "GBP",
+    22.21,
+    "£22.21"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=dpffy&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     22.51,
+     "£22.51"
+    ],
+    "tax": [
+     "GBP",
+     4.49,
+     "£4.49"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     27.0,
+     "£27.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £22.21, pay step totals £27.00",
+   "read_at": "2026-08-11T17:51:01+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  },
+  {
+   "url": "https://isaachaines.gumroad.com/l/vxmswi",
+   "title": "PR001 - FULL DISCOGRAPHY",
+   "page_money": [
+    "£148.11",
+    "£148.11",
+    "$40",
+    "$25",
+    "$200",
+    "$20,",
+    "£66.65",
+    "£51.84"
+   ],
+   "page_price": [
+    "GBP",
+    148.11,
+    "£148.11"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=vxmswi&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     150.05,
+     "£150.05"
+    ],
+    "tax": [
+     "GBP",
+     29.95,
+     "£29.95"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     180.0,
+     "£180.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.5,
+   "why": "page shows £148.11, pay step totals £180.00",
+   "read_at": "2026-08-11T19:36:58+00:00",
+   "_source": "seller-audit-e5-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://ittaimanero.gumroad.com/l/ThickPaintforProcreate",
+   "title": "Thick Paint: An Oil Painting Brush Set for Procreate",
+   "page_money": [
+    "$20",
+    "$20",
+    "$20"
+   ],
+   "page_price": [
+    "USD",
+    20.0,
+    "$20"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=mmXjz&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "USD",
+     20.0,
+     "$20"
+    ],
+    "tax": [
+     "USD",
+     4.0,
+     "$4"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "USD",
+     24.0,
+     "$24"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.0,
+   "why": "page shows $20, pay step totals $24",
+   "read_at": "2026-08-11T16:55:55+00:00",
+   "_source": "seller-audit-e1-2026-08-11.json"
+  },
+  {
+   "url": "https://ivoreemint.gumroad.com/l/postnotes",
+   "title": "Post Notes 2 - notes and todos for Premiere Pro and After Effects",
+   "page_money": [
+    "£18.50",
+    "£18.50"
+   ],
+   "page_price": [
+    "GBP",
+    18.5,
+    "£18.50"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=JYsAB&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     18.26,
+     "£18.26"
+    ],
+    "tax": [
+     "GBP",
+     3.74,
+     "£3.74"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     22.0,
+     "£22.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 18.9,
+   "why": "page shows £18.50, pay step totals £22.00",
+   "read_at": "2026-08-11T23:34:01+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://juddmercerart.gumroad.com/l/gouache-painting-fundamentals-color",
+   "title": "Gouache For Landscapes: Color",
+   "page_money": [
+    "£29.61",
+    "£29.61"
+   ],
+   "page_price": [
+    "GBP",
+    29.61,
+    "£29.61"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=acvzj&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     30.01,
+     "£30.01"
+    ],
+    "tax": [
+     "GBP",
+     5.99,
+     "£5.99"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     36.0,
+     "£36.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £29.61, pay step totals £36.00",
+   "read_at": "2026-08-11T20:21:31+00:00",
+   "_source": "seller-audit-e6b-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://juliabausenhardt.gumroad.com/l/sketchingfundamentals",
+   "title": "Sketching Fundamentals",
+   "page_money": [
+    "$79",
+    "$79",
+    "$199"
+   ],
+   "page_price": [
+    "USD",
+    79.0,
+    "$79"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=qiwfb&option=-1hhdEuyLy5n6cF38tEqMQ%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "USD",
+     79.0,
+     "$79"
+    ],
+    "tax": [
+     "USD",
+     15.8,
+     "$15.80"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "USD",
+     94.8,
+     "$94.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.0,
+   "why": "page shows $79, pay step totals $94.80",
+   "read_at": "2026-08-11T18:54:13+00:00",
+   "_source": "seller-audit-e4-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://kleineluka.gumroad.com/l/magicbounce",
+   "title": "MagicBounce (Texture Upscaler & Optimizer for VRChat and Unity)",
+   "page_money": [
+    "£22.21",
+    "£22.21",
+    "£37.01"
+   ],
+   "page_price": [
+    "GBP",
+    22.21,
+    "£22.21"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=slgra&option=jOUckYZZmL7cYtUu0cHJ8w%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     22.51,
+     "£22.51"
+    ],
+    "tax": [
+     "GBP",
+     4.49,
+     "£4.49"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     27.0,
+     "£27.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £22.21, pay step totals £27.00",
+   "read_at": "2026-08-11T23:33:13+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://leonidaltman.gumroad.com/l/light-wrangler-blender-addon",
+   "title": "Light Wrangler: Best Blender Lighting Add-On",
+   "page_money": [
+    "£43.68",
+    "£43.68",
+    "£125.13",
+    "£236.19"
+   ],
+   "page_price": [
+    "GBP",
+    43.68,
+    "£43.68"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=ffstxw&option=MfWUhQgn9xb4FqGcD76ARA%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     43.97,
+     "£43.97"
+    ],
+    "tax": [
+     "GBP",
+     8.83,
+     "£8.83"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     52.8,
+     "£52.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.9,
+   "why": "page shows £43.68, pay step totals £52.80",
+   "read_at": "2026-08-11T17:49:57+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  },
+  {
+   "url": "https://lfodesign.gumroad.com/l/materials",
+   "title": "Ultimate Procedural Material Library for C4D / Redshift",
+   "page_money": [
+    "£57.26",
+    "£57.26"
+   ],
+   "page_price": [
+    "GBP",
+    57.26,
+    "£57.26"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=uyksei&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     58.24,
+     "£58.24"
+    ],
+    "tax": [
+     "GBP",
+     11.58,
+     "£11.58"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     69.82,
+     "£69.82"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.9,
+   "why": "page shows £57.26, pay step totals £69.82",
+   "read_at": "2026-08-11T15:17:58+00:00",
+   "_source": "seller-audit-2026-08-11.json"
+  },
+  {
+   "url": "https://mangabrush.gumroad.com/l/dialoguebrush",
+   "title": "FREE! SPEECH BUBBLE Dialogue Sample Brushes Procreate, Clip Studio, Photoshop Brush Pack - Manga / Chat / Aura / Dialogue / Anime / Comic / ",
+   "page_money": [
+    "£0.00",
+    "£0.00",
+    "£11.11",
+    "£10.55"
+   ],
+   "page_price": [
+    "GBP",
+    0.0,
+    "£0.00"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=ijulS&option=jqfQ6Sf8LPD_TSg-1tjNrg%3D%3D&quantity=1&code=ANIME5",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "USD",
+     0.0,
+     "$0"
+    ],
+    "total": [
+     "USD",
+     0.0,
+     "$0"
+    ]
+   },
+   "verdict": "currency",
+   "delta_pct": null,
+   "why": "page advertises £0.00 and the pay step charges $0",
+   "read_at": "2026-08-11T17:50:24+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  },
+  {
+   "url": "https://maryamato88.gumroad.com/l/notioly",
+   "title": "Notioly - 500+ Notion-style Illustrations",
+   "page_money": [
+    "£28.87",
+    "£28.87"
+   ],
+   "page_price": [
+    "GBP",
+    28.87,
+    "£28.87"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=dxsgg&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     28.96,
+     "£28.96"
+    ],
+    "tax": [
+     "GBP",
+     5.84,
+     "£5.84"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     34.8,
+     "£34.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.5,
+   "why": "page shows £28.87, pay step totals £34.80",
+   "read_at": "2026-08-11T15:18:52+00:00",
+   "_source": "seller-audit-2026-08-11.json"
+  },
+  {
+   "url": "https://mikesearles.gumroad.com/l/overlookedpuddles",
+   "title": "OVERLOOKED PUDDLES: How to Find and Monetize Dumbly Profitable Ideas Other Digital Creators Haven’t Noticed Yet (+ BONUS ChatGPT Product Cre",
+   "page_money": [
+    "£19.99",
+    "£19.99",
+    "$27",
+    "$39",
+    "$27"
+   ],
+   "page_price": [
+    "GBP",
+    19.99,
+    "£19.99"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=neqsnl&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     20.36,
+     "£20.36"
+    ],
+    "tax": [
+     "GBP",
+     4.04,
+     "£4.04"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     24.4,
+     "£24.40"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 22.1,
+   "why": "page shows £19.99, pay step totals £24.40",
+   "read_at": "2026-08-11T23:33:37+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://mirusox.gumroad.com/l/nnfAM",
+   "title": "ETS2 ownable Chereau Inogam",
+   "page_money": [
+    "£12.82",
+    "£12.82"
+   ],
+   "page_price": [
+    "GBP",
+    12.82,
+    "£12.82"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=nnfAM&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     13.18,
+     "£13.18"
+    ],
+    "tax": [
+     "GBP",
+     2.59,
+     "£2.59"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     15.77,
+     "£15.77"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 23.0,
+   "why": "page shows £12.82, pay step totals £15.77",
+   "read_at": "2026-08-11T18:54:41+00:00",
+   "_source": "seller-audit-e4-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://mynameisviktor.gumroad.com/l/vyaz",
+   "title": "Modern Slavic Vyaz Calligraphy Workbook",
+   "page_money": [
+    "£21.36",
+    "£21.36",
+    "£21.36",
+    "£21.36"
+   ],
+   "page_price": [
+    "GBP",
+    21.36,
+    "£21.36"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=cebip&option=6Nou_ky8rFfbKM_9NKZ9XA%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     21.31,
+     "£21.31"
+    ],
+    "tax": [
+     "GBP",
+     4.32,
+     "£4.32"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     25.63,
+     "£25.63"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.0,
+   "why": "page shows £21.36, pay step totals £25.63",
+   "read_at": "2026-08-12T00:47:32+00:00",
+   "_source": "seller-audit-e8-2026-08-12.json"
+  },
+  {
+   "url": "https://nsdesign.gumroad.com/l/APzakw",
+   "title": "Zbrush + Blender - Dragon VDM Brush",
+   "page_money": [
+    "£11.10",
+    "£11.10",
+    "£29.61",
+    "$100",
+    "$100",
+    "£59.22",
+    "$100",
+    "$100"
+   ],
+   "page_price": [
+    "GBP",
+    11.1,
+    "£11.10"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=APzakw&option=r4FRza6YTP__THfoHA_ycw%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     10.76,
+     "£10.76"
+    ],
+    "tax": [
+     "GBP",
+     2.24,
+     "£2.24"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     13.0,
+     "£13.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 17.1,
+   "why": "page shows £11.10, pay step totals £13.00",
+   "read_at": "2026-08-12T00:47:08+00:00",
+   "_source": "seller-audit-e8-2026-08-12.json"
+  },
+  {
+   "url": "https://nucleusui.gumroad.com/l/nucleus-ui-plus-all-in-one-figma-ui-kit-design-system",
+   "title": "Nucleus UI PRO – Figma UI Kit and Design System (Mobile and Web)",
+   "page_money": [
+    "£73.29",
+    "$72",
+    "$72",
+    "$72",
+    "£73.29",
+    "£221.34",
+    "$100"
+   ],
+   "page_price": [
+    "USD",
+    72.0,
+    "$72"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=snlaf&option=dzFfX_uErYUGcw8geWIEzw%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     73.98,
+     "£73.98"
+    ],
+    "tax": [
+     "GBP",
+     14.82,
+     "£14.82"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     88.8,
+     "£88.80"
+    ]
+   },
+   "verdict": "currency",
+   "delta_pct": null,
+   "why": "page advertises $72 and the pay step charges £88.80",
+   "read_at": "2026-08-11T15:17:45+00:00",
+   "_source": "seller-audit-2026-08-11.json"
+  },
+  {
+   "url": "https://ottoarney.gumroad.com",
+   "title": "Otto Arney",
+   "page_money": [
+    "£14.81",
+    "£11.10",
+    "£7.40"
+   ],
+   "page_repeated": [],
+   "page_price": null,
+   "checkout_href": null,
+   "verdict": "none",
+   "delta_pct": null,
+   "why": "no buy control found",
+   "read_at": "2026-08-12T01:31:21+00:00",
+   "_source": "seller-audit-fixcheck-2026-08-12.json"
+  },
+  {
+   "url": "https://pavelbarnev.gumroad.com/l/OverRigBasic",
+   "title": "basic scripts for the OverRig animation method",
+   "page_money": [
+    "£51.84",
+    "£51.84",
+    "£155.52",
+    "£362.87",
+    "£1,155.26",
+    "£2,221.66",
+    "£3,258.43"
+   ],
+   "page_price": [
+    "GBP",
+    51.84,
+    "£51.84"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=cIdFbR&option=7SKpIjEOgPLYQO4ywBQoGQ%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     52.52,
+     "£52.52"
+    ],
+    "tax": [
+     "GBP",
+     10.48,
+     "£10.48"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     63.0,
+     "£63.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.5,
+   "why": "page shows £51.84, pay step totals £63.00",
+   "read_at": "2026-08-11T19:37:39+00:00",
+   "_source": "seller-audit-e5-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://philpl.gumroad.com/l/dank-mono",
+   "title": "Dank Mono: The coding typeface for aesthetes",
+   "page_money": [
+    "£25",
+    "£25",
+    "£60"
+   ],
+   "page_price": [
+    "GBP",
+    25.0,
+    "£25"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=qJtDd&option=8px10Nk24j24ftw7BrmH0A%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "USD",
+     33.76,
+     "$33.76"
+    ],
+    "tax": [
+     "USD",
+     6.75,
+     "$6.75"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "USD",
+     40.51,
+     "$40.51"
+    ]
+   },
+   "verdict": "currency",
+   "delta_pct": null,
+   "why": "page advertises £25 and the pay step charges $40.51",
+   "read_at": "2026-08-11T19:43:55+00:00",
+   "_source": "seller-audit-e5b-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://piqodesign.gumroad.com/l/iconly3d",
+   "title": "Iconly Pro, Essential 3D icons",
+   "page_money": [
+    "£17.77",
+    "£17.77",
+    "£165.81",
+    "$56.77"
+   ],
+   "page_price": [
+    "GBP",
+    17.77,
+    "£17.77"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=dwahq&option=Mk1xagFAQiSrbjiHNbQFkg%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     18.21,
+     "£18.21"
+    ],
+    "tax": [
+     "GBP",
+     3.59,
+     "£3.59"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     21.8,
+     "£21.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 22.7,
+   "why": "page shows £17.77, pay step totals £21.80",
+   "read_at": "2026-08-12T00:49:02+00:00",
+   "_source": "seller-audit-e8-2026-08-12.json"
+  },
+  {
+   "url": "https://purgatorialgarden.gumroad.com/l/eclipse",
+   "title": "eclipse by PurgatorialGarden",
+   "page_money": [
+    "£25.91",
+    "£25.91"
+   ],
+   "page_price": [
+    "GBP",
+    25.91,
+    "£25.91"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=sbazmw&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     25.76,
+     "£25.76"
+    ],
+    "tax": [
+     "GBP",
+     5.24,
+     "£5.24"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     31.0,
+     "£31.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 19.6,
+   "why": "page shows £25.91, pay step totals £31.00",
+   "read_at": "2026-08-11T23:33:00+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://rawton.gumroad.com/l/deviation",
+   "title": "Deviation 1.3 | Asymmetric Binaural Waveshaper for Ableton Live",
+   "page_money": [
+    "£17.09",
+    "£17.09",
+    "£5.71",
+    "£5.69"
+   ],
+   "page_price": [
+    "GBP",
+    17.09,
+    "£17.09"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=jnprep&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     17.25,
+     "£17.25"
+    ],
+    "tax": [
+     "GBP",
+     3.46,
+     "£3.46"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     20.71,
+     "£20.71"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.2,
+   "why": "page shows £17.09, pay step totals £20.71",
+   "read_at": "2026-08-12T00:48:37+00:00",
+   "_source": "seller-audit-e8-2026-08-12.json"
+  },
+  {
+   "url": "https://razumsinc.gumroad.com/l/GRBlnA",
+   "title": "RAZUM PRO 3D BRUSHSET (NomadSculpt/Zbrush/3Dcoat/Blender)",
+   "page_money": [
+    "£17.77",
+    "£17.77"
+   ],
+   "page_price": [
+    "GBP",
+    17.77,
+    "£17.77"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=GRBlnA&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     18.21,
+     "£18.21"
+    ],
+    "tax": [
+     "GBP",
+     3.59,
+     "£3.59"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     21.8,
+     "£21.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 22.7,
+   "why": "page shows £17.77, pay step totals £21.80",
+   "read_at": "2026-08-12T00:47:57+00:00",
+   "_source": "seller-audit-e8-2026-08-12.json"
+  },
+  {
+   "url": "https://remasemporium.gumroad.com/l/novan7spacesuit",
+   "title": "N7 Space Suit - Novabeast",
+   "page_money": [
+    "£14.80",
+    "£14.80"
+   ],
+   "page_price": [
+    "GBP",
+    14.8,
+    "£14.80"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=ftcvre&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     15.01,
+     "£15.01"
+    ],
+    "tax": [
+     "GBP",
+     2.99,
+     "£2.99"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     18.0,
+     "£18.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £14.80, pay step totals £18.00",
+   "read_at": "2026-08-12T00:50:05+00:00",
+   "_source": "seller-audit-e8-walk-2026-08-12.json"
+  },
+  {
+   "url": "https://rezilloryker.gumroad.com/l/MYutV",
+   "title": "Rexouium Avatar",
+   "page_money": [
+    "£33.30",
+    "£33.30",
+    "£443.95"
+   ],
+   "page_price": [
+    "GBP",
+    33.3,
+    "£33.30"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=MYutV&option=fPMuIjYL6SIyVZR2nuNgPQ%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     33.27,
+     "£33.27"
+    ],
+    "tax": [
+     "GBP",
+     6.73,
+     "£6.73"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     40.0,
+     "£40.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.1,
+   "why": "page shows £33.30, pay step totals £40.00",
+   "read_at": "2026-08-11T16:55:28+00:00",
+   "_source": "seller-audit-e1-2026-08-11.json"
+  },
+  {
+   "url": "https://rhymage.gumroad.com/l/bbLu",
+   "title": "RH Character Tools for Cinema 4D & Mixamo",
+   "page_money": [
+    "£35.54",
+    "£35.54"
+   ],
+   "page_price": [
+    "GBP",
+    35.54,
+    "£35.54"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=bbLu&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     36.41,
+     "£36.41"
+    ],
+    "tax": [
+     "GBP",
+     7.19,
+     "£7.19"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     43.6,
+     "£43.60"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 22.7,
+   "why": "page shows £35.54, pay step totals £43.60",
+   "read_at": "2026-08-11T17:50:12+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  },
+  {
+   "url": "https://rocketlasso.gumroad.com/l/RKTFieldPack1",
+   "title": "RKT Field Pack 1 for Cinema 4D",
+   "page_money": [
+    "£70.34",
+    "£70.34",
+    "$85"
+   ],
+   "page_repeated": [
+    [
+     "GBP",
+     70.34,
+     "£70.34"
+    ]
+   ],
+   "page_price": [
+    "GBP",
+    70.34,
+    "£70.34"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=nvsuo&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     70.78,
+     "£70.78"
+    ],
+    "tax": [
+     "GBP",
+     14.22,
+     "£14.22"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     85.0,
+     "£85.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.8,
+   "why": "page shows £70.34, pay step totals £85.00",
+   "read_at": "2026-08-12T06:02:03+00:00",
+   "_source": "storefront-audit-rocketlasso-2026-08-12.json"
+  },
+  {
+   "url": "https://sanax.gumroad.com/l/fh2022premium",
+   "title": "Volvo FH 2022 Premium by Sanax ETS2 MOD",
+   "page_money": [
+    "€20",
+    "€20"
+   ],
+   "page_price": [
+    "EUR",
+    20.0,
+    "€20"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=nrsfv&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "EUR",
+     20.0,
+     "€20.00"
+    ],
+    "total": [
+     "EUR",
+     20.0,
+     "€20.00"
+    ]
+   },
+   "verdict": "none",
+   "delta_pct": 0.0,
+   "why": "advertised and charged agree",
+   "read_at": "2026-08-11T19:44:12+00:00",
+   "_source": "seller-audit-e5b-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://saxotracks.gumroad.com/l/tejsk",
+   "title": "'80s Remix",
+   "page_money": [
+    "£18.79",
+    "£18.79"
+   ],
+   "page_repeated": [
+    [
+     "GBP",
+     18.79,
+     "£18.79"
+    ]
+   ],
+   "page_price": [
+    "GBP",
+    18.79,
+    "£18.79"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=tejsk&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     18.66,
+     "£18.66"
+    ],
+    "tax": [
+     "GBP",
+     3.8,
+     "£3.80"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     22.46,
+     "£22.46"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 19.5,
+   "why": "page shows £18.79, pay step totals £22.46",
+   "read_at": "2026-08-12T05:55:44+00:00",
+   "_source": "storefront-audit-saxotracks-2026-08-12.json"
+  },
+  {
+   "url": "https://simplemarketmetrics.gumroad.com/l/jeiyj",
+   "title": "Ninja Trader [Wave Runner RENKO]",
+   "page_money": [
+    "£110.25",
+    "£110.25"
+   ],
+   "page_price": [
+    "GBP",
+    110.25,
+    "£110.25"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=jeiyj&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     111.5,
+     "£111.50"
+    ],
+    "tax": [
+     "GBP",
+     22.3,
+     "£22.30"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     133.8,
+     "£133.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.4,
+   "why": "page shows £110.25, pay step totals £133.80",
+   "read_at": "2026-08-11T16:56:20+00:00",
+   "_source": "seller-audit-e1-2026-08-11.json"
+  },
+  {
+   "url": "https://soltwagner.gumroad.com/l/notion-complete-bundle-pack",
+   "title": "Notion Complete Bundle Pack",
+   "page_money": [
+    "£73.29",
+    "$242",
+    "$143",
+    "$200",
+    "$590",
+    "$391",
+    "$590",
+    "£73.29"
+   ],
+   "page_price": [
+    "GBP",
+    73.29,
+    "£73.29"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=agwoae&option=YjDA1iGDQ28vcCWRKw2HCA%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     74.0,
+     "£74.00"
+    ],
+    "total": [
+     "GBP",
+     74.0,
+     "£74.00"
+    ]
+   },
+   "verdict": "none",
+   "delta_pct": 1.0,
+   "why": "advertised and charged agree",
+   "read_at": "2026-08-11T20:20:05+00:00",
+   "_source": "seller-audit-e6-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://synthpatches.gumroad.com/l/hydrasynth-patches",
+   "title": "Hydrasynth Patches",
+   "page_money": [
+    "£10.37",
+    "£10.37"
+   ],
+   "page_price": [
+    "GBP",
+    10.37,
+    "£10.37"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=kvbrj&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     10.7,
+     "£10.70"
+    ],
+    "tax": [
+     "GBP",
+     2.1,
+     "£2.10"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     12.8,
+     "£12.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 23.4,
+   "why": "page shows £10.37, pay step totals £12.80",
+   "read_at": "2026-08-11T18:54:26+00:00",
+   "_source": "seller-audit-e4-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://systemred.gumroad.com/l/visualdesign",
+   "title": "Visual Design Basics - Intro to Design",
+   "page_money": [
+    "£37.01",
+    "£37.01"
+   ],
+   "page_price": [
+    "GBP",
+    37.01,
+    "£37.01"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=SDNyD&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     37.51,
+     "£37.51"
+    ],
+    "tax": [
+     "GBP",
+     7.48,
+     "£7.48"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     44.99,
+     "£44.99"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £37.01, pay step totals £44.99",
+   "read_at": "2026-08-11T15:18:26+00:00",
+   "_source": "seller-audit-2026-08-11.json"
+  },
+  {
+   "url": "https://tangenten.gumroad.com/l/PuppetPinTool",
+   "title": "Puppet Pin Tool - DaVinci Resolve",
+   "page_money": [
+    "£36.27",
+    "£36.27"
+   ],
+   "page_price": [
+    "GBP",
+    36.27,
+    "£36.27"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=qwqtni&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     36.46,
+     "£36.46"
+    ],
+    "tax": [
+     "GBP",
+     7.34,
+     "£7.34"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     43.8,
+     "£43.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.8,
+   "why": "page shows £36.27, pay step totals £43.80",
+   "read_at": "2026-08-11T20:21:07+00:00",
+   "_source": "seller-audit-e6b-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://templ8king.gumroad.com/l/scqhku",
+   "title": "Jaycen Joshua Logic Pro X Mix Template (2025 Edition)",
+   "page_money": [
+    "£44.41",
+    "£44.41"
+   ],
+   "page_price": [
+    "GBP",
+    44.41,
+    "£44.41"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=scqhku&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     45.01,
+     "£45.01"
+    ],
+    "tax": [
+     "GBP",
+     8.98,
+     "£8.98"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     53.99,
+     "£53.99"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £44.41, pay step totals £53.99",
+   "read_at": "2026-08-11T20:20:54+00:00",
+   "_source": "seller-audit-e6b-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://threedeeshop.gumroad.com/l/characterz3",
+   "title": "ADULTZ - Modular adult 3D cartoon characters",
+   "page_money": [
+    "£58.48",
+    "£58.48",
+    "£79.95"
+   ],
+   "page_price": [
+    "GBP",
+    58.48,
+    "£58.48"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=zgwivk&option=zaRslgYvURdvbCdHPM-WuQ%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     59.85,
+     "£59.85"
+    ],
+    "tax": [
+     "GBP",
+     11.95,
+     "£11.95"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     71.8,
+     "£71.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 22.8,
+   "why": "page shows £58.48, pay step totals £71.80",
+   "read_at": "2026-08-11T20:20:18+00:00",
+   "_source": "seller-audit-e6-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://tiggis.gumroad.com/l/erhft",
+   "title": "Weapons Pack(Old and Free)",
+   "page_money": [
+    "£1.48",
+    "£1.48"
+   ],
+   "page_price": [
+    "GBP",
+    1.48,
+    "£1.48"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=erhft&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     1.5,
+     "£1.50"
+    ],
+    "total": [
+     "GBP",
+     1.5,
+     "£1.50"
+    ]
+   },
+   "verdict": "none",
+   "delta_pct": 1.4,
+   "why": "advertised and charged agree",
+   "read_at": "2026-08-12T00:47:20+00:00",
+   "_source": "seller-audit-e8-walk-2026-08-12.json"
+  },
+  {
+   "url": "https://timomason.gumroad.com/l/RunHQ",
+   "title": "RunHQ (Running Notion Template)",
+   "page_money": [
+    "£18.50",
+    "£18.50",
+    "£37.01"
+   ],
+   "page_price": [
+    "GBP",
+    18.5,
+    "£18.50"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=qzyxtjj&option=KMrG5hJTZ1MX4Mrhq7Xpew%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     18.26,
+     "£18.26"
+    ],
+    "tax": [
+     "GBP",
+     3.74,
+     "£3.74"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     22.0,
+     "£22.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 18.9,
+   "why": "page shows £18.50, pay step totals £22.00",
+   "read_at": "2026-08-11T23:34:14+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://tonyomendez.gumroad.com/l/ellenrig",
+   "title": "Ellen - Maya Rig",
+   "page_money": [
+    "£17.09",
+    "£17.09"
+   ],
+   "page_price": [
+    "GBP",
+    17.09,
+    "£17.09"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=dqhmm&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     17.09,
+     "£17.09"
+    ],
+    "total": [
+     "GBP",
+     17.09,
+     "£17.09"
+    ]
+   },
+   "verdict": "none",
+   "delta_pct": 0.0,
+   "why": "advertised and charged agree",
+   "read_at": "2026-08-12T00:48:50+00:00",
+   "_source": "seller-audit-e8-walk-2026-08-12.json"
+  },
+  {
+   "url": "https://tudorhg.gumroad.com/l/gindil",
+   "title": "Audio Consultation (1 hour)",
+   "page_money": [
+    "£110.99",
+    "£110.99",
+    "$150"
+   ],
+   "page_price": [
+    "GBP",
+    110.99,
+    "£110.99"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=gindil&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     112.55,
+     "£112.55"
+    ],
+    "tax": [
+     "GBP",
+     22.45,
+     "£22.45"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     135.0,
+     "£135.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £110.99, pay step totals £135.00",
+   "read_at": "2026-08-11T16:56:07+00:00",
+   "_source": "seller-audit-e1-2026-08-11.json"
+  },
+  {
+   "url": "https://tuviatenenbom.gumroad.com/l/GodSpeaksYiddish",
+   "title": "Watch God Speaks Yiddish Online | Official Movie Stream",
+   "page_money": [
+    "£11.84",
+    "£11.84"
+   ],
+   "page_price": [
+    "GBP",
+    11.84,
+    "£11.84"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=ielwow&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     11.81,
+     "£11.81"
+    ],
+    "tax": [
+     "GBP",
+     2.39,
+     "£2.39"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     14.2,
+     "£14.20"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 19.9,
+   "why": "page shows £11.84, pay step totals £14.20",
+   "read_at": "2026-08-12T00:49:40+00:00",
+   "_source": "seller-audit-e8-walk-2026-08-12.json"
+  },
+  {
+   "url": "https://uddalak.gumroad.com/l/airtable-finance-dashboard",
+   "title": "Airtable-Powered Finance Dashboard For Startups, Freelancers, Agencies, And Micro SaaS",
+   "page_money": [
+    "£29.61",
+    "£29.61"
+   ],
+   "page_price": [
+    "GBP",
+    29.61,
+    "£29.61"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=demalp&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     30.01,
+     "£30.01"
+    ],
+    "tax": [
+     "GBP",
+     5.99,
+     "£5.99"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     36.0,
+     "£36.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.6,
+   "why": "page shows £29.61, pay step totals £36.00",
+   "read_at": "2026-08-11T23:32:47+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://uxstackguru.gumroad.com/l/QLnhu",
+   "title": "216 Illustrations (4 sets) + 156 Lottie animations in one bundle 🥳",
+   "page_money": [
+    "£54.78",
+    "£54.78"
+   ],
+   "page_price": [
+    "GBP",
+    54.78,
+    "£54.78"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=QLnhu&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     55.72,
+     "£55.72"
+    ],
+    "tax": [
+     "GBP",
+     11.08,
+     "£11.08"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     66.8,
+     "£66.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.9,
+   "why": "page shows £54.78, pay step totals £66.80",
+   "read_at": "2026-08-11T20:19:53+00:00",
+   "_source": "seller-audit-e6-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://vertexture.gumroad.com/l/zirail",
+   "title": "ziRail - Create Polygons with Strokes",
+   "page_money": [
+    "£51.10",
+    "£51.10",
+    "£110.34"
+   ],
+   "page_price": [
+    "GBP",
+    51.1,
+    "£51.10"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=IHgzr&option=W4cI4vA7Tox1nN3jlsDKww%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     51.47,
+     "£51.47"
+    ],
+    "tax": [
+     "GBP",
+     10.33,
+     "£10.33"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     61.8,
+     "£61.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.9,
+   "why": "page shows £51.10, pay step totals £61.80",
+   "read_at": "2026-08-11T19:43:43+00:00",
+   "_source": "seller-audit-e5b-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://vfxguide.gumroad.com/l/OCDaddon",
+   "title": "OCD 2.5 (One Click Damage) | Blender add-on",
+   "page_money": [
+    "£14.81",
+    "£14.81"
+   ],
+   "page_price": [
+    "GBP",
+    14.81,
+    "£14.81"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=vfofi&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     15.01,
+     "£15.01"
+    ],
+    "tax": [
+     "GBP",
+     2.99,
+     "£2.99"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     18.0,
+     "£18.00"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.5,
+   "why": "page shows £14.81, pay step totals £18.00",
+   "read_at": "2026-08-11T18:55:10+00:00",
+   "_source": "seller-audit-e4-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://vikiiing.gumroad.com/l/VitalityStudio",
+   "title": "Real 3D iOS icons",
+   "page_money": [
+    "£14.73",
+    "£14.73"
+   ],
+   "page_price": [
+    "GBP",
+    14.73,
+    "£14.73"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=PKydr&option=b06rsNN6xYaXeY-v648-Ig%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     14.9,
+     "£14.90"
+    ],
+    "tax": [
+     "GBP",
+     2.98,
+     "£2.98"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     17.88,
+     "£17.88"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.4,
+   "why": "page shows £14.73, pay step totals £17.88",
+   "read_at": "2026-08-12T00:49:14+00:00",
+   "_source": "seller-audit-e8-2026-08-12.json"
+  },
+  {
+   "url": "https://warptools.gumroad.com/l/warptools",
+   "title": "Warp Tools for Figma",
+   "page_money": [
+    "£21.47",
+    "£21.47",
+    "£39.23",
+    "£71.80",
+    "£130.27"
+   ],
+   "page_price": [
+    "GBP",
+    21.47,
+    "£21.47"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=zcPAL&option=SXpHd740j9BwNB7jBq5iaw%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     21.46,
+     "£21.46"
+    ],
+    "tax": [
+     "GBP",
+     4.34,
+     "£4.34"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     25.8,
+     "£25.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.2,
+   "why": "page shows £21.47, pay step totals £25.80",
+   "read_at": "2026-08-11T23:33:25+00:00",
+   "_source": "seller-audit-e7-2026-08-12.json"
+  },
+  {
+   "url": "https://whereisweatherby.gumroad.com/l/bgXdo",
+   "title": "Pro Panel",
+   "page_money": [
+    "£36.29",
+    "£36.29",
+    "£51.10",
+    "$20",
+    "$39"
+   ],
+   "page_price": [
+    "GBP",
+    36.29,
+    "£36.29"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=bgXdo&option=vLibrUo8SYpV-ei4fd4OiQ%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     36.46,
+     "£36.46"
+    ],
+    "tax": [
+     "GBP",
+     7.34,
+     "£7.34"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     43.8,
+     "£43.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.7,
+   "why": "page shows £36.29, pay step totals £43.80",
+   "read_at": "2026-08-11T19:37:11+00:00",
+   "_source": "seller-audit-e5-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://wiwikuan.gumroad.com/l/improv-101",
+   "title": "即興幼幼班！Wiwi 設計的鋼琴即興訓練課程，31 天讓你成為會即興的人～",
+   "page_money": [
+    "$49",
+    "$49"
+   ],
+   "page_price": [
+    "USD",
+    49.0,
+    "$49"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=euoam&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "USD",
+     49.0,
+     "$49"
+    ],
+    "total": [
+     "USD",
+     49.0,
+     "$49"
+    ]
+   },
+   "verdict": "none",
+   "delta_pct": 0.0,
+   "why": "advertised and charged agree",
+   "read_at": "2026-08-11T19:37:23+00:00",
+   "_source": "seller-audit-e5-probe-2026-08-11.json"
+  },
+  {
+   "url": "https://wonderwellstudios.gumroad.com/l/LeoRig",
+   "title": "Leo - character rig (maya)",
+   "page_money": [
+    "£22.21",
+    "£22.21",
+    "£107.35",
+    "£366.50",
+    "£2,217.54"
+   ],
+   "page_price": [
+    "GBP",
+    22.21,
+    "£22.21"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=lUXLhK&option=G7hFQlxT0kzKwSCDUCyZLw%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     22.5,
+     "£22.50"
+    ],
+    "tax": [
+     "GBP",
+     4.49,
+     "£4.49"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     26.99,
+     "£26.99"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 21.5,
+   "why": "page shows £22.21, pay step totals £26.99",
+   "read_at": "2026-08-11T17:51:51+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  },
+  {
+   "url": "https://yansculpts.gumroad.com/l/mastersculptingheads",
+   "title": "Master Sculpting Heads - 3D Blender Course - New Update! (V1.5)",
+   "page_money": [
+    "£28.88",
+    "£28.88",
+    "£43.68"
+   ],
+   "page_price": [
+    "GBP",
+    28.88,
+    "£28.88"
+   ],
+   "checkout_href": "https://gumroad.com/checkout?product=zdeof&option=I_OFVR7DrYxG6mvGtzXgIg%3D%3D&quantity=1",
+   "checkout_url": "https://gumroad.com/checkout",
+   "checkout": {
+    "subtotal": [
+     "GBP",
+     28.96,
+     "£28.96"
+    ],
+    "tax": [
+     "GBP",
+     5.84,
+     "£5.84"
+    ],
+    "tax_label": "VAT",
+    "total": [
+     "GBP",
+     34.8,
+     "£34.80"
+    ]
+   },
+   "verdict": "tax_on_top",
+   "delta_pct": 20.5,
+   "why": "page shows £28.88, pay step totals £34.80",
+   "read_at": "2026-08-11T17:50:36+00:00",
+   "_source": "seller-audit-e3-2026-08-11.json"
+  }
+ ]
+}

@@ -40,6 +40,12 @@ SAMPLE = ROOT / "data" / "checkout-sample.json"
 # these same figures; recomputing them here with second code is how a page and the letter
 # pointing at it come to disagree by a rounding.
 DECOMP = ROOT / "data" / "checkout-decomposition.json"
+# Written by `build_replication_cohort.py` in the operator repo. A SECOND cohort of stores,
+# walked identically but selected to be written to rather than drawn at random. It exists
+# because the sample above is frozen at 32 by design and 71 further stores had been walked
+# and never published. It is rendered in its own section, under its own denominator, and it
+# NEVER enters `read`, `unread` or `drawn` — the assert below depends on that.
+REPLICATION = ROOT / "data" / "checkout-replication.json"
 PAGE = f"{B.SITE}/checkout.html"
 
 # Our own store, so "it happens to us too" is a row in the table rather than a claim in a
@@ -92,6 +98,94 @@ def store_of(url):
     return url.split("//")[1].split(".gumroad")[0]
 
 
+def replication():
+    """The second cohort's section, or "" when the file is absent.
+
+    THE POINT OF THIS SECTION IS THAT IT WEAKENS ITS OWN EVIDENCE BEFORE USING IT. These
+    stores were picked to be written to. Every filter that put them here — a ratings band,
+    a published contact address, a non-free top product — is a selection a random draw does
+    not make, and the largest of them (the address) selects for sellers who are more set up
+    than average. Read as an estimate of Gumroad, the number is worthless. Read as a
+    replication, it is the strongest thing on the page: a cohort assembled for a different
+    purpose, by different criteria, from a different part of the index, walked on different
+    days, returns the sample's median to within a rounding.
+
+    So the disclaimer is not a hedge bolted on at the end. It is the reason the section is
+    worth reading, and `assert_page` refuses to publish the page without it.
+    """
+    if not REPLICATION.exists():
+        return ""
+    doc = json.loads(REPLICATION.read_text())
+    s, recs = doc["summary"], doc["records"]
+    read, unread = buckets(recs)
+    higher = [r for b, r in read if b == "higher"]
+    deltas = sorted(r["delta_pct"] for r in higher)
+
+    # The two medians side by side, computed here from the records rather than taken from
+    # the emitted summary, so the sentence cannot outlive the data it describes.
+    sample_recs = json.loads(AUDIT.read_text())
+    sread, _ = buckets([r for r in sample_recs if OURS not in r.get("url", "")])
+    smed = median([r["delta_pct"] for b, r in sread if b == "higher"])
+    rmed = median(deltas)
+    agreement = ("lands on the sample&rsquo;s median to the first decimal" if smed == rmed
+                 else f"lands {abs(round(rmed - smed, 1))} points from the sample&rsquo;s median")
+
+    mark = {"higher": "", "agree": "no change", "lower": "misread",
+            "currency": "currency change"}
+    rows = []
+    for b, r in sorted(read, key=lambda x: -(x[1].get("delta_pct") or -999)):
+        ck = r.get("checkout") or {}
+        d = r.get("delta_pct")
+        cell = "—" if d is None else f"{d:+.1f}%"
+        if mark[b]:
+            cell += f" <span class=fine>{mark[b]}</span>"
+        rows.append(f"<tr><td>{B.esc(store_of(r['url']))}</td>"
+                    f"<td class=n>{B.esc(r['page_price'][2])}</td>"
+                    f"<td class=n>{B.esc(ck['tax'][2]) if ck.get('tax') else '—'}</td>"
+                    f"<td class=n>{B.esc(ck['total'][2])}</td>"
+                    f"<td class=n>{cell}</td></tr>")
+    rows = "".join(rows)
+
+    unread_rows = "".join(
+        f"<tr><td>{B.esc(store_of(r['url']))}</td><td colspan=4 class=fine>"
+        f"{B.esc(r.get('why') or r.get('error') or 'not read')}</td></tr>" for r in unread)
+
+    return f"""
+<h2>Does it hold up on stores we did not draw at random? — {len(higher)} of {len(read)}</h2>
+<p class=lede><strong>Not a random sample, and that is stated before the number and not
+after it.</strong> Alongside the draw above, {s['stores']} further stores were walked the
+same way between {B.esc(s['walked_from'])} and {B.esc(s['walked_to'])} — one product each,
+none of them in the sample, none of them ours. They were selected to be written to, so each
+passed filters a random draw does not apply: a ratings-ranked band of the seller index, a
+<strong>published contact address on the product page</strong> (about 17.5% of sellers have
+one, and that is the largest bias here), a top-rated product that is not free, and a
+published category page.</p>
+
+<p>As an estimate of the platform that cohort is worth nothing. As a replication it is worth
+more than the draw: it was assembled for an unrelated purpose, by different criteria, from a
+different part of the index, on different days — and it {agreement}.
+<strong>{len(higher)} of the {len(read)} readable stores charged more at the pay step</strong>,
+median {rmed}% (range {deltas[0]}%&ndash;{deltas[-1]}%), against {smed}% across the
+{len(sread)} readable stores of the random draw.</p>
+
+<table><thead><tr><th>Store</th><th class=n>Page shows</th><th class=n>Tax line</th>
+<th class=n>Pay step total</th><th class=n>Difference</th></tr></thead>
+<tbody>{rows}</tbody></table>
+
+<p class=fine>Not read, {len(unread)} of {s['stores']}, listed rather than dropped for the
+same reason as above.</p>
+<table><thead><tr><th>Store</th><th colspan=4>Why the walk produced no comparable pair</th>
+</tr></thead><tbody>{unread_rows}</tbody></table>
+
+<p class=fine>Where a store was walked more than once, the most recent reading is the one
+counted and the store counts once &mdash; {s['dropped'].get('an earlier or second reading of a store already counted', 0)}
+readings were set aside that way, {s['dropped'].get('already in the published random sample', 0)}
+for already being in the draw above and {s['dropped'].get('our own store', 0)} for being ours.
+The records are in
+<a href="{B.REPO}/blob/main/data/checkout-replication.json">data/checkout-replication.json</a>.</p>
+"""
+
+
 def build(t):
     if not AUDIT.exists():
         raise SystemExit(f"{AUDIT} is missing — copy the audit JSON from the operator repo "
@@ -127,6 +221,14 @@ def build(t):
             f"{len(higher)} of {len(read)} readable stores charged more at the pay step than "
             f"the page advertised — median {med}%. Gumroad's VAT, not the seller's doing, and "
             f"invisible from inside a seller's account.")
+    # The replication belongs in the shared snippet: the sentence a reader sees before
+    # clicking is where "31 stores" is weakest, and a second cohort is the answer to it.
+    # The headline and the TITLE stay anchored to the random draw — the cohort is not a
+    # random sample and must never be quoted as if the two were one number.
+    if REPLICATION.exists():
+        rs = json.loads(REPLICATION.read_text())["summary"]
+        desc += (f" A second, non-random cohort of {rs['stores']} stores, walked the same "
+                 f"way, returns a median of {rs['median_pct']}%.")
 
     rows = []
     for b, r in sorted(read, key=lambda x: -(x[1].get("delta_pct") or -999)):
@@ -236,6 +338,7 @@ is not a measurement.</p>
 </thead><tbody>{unread_rows}</tbody></table>
 
 {split}
+{replication()}
 <h2>Method, in full</h2>
 <ul>
 <li><strong>{len(drawn)} stores drawn and walked, {len(read)} read, {len(unread)} not read.</strong>
@@ -319,6 +422,20 @@ def assert_page(html, recs):
     for r in recs:
         if store_of(r["url"]) not in html:
             problems.append(f"store {store_of(r['url'])} was walked but is not on the page")
+    # THE SECOND COHORT IS THE EASIEST THING ON THIS PAGE TO QUOTE DISHONESTLY: it is
+    # bigger than the draw and it agrees with it, so a later edit that drops the words
+    # "not a random sample" leaves a stronger-looking page and a false one. It is also
+    # the section a later edit would trim to shorten the page. Both are refused here.
+    if REPLICATION.exists():
+        doc = json.loads(REPLICATION.read_text())
+        if "Not a random sample" not in html:
+            problems.append("the second cohort is published without the sentence saying it "
+                            "is not a random sample")
+        if "published contact address" not in html:
+            problems.append("the second cohort's largest selection bias is not disclosed")
+        for r in doc["records"]:
+            if store_of(r["url"]) not in html:
+                problems.append(f"cohort store {store_of(r['url'])} is counted but not listed")
     if problems:
         raise SystemExit("checkout.html: " + "; ".join(problems))
     return len(html)
