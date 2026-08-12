@@ -99,6 +99,15 @@ def build(t):
     recs = json.loads(AUDIT.read_text())
     sample = json.loads(SAMPLE.read_text()) if SAMPLE.exists() else {}
     read, unread = buckets(recs)
+    # OUR OWN STORE IS NOT IN THE DRAW AND MUST NOT BE IN THE DENOMINATOR. It was walked
+    # deliberately, not drawn by `audit_sample.py`'s seeded stratified sample, and until
+    # 2026-08-12 it was counted inside both — the headline read "28 of 32" where the draw
+    # says 27 of 31. The prose disclosed that ours was in the table; the NUMBER did not,
+    # and a store you picked yourself in a random sample's numerator is the one thing this
+    # page's whole method is supposed to rule out. It keeps its own sentence below.
+    read = [(b, r) for b, r in read if OURS not in r.get("url", "")]
+    unread = [r for r in unread if OURS not in r.get("url", "")]
+    drawn = [r for r in recs if OURS not in r.get("url", "")]
     higher = [r for b, r in read if b == "higher"]
     agree = [r for b, r in read if b == "agree"]
     lower = [r for b, r in read if b == "lower"]
@@ -107,9 +116,14 @@ def build(t):
     med, lo, hi = median(deltas), (min(deltas) if deltas else None), (max(deltas) if deltas else None)
     ours = [r for r in recs if OURS in r.get("url", "")]
 
+    assert not any(OURS in r.get("url", "") for _, r in read), \
+        "our own store is back inside the sample denominator"
+    assert len(drawn) == sample.get("n", len(drawn)), \
+        f"{len(drawn)} walked stores but the manifest drew {sample.get('n')}"
+
     title = (f"What a UK buyer is actually charged on Gumroad — "
              f"{len(higher)} of {len(read)} stores measured")
-    desc = (f"Walked {len(recs)} Gumroad product pages and their own checkouts from London. "
+    desc = (f"Walked {len(drawn)} Gumroad product pages and their own checkouts from London. "
             f"{len(higher)} of {len(read)} readable stores charged more at the pay step than "
             f"the page advertised — median {med}%. Gumroad's VAT, not the seller's doing, and "
             f"invisible from inside a seller's account.")
@@ -142,21 +156,25 @@ def build(t):
         ot = (o.get("checkout") or {}).get("total")
         if o.get("page_price") and ot:
             ours_line = (
-                f" Ours is in the table: the page shows {B.esc(o['page_price'][2])} and the pay "
-                f"step totals {B.esc(ot[2])}. We found that on our own product first, on "
+                f" Ours does the same thing: the page shows {B.esc(o['page_price'][2])} and "
+                f"the pay step totals {B.esc(ot[2])}. We found it on our own product first, on "
                 f"2026-08-09, and changed our description the same day — which is the only "
-                f"thing a seller can actually do about it.")
+                f"thing a seller can actually do about it. It is deliberately NOT in the table "
+                f"below and not in any figure on this page: we chose it ourselves, so it does "
+                f"not belong in a random sample's numerator.")
 
     frame = ""
     if sample:
-        extra = len(recs) - sample["n"]
+        extra = len(recs) - len(drawn)
         frame = (f"{sample['n']} of the stores were drawn from {sample['frame_size']:,} sellers "
                  f"with a fixed seed ({sample['seed']}), eight from each of four price bands, "
                  f"before anything was walked. The draw is reproducible from the same CSV, so "
                  f"nobody — including us — can re-roll it until the result looks better."
-                 + (f" The remaining {extra} is our own product, added on purpose: a page that "
-                    f"reports a platform's behaviour and exempts its own author from it is "
-                    f"worth less than nothing." if extra > 0 else ""))
+                 + (f" Our own product was walked alongside them and is reported above "
+                    f"rather than counted here — a page that reports a platform's behaviour "
+                    f"and exempts its own author from it is worth less than nothing, and one "
+                    f"that puts a self-chosen store in a random sample is worth less than "
+                    f"that." if extra > 0 else ""))
 
     tax_labels = sorted({(r.get("checkout") or {}).get("tax_label")
                          for _, r in read if (r.get("checkout") or {}).get("tax_label")})
@@ -211,7 +229,7 @@ UK or EU visitor reads at the moment of paying does not appear on any screen you
 <th class=n>Pay step total</th><th class=n>Difference</th></tr></thead>
 <tbody>{table}</tbody></table>
 
-<h2>The ones we could not read — {len(unread)} of {len(recs)}</h2>
+<h2>The ones we could not read — {len(unread)} of {len(drawn)}</h2>
 <p>Listed rather than dropped. A percentage whose denominator quietly excludes the awkward cases
 is not a measurement.</p>
 <table><thead><tr><th>Store</th><th colspan=4>Why the walk produced no comparable pair</th></tr>
@@ -220,7 +238,7 @@ is not a measurement.</p>
 {split}
 <h2>Method, in full</h2>
 <ul>
-<li><strong>{len(recs)} stores walked, {len(read)} read, {len(unread)} not read.</strong>
+<li><strong>{len(drawn)} stores drawn and walked, {len(read)} read, {len(unread)} not read.</strong>
 {len(higher)} charged more at the pay step, {len(agree)} matched the page,
 {len(lower)} came out lower — that last group is almost certainly us misreading the page price
 (a pay-what-you-want minimum or a struck-through price), not a discount, and it is counted in
@@ -245,7 +263,10 @@ supposed to. What you can do is stop being surprised by it:</p>
 <ul>
 <li><strong>Know your own number.</strong> Open your product page in a private window from a VAT
 country and follow your own buy button. It takes a minute and it is the only way to see what your
-buyer sees.</li>
+buyer sees. If you are not in a VAT country and cannot do that,
+<a href="https://github.com/sujeito-operator/gumroad-checkout-gap">this reads it for you</a> — the
+same code that produced the table above, one file, MIT, no signup and no email. It loads two pages
+and stops.</li>
 <li><strong>Say it on the page.</strong> A line saying tax is added at checkout for EU/UK buyers
 costs nothing and removes the surprise at the exact step where surprise loses the sale.</li>
 <li><strong>Compare like with like.</strong> When you benchmark your price against a competitor,
@@ -269,6 +290,12 @@ def assert_page(html, recs):
     every store the walk failed on must be named.
     """
     problems = []
+    # The page tells the reader to check their own number, and for a US seller that
+    # instruction is unfollowable — they are the one class of reader who CANNOT see the
+    # finding, and they are most of the market. The free tool is the answer to it, so a
+    # build that drops the link publishes advice nobody can take.
+    if "gumroad-checkout-gap" not in html:
+        problems.append("the page tells the reader to measure their own and links no way to")
     if "merchant of record" not in html:
         problems.append("the attribution to Gumroad is missing from the page")
     if "not an accusation" not in html:

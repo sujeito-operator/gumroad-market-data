@@ -194,6 +194,12 @@ sell at all, or simply sit. It is free here in full; nothing is held back from t
 - **Subscriptions are rare:** 64 of 1,344 products bill recurring.
 - **Price anchors (USD):** median $36.99, 75th percentile $87.99,
   90th $222.01.
+- **The price a UK buyer is charged is not the price on the page**, on 27 of the
+  31 randomly drawn stores we could read — a median of 21.2% more, range
+  16.6%–27.9%. It is Gumroad's VAT as merchant of record, not a seller's mistake,
+  and it applies to our own product too. A seller cannot see it: logged in you read your own
+  catalogue in your own currency from your own country. [The sample and every
+  reading](https://sujeito-operator.github.io/gumroad-market-data/checkout.html); [measure your own](https://github.com/sujeito-operator/gumroad-checkout-gap).
 
 ## Method, and what this cannot tell you
 

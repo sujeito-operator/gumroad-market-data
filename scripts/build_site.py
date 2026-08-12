@@ -1066,7 +1066,24 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
 
 # ------------------------------------------------------------------- README
 
+def checkout_summary():
+    """The checkout finding, read from the same JSON the page is built from.
+
+    Typed here it would be a fourth copy of a number that has already been wrong once
+    (the page counted our own store inside a random sample until 2026-08-12). Read, it
+    cannot disagree with the page.
+    """
+    import build_checkout
+    recs = json.loads(build_checkout.AUDIT.read_text())
+    drawn = [r for r in recs if build_checkout.OURS not in r.get("url", "")]
+    read, _ = build_checkout.buckets(drawn)
+    d = sorted(r["delta_pct"] for b, r in read if b == "higher")
+    return {"higher": len(d), "read": len(read), "median": build_checkout.median(d),
+            "lo": d[0], "hi": d[-1]}
+
+
 def build_readme(s, mix, ts, ss, sr):
+    ck = checkout_summary()
     top, bottom = s["by_category"][0], s["by_category"][-1]
     fx = s["fx_rates_to_usd"]
     # Label for the one branch the per-product crawl has reached. Derived, so the README's
@@ -1235,6 +1252,12 @@ sell at all, or simply sit. It is free here in full; nothing is held back from t
 - **Subscriptions are rare:** {s['subs']} of {s['n']:,} products bill recurring.
 - **Price anchors (USD):** median {money(s['med'])}, 75th percentile {money(s['p75'])},
   90th {money(s['p90'])}.
+- **The price a UK buyer is charged is not the price on the page**, on {ck['higher']} of the
+  {ck['read']} randomly drawn stores we could read — a median of {ck['median']}% more, range
+  {ck['lo']}%–{ck['hi']}%. It is Gumroad's VAT as merchant of record, not a seller's mistake,
+  and it applies to our own product too. A seller cannot see it: logged in you read your own
+  catalogue in your own currency from your own country. [The sample and every
+  reading]({CHECKOUT_PAGE}); [measure your own](https://github.com/sujeito-operator/gumroad-checkout-gap).
 
 ## Method, and what this cannot tell you
 
