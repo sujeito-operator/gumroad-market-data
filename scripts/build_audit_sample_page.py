@@ -35,6 +35,16 @@ SRC = ROOT / "data" / "audit-sample-2026-08-12.md"
 OUT = ROOT / "docs" / "audit-sample.html"
 PAGE = f"{B.SITE}/audit-sample.html"
 PRODUCT = "https://sujeitooperator.gumroad.com/l/xlvfeb"
+# THE RECURRING VERSION OF THE SAME WALK, ADDED 2026-08-13, AND IT CARRIES NO PRICE EITHER
+# — for exactly the reason the docstring above gives, which applies to it unchanged. It is
+# on this page and not on the 542-page buy block because this is the one page whose reader
+# has already self-selected as a Gumroad seller looking at their own checkout, and because
+# the thing it offers IS the document above, re-run: the monitor's first month is this
+# report. Naming it here is not an upsell bolted on, it is the honest second half of the
+# sentence "yours is run the day the order lands" — after which, without this, nothing
+# happens again ever. On 2026-08-13 the recurring SKU was published and named on no owned
+# surface at all, while three one-off offers were named on several.
+MONITOR = "https://sujeitooperator.gumroad.com/l/zyoqbc"
 
 TITLE = ("A worked sample of the Gumroad storefront audit — nine products, "
          "every checkout read at the pay step")
@@ -48,8 +58,15 @@ The page above is one storefront's audit end to end — the same document a buye
 with the seller's name and product titles removed and not one figure altered. Yours names
 your products, walks every product on your storefront, and is run the day the order lands.
 <a href="{PRODUCT}">See the price and order on Gumroad &rarr;</a>
-<span class=fine>Prefer to look at the underlying data first? The category crawl behind the
-price comparison is <a href="{B.SITE}/">free and openly licensed</a>.</span></div>"""
+<a class=alt href="{MONITOR}">Or have it watched: the same walk every week, and an email the day
+a price stops matching the pay step &rarr;</a>
+<span class=fine>The watched version is a monthly subscription and its first month is this
+report, included rather than added on; after that the walk repeats weekly and you hear from me
+when a gap opens, closes or moves. The number moves on its own — it is a function of the day's
+exchange rate, the buyer's country, Gumroad's tax handling and your own edits — so a report is
+true on the day it is written and the watching is what keeps it true. Both state their own
+price on their own page. Prefer to look at the underlying data first? The category crawl behind
+the price comparison is <a href="{B.SITE}/">free and openly licensed</a>.</span></div>"""
 
 
 # ---------------------------------------------------------------- markdown, the subset
