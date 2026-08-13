@@ -1,11 +1,11 @@
 <!doctype html><html lang=en><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title>What a UK buyer is actually charged on Gumroad — 27 of 31 stores measured</title>
-<meta name=description content="Walked 32 Gumroad product pages and their own checkouts from London. 27 of 31 readable stores charged more at the pay step than the page advertised — median 21.2%. Gumroad's VAT, not the seller's doing, and invisible from inside a seller's account. A second, non-random cohort of 71 stores, walked the same way, returns a median of 21.4%.">
+<meta name=description content="Walked 32 Gumroad product pages and their own checkouts from London. 27 of 31 readable stores charged more at the pay step than the page advertised — median 21.2%. Gumroad's VAT, not the seller's doing, and invisible from inside a seller's account. A second, non-random cohort of 71 stores, walked the same way, returns a median of 21.4%. And of 84 stores with a recorded gap, 81 — 96.4% — say nothing about tax anywhere on the page.">
 <link rel=canonical href="https://sujeito-operator.github.io/gumroad-market-data/checkout.html">
 <meta property="og:type" content="website">
 <meta property="og:title" content="What a UK buyer is actually charged on Gumroad — 27 of 31 stores measured">
-<meta property="og:description" content="Walked 32 Gumroad product pages and their own checkouts from London. 27 of 31 readable stores charged more at the pay step than the page advertised — median 21.2%. Gumroad's VAT, not the seller's doing, and invisible from inside a seller's account. A second, non-random cohort of 71 stores, walked the same way, returns a median of 21.4%.">
+<meta property="og:description" content="Walked 32 Gumroad product pages and their own checkouts from London. 27 of 31 readable stores charged more at the pay step than the page advertised — median 21.2%. Gumroad's VAT, not the seller's doing, and invisible from inside a seller's account. A second, non-random cohort of 71 stores, walked the same way, returns a median of 21.4%. And of 84 stores with a recorded gap, 81 — 96.4% — say nothing about tax anywhere on the page.">
 <meta property="og:url" content="https://sujeito-operator.github.io/gumroad-market-data/checkout.html">
 <meta name="twitter:card" content="summary">
 <style>
@@ -150,6 +150,62 @@ Prices move; re-run it yourself. The reader is
 <a href="https://github.com/sujeito-operator">open source</a> and the raw records for this page are
 in <a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/data/checkout-audit.json">data/checkout-audit.json</a>.</li>
 </ul>
+
+<h2>How many of them say so on the page? — 3 of 84</h2>
+<p class=lede>Everything above is a fact about Gumroad. This is the only part that is a fact about
+the <em>sellers</em>, and it is the sharper number.
+<strong>Of 84 third-party storefronts where we recorded a pay-step gap, 81 &mdash; 96.4% &mdash;
+say nothing about tax anywhere on the product page.</strong> Three tell the reader. None claims the
+price already includes it.</p>
+
+<div class=kv>
+<div><b>84</b><span>stores with a recorded gap</span></div>
+<div><b>81</b><span>say nothing at all</span></div>
+<div><b>3</b><span>tell the reader</span></div>
+<div><b>96.4%</b><span>silent</span></div>
+<div><b>21.2%</b><span>median gap, silent stores</span></div>
+<div><b>0 of 81</b><span>mention tax in any context</span></div>
+</div>
+
+<p>The distinction matters more than it looks. The 21% gap is <em>not the seller&rsquo;s doing and
+not the seller&rsquo;s to fix</em> &mdash; that is said plainly at the top of this page and it stays
+said. But whether the page mentions it is entirely theirs: one line in a description, no plugin, no
+platform change, about sixty seconds. It is the one part of this whole measurement that comes with
+an action attached.</p>
+
+<p>The three that do it, and the words that earned it:</p>
+<table><thead><tr><th>store</th><th>the phrase on the page</th></tr></thead><tbody>
+<tr><td><code>uxstackguru</code></td><td>&ldquo;VAT rate may be charged&rdquo;</td></tr>
+<tr><td><code>whereisweatherby</code></td><td>&ldquo;VAT Tax is automatically applied&rdquo;</td></tr>
+<tr><td><code>yansculpts</code></td><td>&ldquo;excluding VAT&rdquo;</td></tr>
+</tbody></table>
+
+<p class=cite><strong>Why 81 is not just &ldquo;our search missed it&rdquo;.</strong> A needle set
+can fail by being too narrow, and that failure looks exactly like a finding. So all 81 silent pages
+were re-read and searched for the bare words <code>vat</code>, <code>gst</code>, <code>tax</code>
+and <code>taxes</code> anywhere in their visible text, with no requirement that they sit near
+anything else. <strong>0 of 81 contain any of them in any context.</strong> The silence is total,
+not a matter of phrasing. Matching is word-boundary anchored throughout, because
+<em>pri&#8203;vat&#8203;e</em>, <em>inno&#8203;vat&#8203;ive</em> and <em>syn&#8203;tax</em> would
+otherwise each read as a tax disclosure.</p>
+
+<p><strong>Our own store is excluded from both sides of that ratio</strong>, the same way it is
+excluded from the drawn sample above. It was measured too: all three paid pages state that tax is
+added, and did so before this count was taken rather than after it.</p>
+
+<p class=cite><strong>What this is not.</strong> It is a measurement of what page text says, and
+nothing else. It is not a claim that any seller has broken any rule &mdash; that depends on who the
+trader is, where their buyers are and how a regulator reads a platform-collected tax, none of which
+a reading of a web page can settle. If you want the rules themselves rather than our summary of
+them, the relevant ones are the definition of &ldquo;selling price&rdquo; in the
+<a href="https://www.legislation.gov.uk/uksi/2004/102/article/1/made">Price Marking Order 2004</a>,
+regulation 6 of the
+<a href="https://www.legislation.gov.uk/uksi/2008/1277/regulation/6/made">CPUTRs 2008</a>, and the
+consumer provisions of the Digital Markets, Competition and Consumers Act 2024, in force since
+6 April 2025. That last one is the one to read: it requires the total price up front, and where a
+mandatory charge <em>cannot be quantified in advance</em> &mdash; which VAT here genuinely cannot,
+since it depends on a buyer&rsquo;s country &mdash; it asks that the headline price be accompanied
+by what a reader needs to work the total out. Which is the one line above.</p>
 
 <h2>What a seller can actually do</h2>
 <p>Not much, and it is better to say so than to invent a fix. You cannot turn it off; you are not
