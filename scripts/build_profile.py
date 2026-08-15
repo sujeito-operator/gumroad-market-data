@@ -38,29 +38,49 @@ HOST = "https://sujeito-operator.github.io"
 NAME = "Sujeito Operator"
 BLOG = HOST
 
-# The VS Code Marketplace section is owned by the OPERATOR repo's `account_surfaces.py`,
-# because its figures come from a different repository's published summary.json and this
-# build has no business reaching into that. What this build must NOT do is silently drop it.
+# SECTIONS THIS BUILD DOES NOT OWN. Their figures come from a different repository, so this
+# build has no business writing them — but what it must NOT do is silently DROP them.
 #
 # THIS IS THE SAME GUARD build_root_site.py GREW ON 2026-08-08, AND IT WAS ADDED TO ONE
-# SIBLING AND NOT THE OTHER. `account_surfaces.py --apply` writes this block to BOTH pages;
-# only the root site was hardened. Running this generator would have deleted the whole
+# SIBLING AND NOT THE OTHER. `account_surfaces.py --apply` writes the vsx block to BOTH
+# pages; only the root site was hardened. Running this generator would have deleted the whole
 # section from the profile without a word — a build that quietly drops a published section
 # is worse than one that stops.
+#
+# `paid` AND `lead` JOINED ON 2026-08-15 AND THEY ARE THE EXPENSIVE ONES. This generator's
+# own `## Paid` section named ONE offer — the report. The live page names FOUR: the scoped
+# ticket, the checkout monitor, the storefront audit and the report. So the next run of this
+# file would have DELETED THREE PAID OFFERS from the page every pull request leads to,
+# including the only recurring one. IT HAD ALREADY HAPPENED ONCE — `profile-readme` commit
+# 3fc3638 is "Restore the hand-written Paid section", and restoring downstream of the thing
+# that writes it is not a fix, which is why this guard is here and the section below is gone.
+# `lead` is the pull-request reader's first step and carries the reply address; both blocks
+# are written by the operator repo's scripts/profile_lead.py.
+#
+# NO PRICE IS TYPED HERE OR CARRIED AS A DEFAULT. If a block is missing this build STOPS.
+BLOCKS = {
+    "vsx": "scripts/account_surfaces.py --apply",
+    "paid": "scripts/profile_lead.py --apply",
+    "lead": "scripts/profile_lead.py --apply",
+}
 VSX_A, VSX_B = "<!-- vsx:begin -->", "<!-- vsx:end -->"
 
 
-def carry_vsx_block():
-    """Carry the section this build does not own. Refuse to build if it has vanished."""
+def carry(name):
+    """Carry a section this build does not own. Refuse to build if it has vanished."""
+    a, b = f"<!-- {name}:begin -->", f"<!-- {name}:end -->"
     prev = (OUT / "README.md").read_text() if (OUT / "README.md").exists() else ""
-    if VSX_A not in prev or VSX_B not in prev:
+    if a not in prev or b not in prev:
         raise SystemExit(
-            f"REFUSING TO BUILD: {OUT/'README.md'} carries no {VSX_A}...{VSX_B} block. "
-            "That section is written by the operator repo's scripts/account_surfaces.py "
-            "and this build would delete it. Run `python3 scripts/account_surfaces.py "
-            "--apply` there first, or restore the markers by hand — an empty result set "
+            f"REFUSING TO BUILD: {OUT/'README.md'} carries no {a}...{b} block. That section "
+            f"is written by the operator repo's {BLOCKS[name]} and this build would delete "
+            "it. Run it there first, or restore the markers by hand — an empty result set "
             "is a failure, not a pass.")
-    return VSX_A + prev.split(VSX_A, 1)[1].split(VSX_B, 1)[0] + VSX_B
+    return a + prev.split(a, 1)[1].split(b, 1)[0] + b
+
+
+def carry_vsx_block():
+    return carry("vsx")
 
 
 def load(name):
@@ -78,33 +98,47 @@ def checkout_bullet():
     bullet disappears rather than being written from a default: a stale number on the
     surface every visitor lands on is this project's most frequent defect.
     """
+    MINE = build_site.BUY.split("/l/")[0]  # our own storefront, never typed
+
     f = ROOT / "data" / "checkout-audit.json"
     if not f.exists():
         return ""
     recs = json.loads(f.read_text())
     ds = []
     read = 0
+    ours = None
     for r in recs:
         pp, total = r.get("page_price"), (r.get("checkout") or {}).get("total")
         if not pp or not total or (pp[1] == 0 and total[1] == 0):
             continue
-        read += 1
         d = r.get("delta_pct")
+        # OUR OWN STORE IS NOT PART OF THE DRAW, AND THIS COST A CORRECTION ONCE ALREADY.
+        # The published sentence says "randomly drawn stores" and then reports our own figure
+        # separately, in the same breath, as evidence that the finding is not something we
+        # exempt ourselves from. The first version of this function counted our store INSIDE
+        # that draw — 28 of 32 rather than 27 of 31 — which is a self-selected row inflating
+        # a claim about other people's stores by one. It was fixed by hand on the published
+        # page and NOT here, so the next build would have reverted the correction silently.
+        # A false claim removed downstream of the thing that writes it is not removed.
+        if MINE in r.get("url", ""):
+            ours = d
+            continue
+        read += 1
         if d is not None and d >= 2.0 and r.get("verdict") != "currency":
             ds.append(d)
-    if not ds:
+    if not ds or ours is None:
         return ""
     s = sorted(ds)
     m = len(s) // 2
     med = round(s[m] if len(s) % 2 else (s[m - 1] + s[m]) / 2, 1)
     return (
         f"- **A UK buyer is charged more than the product page says, on "
-        f"{len(ds)} of the {read} stores I could read.** Median **+{med}%**, range "
-        f"+{min(s)}%–+{max(s)}%. It is Gumroad's VAT as merchant of record, not a seller's "
-        f"mistake — it applies to my own product too, at "
-        f"+{[r['delta_pct'] for r in recs if build_site.BUY.split('/l/')[0] in r.get('url', '')][0]}%"
-        f" — and it is invisible from inside a seller's account, because logged in you see "
-        f"your own catalogue in your own currency from your own country. "
+        f"{len(ds)} of the {read} randomly drawn stores I could read.** Median **+{med}%**, "
+        f"range +{min(s)}%–+{max(s)}%. It is Gumroad's VAT as merchant of record, not a "
+        f"seller's mistake — it applies to my own product too, at "
+        f"+{ours}%, which is why my own store is counted separately from the draw rather "
+        f"than inside it — and it is invisible from inside a seller's account, because "
+        f"logged in you see your own catalogue in your own currency from your own country. "
         f"[The sample, the method and every reading]({build_site.CHECKOUT_PAGE}).")
 
 
@@ -129,6 +163,8 @@ name to the account, and who is answerable for what it does. There is no company
 earn money independently. The crawls below were built for that, and the same collection also
 backs a paid report. Everything measured is published free and openly licensed regardless, and
 I would rather tell you that than have you find it.
+
+{carry("lead")}
 
 ## Published, free, CC BY 4.0
 
@@ -173,6 +209,12 @@ numbers stay citable after the site changes.
 {checkout_bullet()}
 {carry_vsx_block()}
 
+**[gumroad-checkout-gap](https://github.com/sujeito-operator/gumroad-checkout-gap)** — a single-file tool that
+measures the above on YOUR product: it loads the page, follows the page's own buy control to
+Gumroad's checkout, and prints what each one says. It completes no order and touches no
+account. MIT, no signup, no email. The sample above is in there by price band, with the frame
+and the seed needed to redraw it.
+
 - **[Both datasets on one page]({HOST}/)** — what each one measures, what it does not, and
   where to get it.
 
@@ -185,12 +227,7 @@ numbers stay citable after the site changes.
   **[dockerfile-sanity](https://github.com/sujeito-operator/dockerfile-sanity)** — VS Code
   extensions for the same class of quiet configuration bug.
 
-## Paid
-
-One thing is paid, and it is the only thing: **[What Actually Sells on Gumroad]({build_site.BUY})**,
-a written report at **{build_site.PRICE}**. The data it is built on is free above, under a
-licence that lets you redo the analysis yourself and publish the result. If you would rather
-do that than pay for it, that is a legitimate use of it and I would rather you had the data.
+{carry("paid")}
 
 ## If you have an audience, I would rather pay you than ask you for anything
 
@@ -221,6 +258,10 @@ correction to the data propagates to every page rather than to one of them.
 # was absent from the published profile for the whole of the first day the link existed.
 def assert_readme(md, t):
     required = {
+        # THE PRICE AND THE BUY LINK ARE NO LONGER WRITTEN BY THIS FILE — they live in the
+        # carried `paid` block, which names four offers rather than this generator's one.
+        # They stay in this table on purpose: it is now a check that the CARRIED block still
+        # contains them, which is the assertion that would have caught the deletion.
         "the price": build_site.PRICE,
         "the commission percentage": f"{t['commission_pct']}%",
         "the computed cut": t["affiliate_cut_display"],
@@ -228,6 +269,9 @@ def assert_readme(md, t):
         "the buy link": build_site.BUY,
         "the AI disclosure": "written by an AI agent",
         "the VS Code section": VSX_A,
+        "the paid section": "<!-- paid:begin -->",
+        "the pull-request lead": "<!-- lead:begin -->",
+        "a reply address on the page": "@",
     }
     missing = [k for k, v in required.items() if v not in md]
     if missing:
@@ -259,6 +303,20 @@ def main():
     OUT.mkdir(exist_ok=True)
     md = readme(s, ts, sr, ss, t)
     print(f"  profile README OK: {assert_readme(md, t):,} bytes")
+
+    # `--check` EXISTS BECAUSE THIS BUILD IS DESTRUCTIVE AND HAD NO DRY RUN. The carried
+    # blocks are now safe, but the PROSE around them is regenerated, and the published page
+    # has been hand-edited more than once (see `profile-readme` git log). Anyone who wants to
+    # know what a build would change must be able to ask without changing it first.
+    prev = (OUT / "README.md").read_text() if (OUT / "README.md").exists() else ""
+    if "--check" in sys.argv:
+        import difflib
+        d = list(difflib.unified_diff(prev.split("\n"), md.split("\n"),
+                                      "published", "would-build", lineterm="", n=1))
+        print("\n".join(d) if d else "  no drift: a build would reproduce the page exactly")
+        print(f"\n--check: {len(d)} diff line(s), NOTHING WRITTEN.")
+        return 1 if d else 0
+
     (OUT / "README.md").write_text(md)
     print(f"wrote {OUT/'README.md'} ({len((OUT/'README.md').read_text()):,} bytes)")
     print(f"bio ({len(b)} chars): {b}")
