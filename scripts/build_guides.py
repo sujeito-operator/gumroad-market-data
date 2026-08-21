@@ -1603,9 +1603,13 @@ independent ways.</p>
 at least one rating, its ratio can never exceed its sales count &mdash; a product with six sales
 cannot show a multiplier above six. So the low bands there are <strong>censored by
 construction</strong> and the rise across that table is partly mechanical. The ratings-cut table
-above it is not censored that way, and it shows the same climb from
-&times;{first['median']} to &times;{last['median']}. That is why both are printed: one of them
-would have been a nicer chart and a worse answer.</p>
+above it is not censored that way, and it points the same way over a far shorter distance:
+its widest band is &times;{max(b['median'] for b in d['by_ratings'])} against
+&times;{first['median']} at the narrowest, a factor of
+{max(b['median'] for b in d['by_ratings']) / first['median']:.1f}, where the sales cut spans a
+factor of {max(b['median'] for b in d['by_sales']) / d['by_sales'][0]['median']:.0f}.
+<strong>The direction is real; the size of it is mostly the cut.</strong> That is why both are
+printed: one of them would have been a nicer chart and a worse answer.</p>
 
 <h2>Price barely matters</h2>
 <table>{head}<tbody>{by_price}</tbody></table>

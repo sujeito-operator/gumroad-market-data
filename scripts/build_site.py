@@ -1050,11 +1050,19 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
             f"x{pr['q1']}-x{pr['q3']} over n={pr['n']}. Free listings: median "
             f"x{fr['median']}, IQR x{fr['q1']}-x{fr['q3']}, n={fr['n']}. Quote the range, "
             f"not the median alone.",
-            f"- **The ratio rises with listing size**: x{sr['by_ratings'][0]['median']} "
-            f"for listings with 1-2 ratings against x{sr['by_ratings'][-1]['median']} for "
-            f"50 or more. A fixed 'x30 rule' is wrong at both ends.",
+            f"- **The ratio rises with listing size, and by how much depends on the cut.** "
+            f"Bucketed by rating count it runs x{sr['by_ratings'][0]['median']} to "
+            f"x{max(b['median'] for b in sr['by_ratings'])}; bucketed by units sold it runs "
+            f"x{sr['by_sales'][0]['median']} to x{max(b['median'] for b in sr['by_sales'])}. "
+            f"The units cut is sorted by its own numerator and censored (ratio <= sales "
+            f"when ratings >= 1), so it overstates the trend; the ratings cut is the one an "
+            f"estimator can use, because a rating count is what a listing shows you. A fixed "
+            f"'x30 rule' is wrong at both ends either way.",
             f"- **Ratings are a valid ordinal proxy**: rank correlation with units sold is "
-            f"{sr['spearman_all']}. They rank demand reliably and measure it badly.",
+            f"{sr['spearman_paired']} across the {sr['paired']} listings publishing both, "
+            f"{sr['spearman_all']} across all {sr['disclosing']} disclosing listings - the "
+            f"higher figure includes {sr['unrated_n']} zero-rating listings entered as zero, "
+            f"which flatters it. They rank demand reliably and measure it badly.",
             f"- **{sr['unrated_n']} of {sr['disclosing']} products with a public sales "
             f"count have zero ratings** (median {sr['unrated_median_sales']} units, max "
             f"{sr['unrated_max_sales']:,}). An unrated listing is weak evidence of no "
@@ -1112,6 +1120,31 @@ def build_readme(s, mix, ts, ss, sr):
     cov_branch = next((x["node"].split(" > ")[0] for x in ts["by_node"]
                        if x["slug"].split("/")[0] == sr["coverage"]["dominant"]),
                       sr["coverage"]["dominant"])
+    # The ratio, bucketed both ways, with the direction words derived rather than typed.
+    # Bucketing units/ratings by BANDS OF UNITS sorts it partly by its own numerator and
+    # is censored besides (with >=1 rating the ratio cannot exceed the sales count), so
+    # that cut stretches the trend; bucketing by BANDS OF RATINGS sorts it by its own
+    # denominator and flattens it. Printing one alone is how a 15x and a 1.2x get quoted
+    # as the same finding. `bs_hi`/`br_hi` are the LARGEST band medians, not the last
+    # ones: neither series is monotonic and an endpoint pair would claim a trend the
+    # data does not have.
+    bs, br = sr["by_sales"], sr["by_ratings"]
+    _lo = lambda bands: min(bands, key=lambda b: b["median"])
+    _hi = lambda bands: max(bands, key=lambda b: b["median"])
+    bs_lo, bs_hi, br_lo, br_hi = _lo(bs), _hi(bs), _lo(br), _hi(br)
+    bs_span = bs_hi["median"] / bs_lo["median"]
+    br_span = br_hi["median"] / br_lo["median"]
+    def _rises(bands):
+        m = [b["median"] for b in bands]
+        return all(x < y for x, y in zip(m, m[1:]))
+    br_shape = textwrap.fill(
+        "the bands rise one to the next." if _rises(br) else
+        f"the bands do not even rise one to the next — the widest is {br_hi['label']}, "
+        f"not the largest listings.",
+        width=88, initial_indent="  ", subsequent_indent="  ")
+    # Derived, so it cannot outlive the gap it describes: if the two cuts ever converge
+    # this stops claiming the spread is an artefact.
+    cut_share = "most of" if br_span < bs_span / 2 else "part of"
     tbl = "\n".join(
         f"| [{c['topic']}]({SITE}/c/{slug(c['topic'])}.html) | {c['rated_share']}% | "
         f"{c['med_ratings']:,} | {c['top_n']:,} | {money(c['median'])} | {money(c['p90'])} | "
@@ -1216,8 +1249,8 @@ pages one at a time finds them: **{sr['disclosing']} of {sr['fetched']:,} produc
 {sr['units_observed']:,} units. That subset is the only place the proxy can be checked
 against the thing it proxies for.
 
-> ⚠️ **This section covers {cov_branch}, not Gumroad.** The per-product crawl walks the
-> per-product crawl has not finished and its sample is uneven: **{sr['coverage']['dominant_pct']:.0f}% of
+> ⚠️ **This section covers {cov_branch}, not Gumroad.** The per-product crawl has not
+> finished and its sample is uneven: **{sr['coverage']['dominant_pct']:.0f}% of
 > the {sr['fetched']:,} pages fetched so far are under {cov_branch}**, one of the
 > {sr['coverage']['n_top_levels_in_taxonomy']} top-level categories that returned listings.
 > {cov_branch} is an unusual corner — high unit volumes, low prices, an unusually active
@@ -1227,14 +1260,35 @@ against the thing it proxies for.
 
 > **There is no fixed multiplier.** Across the {sr['paired']} products publishing both, the
 > median paid listing sells **×{sr['paid_ratio']['median']}** its rating count — but the
-> middle half spans ×{sr['paid_ratio']['q1']} to ×{sr['paid_ratio']['q3']}, and the ratio
-> **climbs with the size of the listing**: ×{sr['by_ratings'][0]['median']} at
-> {sr['by_ratings'][0]['label'].replace(' ratings', '')} ratings against
-> ×{sr['by_ratings'][-1]['median']} at 50 or more. Free products run higher still
-> (×{sr['free_ratio']['median']}, n={sr['free_ratio']['n']}).
+> middle half spans ×{sr['paid_ratio']['q1']} to ×{sr['paid_ratio']['q3']}. Free products
+> run higher still (×{sr['free_ratio']['median']}, n={sr['free_ratio']['n']}).
 
-- **The proxy holds up for ranking.** Rank correlation between ratings and units sold is
-  **{sr['spearman_all']}**. Ratings rank demand reliably and measure it badly.
+**How far the multiplier moves depends on which way you cut the same {sr['paired']} rows.**
+Both cuts are published, because either one alone is a different answer to the same
+question:
+
+| Bucketed by | Narrowest band | Widest band | Spread |
+|---|---|---|---:|
+| **units sold** | ×{bs_lo['median']} at {bs_lo['label']} | ×{bs_hi['median']} at {bs_hi['label']} | **{bs_span:.0f}×** |
+| **rating count** | ×{br_lo['median']} at {br_lo['label']} | ×{br_hi['median']} at {br_hi['label']} | **{br_span:.1f}×** |
+
+- **The two disagree because each buckets a ratio by one of its own terms.** Sales per
+  rating sorted into bands of *units* is sorted partly by its own numerator, and is
+  censored besides — a listing with six sales and at least one rating cannot show a
+  multiplier above six — so that cut stretches the trend. Sorted into bands of *ratings*
+  it is sorted by its own denominator, which flattens it. On that cut,
+{br_shape}
+  **The direction is real; {cut_share} the {bs_span:.0f}× is the cut, not the market.**
+- **Only the ratings cut is usable, and that is the practical point.** A rating count is
+  what a listing shows you; a unit count is the thing you are trying to estimate. Applying
+  the units-cut bands as a correction factor means estimating a number from itself.
+- **The proxy holds up for ranking, on the narrower reading.** Rank correlation between
+  ratings and units sold is **{sr['spearman_paired']}** across the {sr['paired']} listings
+  publishing both. It reads **{sr['spearman_all']}** across all {sr['disclosing']}
+  disclosing listings — but that figure includes the {sr['unrated_n']} with no ratings at
+  all, entered as zero, which pins a block of points at the floor of both axes and
+  flatters the correlation. Quote {sr['spearman_paired']}, or quote {sr['spearman_all']}
+  with this sentence attached. Ratings rank demand reliably and measure it badly.
 - **{sr['unrated_n']} of the {sr['disclosing']} products with a public sales count have zero
   ratings** — median {sr['unrated_median_sales']} units, the largest
   **{sr['unrated_max_sales']:,} sales with no rating at all**. An unrated listing is weak

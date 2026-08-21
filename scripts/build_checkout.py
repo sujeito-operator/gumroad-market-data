@@ -29,6 +29,7 @@ Imported and called by build_site.py, so one command still regenerates every sur
 """
 import json
 import pathlib
+import re
 
 import build_site as B
 
@@ -47,6 +48,9 @@ DECOMP = ROOT / "data" / "checkout-decomposition.json"
 # NEVER enters `read`, `unread` or `drawn` — the assert below depends on that.
 REPLICATION = ROOT / "data" / "checkout-replication.json"
 PAGE = f"{B.SITE}/checkout.html"
+# The published file, read back before it is overwritten. See the last arm of
+# `assert_page`: this page has a second author and this generator does not know it.
+PUBLISHED = ROOT / "docs" / "checkout.html"
 
 # Our own store, so "it happens to us too" is a row in the table rather than a claim in a
 # sentence. Derived from the buy link the rest of the site already uses, so it cannot
@@ -436,6 +440,28 @@ def assert_page(html, recs):
         for r in doc["records"]:
             if store_of(r["url"]) not in html:
                 problems.append(f"cohort store {store_of(r['url'])} is counted but not listed")
+    # THIS PAGE HAS TWO AUTHORS AND ONLY ONE OF THEM IS THIS FILE.
+    #
+    # The tax-disclosure section ("How many of them say so on the page? — 3 of 84") was
+    # written straight into the published HTML on 2026-08-13 — `vat_disclosure.py` in the
+    # operator repo says so in its own comment — and the cache it is computed from lives
+    # in that repo, so nothing here can render it. Nobody ran a full build between then
+    # and 2026-08-21, so nobody found out that a plain rebuild DELETES it: the whole
+    # section, its table of the three stores that do disclose, the 0-of-81 re-read, the
+    # legal citations, and the sentence in the meta description that names the finding.
+    #
+    # A page with two authors may only ever GAIN sections in a rebuild. Losing one is not
+    # a diff to review later, it is a published finding falling off the internet, so it
+    # stops the build BEFORE the write rather than after it — `build_site.py` calls this
+    # function on the rendered string and only then writes the file.
+    published = PUBLISHED.read_text(encoding="utf-8") if PUBLISHED.exists() else ""
+    for heading in re.findall(r"<h2>(.*?)</h2>", published, re.S):
+        if f"<h2>{heading}</h2>" not in html:
+            problems.append(
+                f"REBUILD WOULD DELETE THE PUBLISHED SECTION <h2>{heading}</h2>. It was "
+                f"written by hand or by another repo and no generator here emits it. "
+                f"Merge that section into build() from its real source before rebuilding "
+                f"— do not publish the shorter page, and do not delete this check")
     if problems:
         raise SystemExit("checkout.html: " + "; ".join(problems))
     return len(html)

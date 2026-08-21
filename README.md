@@ -96,8 +96,8 @@ pages one at a time finds them: **316 of 1,359 products
 450,651 units. That subset is the only place the proxy can be checked
 against the thing it proxies for.
 
-> ⚠️ **This section covers 3D, not Gumroad.** The per-product crawl walks the
-> per-product crawl has not finished and its sample is uneven: **57% of
+> ⚠️ **This section covers 3D, not Gumroad.** The per-product crawl has not
+> finished and its sample is uneven: **57% of
 > the 1,359 pages fetched so far are under 3D**, one of the
 > 15 top-level categories that returned listings.
 > 3D is an unusual corner — high unit volumes, low prices, an unusually active
@@ -107,14 +107,36 @@ against the thing it proxies for.
 
 > **There is no fixed multiplier.** Across the 229 products publishing both, the
 > median paid listing sells **×25.5** its rating count — but the
-> middle half spans ×11.7 to ×54.2, and the ratio
-> **climbs with the size of the listing**: ×22.0 at
-> 1–2 ratings against
-> ×26.4 at 50 or more. Free products run higher still
-> (×24.1, n=39).
+> middle half spans ×11.7 to ×54.2. Free products
+> run higher still (×24.1, n=39).
 
-- **The proxy holds up for ranking.** Rank correlation between ratings and units sold is
-  **0.831**. Ratings rank demand reliably and measure it badly.
+**How far the multiplier moves depends on which way you cut the same 229 rows.**
+Both cuts are published, because either one alone is a different answer to the same
+question:
+
+| Bucketed by | Narrowest band | Widest band | Spread |
+|---|---|---|---:|
+| **units sold** | ×3.5 at 1–9 sales | ×54.1 at 500–1,999 | **15×** |
+| **rating count** | ×22.0 at 1–2 ratings | ×31.2 at 3–9 | **1.4×** |
+
+- **The two disagree because each buckets a ratio by one of its own terms.** Sales per
+  rating sorted into bands of *units* is sorted partly by its own numerator, and is
+  censored besides — a listing with six sales and at least one rating cannot show a
+  multiplier above six — so that cut stretches the trend. Sorted into bands of *ratings*
+  it is sorted by its own denominator, which flattens it. On that cut,
+  the bands do not even rise one to the next — the widest is 3–9, not the largest
+  listings.
+  **The direction is real; most of the 15× is the cut, not the market.**
+- **Only the ratings cut is usable, and that is the practical point.** A rating count is
+  what a listing shows you; a unit count is the thing you are trying to estimate. Applying
+  the units-cut bands as a correction factor means estimating a number from itself.
+- **The proxy holds up for ranking, on the narrower reading.** Rank correlation between
+  ratings and units sold is **0.784** across the 229 listings
+  publishing both. It reads **0.831** across all 316
+  disclosing listings — but that figure includes the 87 with no ratings at
+  all, entered as zero, which pins a block of points at the floor of both axes and
+  flatters the correlation. Quote 0.784, or quote 0.831
+  with this sentence attached. Ratings rank demand reliably and measure it badly.
 - **87 of the 316 products with a public sales count have zero
   ratings** — median 8 units, the largest
   **1,320 sales with no rating at all**. An unrated listing is weak
