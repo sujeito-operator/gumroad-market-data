@@ -47,6 +47,25 @@ DECOMP = ROOT / "data" / "checkout-decomposition.json"
 # and never published. It is rendered in its own section, under its own denominator, and it
 # NEVER enters `read`, `unread` or `drawn` — the assert below depends on that.
 REPLICATION = ROOT / "data" / "checkout-replication.json"
+# Written by `vat_disclosure.py --emit-disclosure` in the operator repo, which owns the
+# ONLY implementation of the classifier and of the bare-word re-read that tests it.
+#
+# THIS FILE EXISTS BECAUSE THE SECTION IT FEEDS WAS TYPED BY HAND. On 2026-08-13 the
+# disclosure ratio was computed in a session and pasted straight into `docs/checkout.html`.
+# No generator emitted it, so no generator knew it was there, and a plain rebuild on
+# 2026-08-21 silently deleted the whole section — the finding, its table, the re-read and
+# the legal citations. Nothing noticed because no full build had run in nine days. The
+# last arm of `assert_page` is the guard that caught it; this is the repair.
+DISCLOSURE = ROOT / "data" / "checkout-disclosure.json"
+# THE RECURRING SKU, NAMED HERE AND NOWHERE ELSE ON THIS PAGE, AND CARRYING NO FIGURE.
+# `build_audit_sample_page.py` made this argument first on 2026-08-13 and it applies to
+# this page at least as well: the reader of a page about pay-step gaps has self-selected
+# as somebody who cares whether their own checkout still agrees with their own page. The
+# section below already tells them to go and look — the monitor is the honest second half
+# of that sentence, because looking once answers a question that comes back every time a
+# price moves. No price is typed: the figure lives on the Gumroad page and on no surface
+# this repository generates, which is the same rule the report's guarantee window follows.
+MONITOR = "https://sujeitooperator.gumroad.com/l/zyoqbc"
 PAGE = f"{B.SITE}/checkout.html"
 # The published file, read back before it is overwritten. See the last arm of
 # `assert_page`: this page has a second author and this generator does not know it.
@@ -190,6 +209,114 @@ The records are in
 """
 
 
+def disclosure():
+    """The disclosure section, rendered from the operator repo's emitted tally.
+
+    THE ONLY LITERALS HERE ARE THE LEGAL CITATIONS. Every count, ratio, store name and
+    matched phrase is read off the file. That is the whole point: the previous version of
+    this section was nine numbers typed into HTML, which is why nothing could regenerate
+    it and why a rebuild deleted it.
+
+    THE PROSE ASKS THE DATA BEFORE IT CHARACTERISES IT. "The silence is total" is only
+    true while the bare-word re-read comes back empty; if a silent page ever turns out to
+    mention tax in some context the classifier did not credit, this says the weaker thing
+    instead. A sentence that cannot come out false is not evidence of anything.
+    """
+    if not DISCLOSURE.exists():
+        raise SystemExit(
+            f"{DISCLOSURE} is missing. It is written by `vat_disclosure.py "
+            f"--emit-disclosure` in the operator repo. Building without it would drop the "
+            f"disclosure section, which is the defect this file exists to prevent.")
+    d = json.loads(DISCLOSURE.read_text())
+    gapped, silent, told = d["gapped"], d["silent"], d["disclosed"]
+    checked, hits = d["bare_checked"], d["bare_hits"]
+    # Small counts read as words in prose and as digits in the tiles. The published page
+    # said "Three tell the reader"; deriving the number must not cost it that.
+    told_word = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight",
+                 "nine", "ten"][told] if told <= 10 else str(told)
+
+    # The re-read paragraph, in the two shapes the data can take.
+    if hits == 0:
+        bare = (f"<strong>{hits} of {checked} contain any of them in any context.</strong> "
+                f"The silence is total, not a matter of phrasing.")
+    else:
+        words = ", ".join(f"<code>{B.esc(w)}</code>" for w in d["bare_words"])
+        bare = (f"<strong>{hits} of {checked} do contain one</strong> ({words}) somewhere in "
+                f"their text without saying anything to the buyer about it. So the silence "
+                f"is not total: on those pages the word appears and tells the reader "
+                f"nothing. The other {checked - hits} do not mention tax at all.")
+
+    # The phrase column is a MATCHED SPAN, not a quotation, and it must not be dressed as
+    # one. One of the three reads "excluding VAT, VAT" — the needle runs from "excluding"
+    # to the second tax word — and inside typographic quotes that looks like a typo on the
+    # seller's page rather than the shape of our own regex. `<code>` says what it is.
+    told_rows = "\n".join(
+        f"<tr><td><code>{B.esc(store)}</code></td><td><code>{B.esc(phrase or '')}</code></td></tr>"
+        for store, phrase in sorted(d["disclosing"].items()))
+    # `contradicted` is the sharpest cell in the classifier and it has always been empty.
+    # Saying so is worth a clause: it is the difference between "nobody mentions it" and
+    # "somebody claims the opposite", and a reader is entitled to know which one we found.
+    contra = d.get("contradicted", 0)
+    contra_clause = ("None claims the price already includes it." if not contra else
+                     f"{contra} claim the price already includes it, against a gap the walk "
+                     f"recorded.")
+    return f"""
+<h2>How many of them say so on the page? — {told} of {gapped}</h2>
+<p class=lede>Everything above is a fact about Gumroad. This is the only part that is a fact about
+the <em>sellers</em>, and it is the sharper number.
+<strong>Of {gapped} third-party storefronts where we recorded a pay-step gap, {silent} &mdash;
+{d['pct_silent']}% &mdash; say nothing about tax anywhere on the product page.</strong>
+{told_word.capitalize()} tell the reader. {contra_clause}</p>
+
+<div class=kv>
+<div><b>{gapped}</b><span>stores with a recorded gap</span></div>
+<div><b>{silent}</b><span>say nothing at all</span></div>
+<div><b>{told}</b><span>tell the reader</span></div>
+<div><b>{d['pct_silent']}%</b><span>silent</span></div>
+<div><b>{d['median_gap_silent']}%</b><span>median gap, silent stores</span></div>
+<div><b>{hits} of {checked}</b><span>mention tax in any context</span></div>
+</div>
+
+<p>The distinction matters more than it looks. The {d['median_gap_silent']}% gap is <em>not the
+seller&rsquo;s doing and not the seller&rsquo;s to fix</em> &mdash; that is said plainly at the top
+of this page and it stays said. But whether the page mentions it is entirely theirs: one line in a
+description, no plugin, no platform change, about sixty seconds. It is the one part of this whole
+measurement that comes with an action attached.</p>
+
+<p>The {told_word} that do it, and the words that earned it. The right-hand column is the span the
+classifier matched, not a tidied quotation:</p>
+<table><thead><tr><th>store</th><th>what matched on the page</th></tr></thead><tbody>
+{told_rows}
+</tbody></table>
+
+<p class=cite><strong>Why {silent} is not just &ldquo;our search missed it&rdquo;.</strong> A needle
+set can fail by being too narrow, and that failure looks exactly like a finding. So all {checked}
+silent pages were re-read and searched for the bare words <code>vat</code>, <code>gst</code>,
+<code>tax</code> and <code>taxes</code> anywhere in their visible text, with no requirement that
+they sit near anything else. {bare} Matching is word-boundary anchored throughout, because
+<em>pri&#8203;vat&#8203;e</em>, <em>inno&#8203;vat&#8203;ive</em> and <em>syn&#8203;tax</em> would
+otherwise each read as a tax disclosure.</p>
+
+<p><strong>Our own store is excluded from both sides of that ratio</strong>, the same way it is
+excluded from the drawn sample above. It was measured too: all three paid pages state that tax is
+added, and did so before this count was taken rather than after it.</p>
+
+<p class=cite><strong>What this is not.</strong> It is a measurement of what page text says, and
+nothing else. It is not a claim that any seller has broken any rule &mdash; that depends on who the
+trader is, where their buyers are and how a regulator reads a platform-collected tax, none of which
+a reading of a web page can settle. If you want the rules themselves rather than our summary of
+them, the relevant ones are the definition of &ldquo;selling price&rdquo; in the
+<a href="https://www.legislation.gov.uk/uksi/2004/102/article/1/made">Price Marking Order 2004</a>,
+regulation 6 of the
+<a href="https://www.legislation.gov.uk/uksi/2008/1277/regulation/6/made">CPUTRs 2008</a>, and the
+consumer provisions of the Digital Markets, Competition and Consumers Act 2024, in force since
+6 April 2025. That last one is the one to read: it requires the total price up front, and where a
+mandatory charge <em>cannot be quantified in advance</em> &mdash; which VAT here genuinely cannot,
+since it depends on a buyer&rsquo;s country &mdash; it asks that the headline price be accompanied
+by what a reader needs to work the total out. Which is the one line above.</p>
+"""
+
+
 def build(t):
     if not AUDIT.exists():
         raise SystemExit(f"{AUDIT} is missing — copy the audit JSON from the operator repo "
@@ -233,6 +360,14 @@ def build(t):
         rs = json.loads(REPLICATION.read_text())["summary"]
         desc += (f" A second, non-random cohort of {rs['stores']} stores, walked the same "
                  f"way, returns a median of {rs['median_pct']}%.")
+    # The disclosure ratio is the only sentence here that is about the SELLERS rather than
+    # about Gumroad, so it is the one a reader can act on and the one worth the last
+    # sentence of a search snippet. It was in the published description and in no
+    # generator — same defect as the section itself, same repair.
+    if DISCLOSURE.exists():
+        ds = json.loads(DISCLOSURE.read_text())
+        desc += (f" And of {ds['gapped']} stores with a recorded gap, {ds['silent']} — "
+                 f"{ds['pct_silent']}% — say nothing about tax anywhere on the page.")
 
     rows = []
     for b, r in sorted(read, key=lambda x: -(x[1].get("delta_pct") or -999)):
@@ -363,7 +498,7 @@ Prices move; re-run it yourself. The reader is
 <a href="https://github.com/sujeito-operator">open source</a> and the raw records for this page are
 in <a href="{B.REPO}/blob/main/data/checkout-audit.json">data/checkout-audit.json</a>.</li>
 </ul>
-
+{disclosure()}
 <h2>What a seller can actually do</h2>
 <p>Not much, and it is better to say so than to invent a fix. You cannot turn it off; you are not
 supposed to. What you can do is stop being surprised by it:</p>
@@ -378,6 +513,12 @@ and stops.</li>
 costs nothing and removes the surprise at the exact step where surprise loses the sale.</li>
 <li><strong>Compare like with like.</strong> When you benchmark your price against a competitor,
 you are reading their pre-tax number and your buyer is paying a post-tax one.</li>
+<li><strong>Or have it re-read for you.</strong> The first bullet is a thing you do once, and the
+number it gives you goes stale the next time you change a price, add a product or Gumroad changes
+what it collects. <a href="{MONITOR}">The checkout monitor</a> is that same walk, run against every
+product on your store on a schedule, and it writes to you only when a page and its pay step start
+disagreeing. It is the paid, recurring version of the free script above &mdash; the script is not a
+teaser for it, and if once is all you need, once is free.</li>
 </ul>
 
 {B.buy_block("It reads " + f"{B.REPORT_CATS:,}" + " Gumroad categories the same way this page reads checkouts: from what the platform actually shows, not from what it says about itself.")}
@@ -440,20 +581,25 @@ def assert_page(html, recs):
         for r in doc["records"]:
             if store_of(r["url"]) not in html:
                 problems.append(f"cohort store {store_of(r['url'])} is counted but not listed")
-    # THIS PAGE HAS TWO AUTHORS AND ONLY ONE OF THEM IS THIS FILE.
+    # A REBUILD MAY ONLY EVER GAIN SECTIONS. THIS IS THE CHECK THAT SAYS SO.
     #
-    # The tax-disclosure section ("How many of them say so on the page? — 3 of 84") was
-    # written straight into the published HTML on 2026-08-13 — `vat_disclosure.py` in the
-    # operator repo says so in its own comment — and the cache it is computed from lives
-    # in that repo, so nothing here can render it. Nobody ran a full build between then
-    # and 2026-08-21, so nobody found out that a plain rebuild DELETES it: the whole
-    # section, its table of the three stores that do disclose, the 0-of-81 re-read, the
-    # legal citations, and the sentence in the meta description that names the finding.
+    # It was added on 2026-08-21 for a section that had no generator: the tax-disclosure
+    # finding ("How many of them say so on the page? — 3 of 84") was written straight into
+    # the published HTML on 2026-08-13, computed from a cache in the operator repo that
+    # nothing here could read. No full build ran in the nine days between, so nobody found
+    # out that a plain rebuild DELETED it — the whole section, its table of the three
+    # stores that do disclose, the bare-word re-read, the legal citations, and the sentence
+    # in the meta description that names the finding.
     #
-    # A page with two authors may only ever GAIN sections in a rebuild. Losing one is not
-    # a diff to review later, it is a published finding falling off the internet, so it
-    # stops the build BEFORE the write rather than after it — `build_site.py` calls this
-    # function on the rendered string and only then writes the file.
+    # THAT PARTICULAR HOLE IS NOW CLOSED — `disclosure()` renders the section from
+    # `data/checkout-disclosure.json`, which `vat_disclosure.py --emit-disclosure` writes.
+    # THE CHECK STAYS ANYWAY, AND NOT OUT OF SENTIMENT. It is not about that section; it
+    # is about the class. Any future hand-edit to the published bytes is invisible to this
+    # file by construction, and losing one is not a diff to review later, it is a published
+    # finding falling off the internet. So it stops the build BEFORE the write rather than
+    # after it — `build_site.py` calls this function on the rendered string and only then
+    # writes the file. Do not delete it, and do not "fix" a failure by deleting the
+    # heading from the published file.
     published = PUBLISHED.read_text(encoding="utf-8") if PUBLISHED.exists() else ""
     for heading in re.findall(r"<h2>(.*?)</h2>", published, re.S):
         if f"<h2>{heading}</h2>" not in html:

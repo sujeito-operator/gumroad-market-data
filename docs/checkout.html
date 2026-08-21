@@ -154,9 +154,9 @@ in <a href="https://github.com/sujeito-operator/gumroad-market-data/blob/main/da
 <h2>How many of them say so on the page? — 3 of 84</h2>
 <p class=lede>Everything above is a fact about Gumroad. This is the only part that is a fact about
 the <em>sellers</em>, and it is the sharper number.
-<strong>Of 84 third-party storefronts where we recorded a pay-step gap, 81 &mdash; 96.4% &mdash;
-say nothing about tax anywhere on the product page.</strong> Three tell the reader. None claims the
-price already includes it.</p>
+<strong>Of 84 third-party storefronts where we recorded a pay-step gap, 81 &mdash;
+96.4% &mdash; say nothing about tax anywhere on the product page.</strong>
+Three tell the reader. None claims the price already includes it.</p>
 
 <div class=kv>
 <div><b>84</b><span>stores with a recorded gap</span></div>
@@ -167,25 +167,25 @@ price already includes it.</p>
 <div><b>0 of 81</b><span>mention tax in any context</span></div>
 </div>
 
-<p>The distinction matters more than it looks. The 21% gap is <em>not the seller&rsquo;s doing and
-not the seller&rsquo;s to fix</em> &mdash; that is said plainly at the top of this page and it stays
-said. But whether the page mentions it is entirely theirs: one line in a description, no plugin, no
-platform change, about sixty seconds. It is the one part of this whole measurement that comes with
-an action attached.</p>
+<p>The distinction matters more than it looks. The 21.2% gap is <em>not the
+seller&rsquo;s doing and not the seller&rsquo;s to fix</em> &mdash; that is said plainly at the top
+of this page and it stays said. But whether the page mentions it is entirely theirs: one line in a
+description, no plugin, no platform change, about sixty seconds. It is the one part of this whole
+measurement that comes with an action attached.</p>
 
-<p>The three that do it, and the words that earned it:</p>
-<table><thead><tr><th>store</th><th>the phrase on the page</th></tr></thead><tbody>
-<tr><td><code>uxstackguru</code></td><td>&ldquo;VAT rate may be charged&rdquo;</td></tr>
-<tr><td><code>whereisweatherby</code></td><td>&ldquo;VAT Tax is automatically applied&rdquo;</td></tr>
-<tr><td><code>yansculpts</code></td><td>&ldquo;excluding VAT&rdquo;</td></tr>
+<p>The three that do it, and the words that earned it. The right-hand column is the span the
+classifier matched, not a tidied quotation:</p>
+<table><thead><tr><th>store</th><th>what matched on the page</th></tr></thead><tbody>
+<tr><td><code>uxstackguru</code></td><td><code>VAT rate may be charged</code></td></tr>
+<tr><td><code>whereisweatherby</code></td><td><code>VAT Tax is automatically applied</code></td></tr>
+<tr><td><code>yansculpts</code></td><td><code>excluding VAT, VAT</code></td></tr>
 </tbody></table>
 
-<p class=cite><strong>Why 81 is not just &ldquo;our search missed it&rdquo;.</strong> A needle set
-can fail by being too narrow, and that failure looks exactly like a finding. So all 81 silent pages
-were re-read and searched for the bare words <code>vat</code>, <code>gst</code>, <code>tax</code>
-and <code>taxes</code> anywhere in their visible text, with no requirement that they sit near
-anything else. <strong>0 of 81 contain any of them in any context.</strong> The silence is total,
-not a matter of phrasing. Matching is word-boundary anchored throughout, because
+<p class=cite><strong>Why 81 is not just &ldquo;our search missed it&rdquo;.</strong> A needle
+set can fail by being too narrow, and that failure looks exactly like a finding. So all 81
+silent pages were re-read and searched for the bare words <code>vat</code>, <code>gst</code>,
+<code>tax</code> and <code>taxes</code> anywhere in their visible text, with no requirement that
+they sit near anything else. <strong>0 of 81 contain any of them in any context.</strong> The silence is total, not a matter of phrasing. Matching is word-boundary anchored throughout, because
 <em>pri&#8203;vat&#8203;e</em>, <em>inno&#8203;vat&#8203;ive</em> and <em>syn&#8203;tax</em> would
 otherwise each read as a tax disclosure.</p>
 
@@ -221,6 +221,12 @@ and stops.</li>
 costs nothing and removes the surprise at the exact step where surprise loses the sale.</li>
 <li><strong>Compare like with like.</strong> When you benchmark your price against a competitor,
 you are reading their pre-tax number and your buyer is paying a post-tax one.</li>
+<li><strong>Or have it re-read for you.</strong> The first bullet is a thing you do once, and the
+number it gives you goes stale the next time you change a price, add a product or Gumroad changes
+what it collects. <a href="https://sujeitooperator.gumroad.com/l/zyoqbc">The checkout monitor</a> is that same walk, run against every
+product on your store on a schedule, and it writes to you only when a page and its pay step start
+disagreeing. It is the paid, recurring version of the free script above &mdash; the script is not a
+teaser for it, and if once is all you need, once is free.</li>
 </ul>
 
 <div class=buy><strong>The written report — $249</strong><br>
