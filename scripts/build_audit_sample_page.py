@@ -74,27 +74,32 @@ def cta(audit, monitor):
     Gumroad request, and an import that touches the network is an import that fails on
     the day the network does.
 
-    THE ORDER OF THE TWO LINKS IS DELIBERATE AND IT IS NOT THE ORDER OF THE PRICES. The
-    monitor is the cheaper of the two and its first month IS this report, so the recurring
-    product is the easier way in rather than an upsell bolted onto the one-off. That is
-    `gumroad_monitor_sku.py`'s argument and it only reads as honest if both numbers are on
-    the page, which until today neither was.
+    ONLY THE AUDIT'S FIGURE GOES HERE, AND THE MONITOR'S DELIBERATELY DOES NOT. Both were
+    on this page for about twenty minutes on 2026-08-22 and then the monitor's came off.
+    `build_affiliate_pitch.audit_sample_live()` links this page as EVIDENCE from nine cold
+    batches that have just asked for the audit's price, and the monitor is cheaper per
+    month than the audit is once. That may well be the right ladder —
+    `gumroad_monitor_sku.py` argued on 2026-08-13 that the recurring product should be the
+    easier way in — but it is a PRICING decision about what nine live letters are worth,
+    and it is not one to make as a side effect of a funnel change. The monitor is still
+    priced, visibly and with its Product markup, on `checkout.html`, which is its canonical
+    page and which `price_sweep.py` already sweeps. See next.md §QP-10.
     """
     return f"""<div class=buy><strong>This is the report, not a summary of it.</strong><br>
 The page above is one storefront's audit end to end &mdash; the same document a buyer receives,
 with the seller's name and product titles removed and not one figure altered. Yours names
 your products, walks every product on your storefront, and is run the day the order lands.
 <a href="{PRODUCT}">Order the audit &mdash; {audit['display']}, once &rarr;</a>
-<a class=alt href="{MONITOR}">Or have it watched &mdash; {monitor['display']} a month, and your
-first month is this report &rarr;</a>
+<a class=alt href="{MONITOR}">Or have it watched: the same walk every week, and an email the day
+a price stops matching the pay step &rarr;</a>
 <span class=fine>The watched version is a monthly subscription and its first month is this
-report, included rather than added on &mdash; so the watched version is the cheaper way in and not
-the upsell. After that the walk repeats weekly and you hear from me when a gap opens, closes or
-moves. The number moves on its own &mdash; it is a function of the day's
+report, included rather than added on; after that the walk repeats weekly and you hear from me
+when a gap opens, closes or moves. It states its own price on its own page. The number moves on
+its own &mdash; it is a function of the day's
 exchange rate, the buyer's country, Gumroad's tax handling and your own edits &mdash; so a report is
-true on the day it is written and the watching is what keeps it true. Both figures above were read
-off the Gumroad product pages when this page was built ({audit['read_at']}); those pages are
-where you pay and they are the authority if they ever disagree with this one.
+true on the day it is written and the watching is what keeps it true. The figure above was read
+off the Gumroad product page when this page was built ({audit['read_at']}); that page is
+where you pay and it is the authority if it ever disagrees with this one.
 Prefer to look at the underlying data first? The category crawl behind
 the price comparison is <a href="{B.SITE}/">free and openly licensed</a>.</span></div>"""
 
@@ -244,17 +249,23 @@ def assert_page(doc, md, audit, monitor):
         # starts selling.
         ask = doc.split("<div class=buy>", 1)[1].split("</div>", 1)[0] if \
             "<div class=buy>" in doc else ""
-        allowed = {audit["display"], monitor["display"]}
+        # The monitor's figure is NOT allowed here — see `cta`'s docstring and §QP-10.
+        allowed = {audit["display"]}
         for fig in set(re.findall(r"\$\d+(?:,\d{3})*(?:\.\d+)?", ask)):
             if fig not in allowed:
                 problems.append(
                     f"the call to action shows {fig}, which is not a live reading "
                     f"(live: {sorted(allowed)}) — a figure in an ask must come from "
                     f"live_price.price() and from nowhere else")
-        for rec, what in ((audit, "audit"), (monitor, "monitor")):
-            if rec["display"] not in ask:
-                problems.append(f"the {what} price {rec['display']} was read live and did "
-                                f"not reach the call to action")
+        if audit["display"] not in ask:
+            problems.append(f"the audit price {audit['display']} was read live and did "
+                            f"not reach the call to action")
+        if monitor["display"] in ask:
+            problems.append(
+                f"the monitor's {monitor['display']} is in the ask. This page is linked as "
+                f"EVIDENCE by nine cold batches that have just quoted the audit's price, and "
+                f"a cheaper recurring figure here is a pricing decision, not a page edit. "
+                f"It belongs on checkout.html. See §QP-10.")
         # The markup and the visible text must agree, because Google's policy is that
         # marked-up content is visible content — and because a Product block that
         # disagrees with the page it sits on is worse than no Product block.
