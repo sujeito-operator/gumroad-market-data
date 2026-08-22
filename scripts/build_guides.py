@@ -555,7 +555,21 @@ def nav(current):
     parts = []
     for sl, label in GUIDES:
         parts.append(label if sl == current else f'<a href="{sl}.html">{label}</a>')
+    # `checkout.html` is NOT in GUIDES and must not be added to it. GUIDES is consumed by
+    # six other builders (build_site, build_sellers, build_taxonomy, llms.txt, the README
+    # line) which all render it as `g/{slug}.html`, and the checkout page lives one level
+    # up at `docs/checkout.html`. An entry there would emit `g/checkout.html` — a 404 on
+    # roughly 540 pages — so it is linked here, by hand, as the sibling it actually is.
+    #
+    # WHY IT IS LINKED AT ALL, 2026-08-22. Every other content page on this site is
+    # reachable from ~540 others; `checkout.html` was reachable from FOUR (README,
+    # index, audit-sample, itself). It is not a sales page — it is the 27-of-31-stores
+    # VAT measurement, and it is the second of only two pages carrying the recurring
+    # monitor SKU, which is the one product the 2026-10-01 recurring goal actually needs.
+    # The eleven guides are the highest-intent pages on the site and three of them are
+    # about price, which is the question this page answers one step further on.
     return ('<nav class=sib>Guides: ' + " &middot; ".join(parts)
+            + ' &middot; <a href="../checkout.html">What buyers pay at checkout</a>'
             + ' &middot; <a href="../">all 42 categories</a></nav>')
 
 
