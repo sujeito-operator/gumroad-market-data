@@ -2290,7 +2290,7 @@ def main():
     import build_checkout
     cpage = build_checkout.build(terms)
     crecs = json.loads((ROOT / "data" / "checkout-audit.json").read_text())
-    print(f"  checkout page OK: {build_checkout.assert_page(cpage, crecs):,} bytes")
+    print(f"  checkout page OK: {build_checkout.assert_page(cpage, crecs, build_checkout.live_monitor()):,} bytes")
     (ROOT / "docs" / "checkout.html").write_text(cpage)
     kpage = build_kit(terms, s, ts, ss, sr)
     kdrafts = [(n, b) for n, _l, _note, b in kit_drafts(s, ts, ss, sr, terms)]

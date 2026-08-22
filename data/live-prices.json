@@ -1,0 +1,20 @@
+{
+  "bylafq": {
+    "cents": 24900,
+    "read_at": "2026-08-22T01:25:33Z",
+    "recurring": false,
+    "what": "the written report, one-off"
+  },
+  "xlvfeb": {
+    "cents": 14900,
+    "read_at": "2026-08-22T01:25:33Z",
+    "recurring": false,
+    "what": "storefront audit, one-off"
+  },
+  "zyoqbc": {
+    "cents": 9900,
+    "read_at": "2026-08-22T01:25:33Z",
+    "recurring": true,
+    "what": "checkout monitor, recurring monthly"
+  }
+}

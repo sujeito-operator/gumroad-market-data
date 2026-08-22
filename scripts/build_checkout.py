@@ -32,6 +32,7 @@ import pathlib
 import re
 
 import build_site as B
+import live_price
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 AUDIT = ROOT / "data" / "checkout-audit.json"
@@ -57,14 +58,25 @@ REPLICATION = ROOT / "data" / "checkout-replication.json"
 # the legal citations. Nothing noticed because no full build had run in nine days. The
 # last arm of `assert_page` is the guard that caught it; this is the repair.
 DISCLOSURE = ROOT / "data" / "checkout-disclosure.json"
-# THE RECURRING SKU, NAMED HERE AND NOWHERE ELSE ON THIS PAGE, AND CARRYING NO FIGURE.
+# THE RECURRING SKU, NAMED HERE AND NOWHERE ELSE ON THIS PAGE.
 # `build_audit_sample_page.py` made this argument first on 2026-08-13 and it applies to
 # this page at least as well: the reader of a page about pay-step gaps has self-selected
 # as somebody who cares whether their own checkout still agrees with their own page. The
 # section below already tells them to go and look — the monitor is the honest second half
 # of that sentence, because looking once answers a question that comes back every time a
-# price moves. No price is typed: the figure lives on the Gumroad page and on no surface
-# this repository generates, which is the same rule the report's guarantee window follows.
+# price moves.
+#
+# UNTIL 2026-08-22 THIS COMMENT ENDED "AND CARRYING NO FIGURE", and the stated reason was
+# that a typed price is a surface to keep in sync. That reason is unchanged and it is
+# still right about TYPED prices. It was doing more work than it should have been: it was
+# also keeping the figure off the page from a reader who has just been shown, at length,
+# that their own checkout may not say what they think — which is the moment they are most
+# likely to want the answer and least likely to go and find it. The monthly figure below
+# is read live off the Gumroad product by `live_price.price()` at build time, is not typed
+# anywhere in this repository, and is compared against the live product every session by
+# `sku_price_gate.py` in the operator repo. THE PRODUCT MARKUP FOR THIS SKU IS DECLARED
+# ON THIS PAGE AND ON NO OTHER — `audit-sample.html` shows the same figure but declares
+# the AUDIT, so each SKU has exactly one Product block and one place to keep true.
 MONITOR = "https://sujeitooperator.gumroad.com/l/zyoqbc"
 PAGE = f"{B.SITE}/checkout.html"
 # The published file, read back before it is overwritten. See the last arm of
@@ -75,6 +87,18 @@ PUBLISHED = ROOT / "docs" / "checkout.html"
 # sentence. Derived from the buy link the rest of the site already uses, so it cannot
 # drift away from the product being sold.
 OURS = B.BUY.split("/l/")[0].split("//")[1]
+
+
+def live_monitor():
+    """The one live reading of the recurring SKU this process is allowed to publish.
+
+    `live_price.price` memoises, so `build()` and `assert_page`'s caller get the SAME
+    reading rather than two reads seconds apart. `monitor` is a REQUIRED argument to
+    `assert_page` for the reason §QL-2 names: an optional argument defaulting to None is
+    an arm that silently does not run, and an arm that silently does not run looks exactly
+    like an arm that passed.
+    """
+    return live_price.price(MONITOR.rsplit("/", 1)[1])
 
 
 def buckets(recs):
@@ -321,6 +345,7 @@ def build(t):
     if not AUDIT.exists():
         raise SystemExit(f"{AUDIT} is missing — copy the audit JSON from the operator repo "
                          f"(`evidence/seller-audit-sample-*.json`) before building.")
+    monitor = live_monitor()
     recs = json.loads(AUDIT.read_text())
     sample = json.loads(SAMPLE.read_text()) if SAMPLE.exists() else {}
     read, unread = buckets(recs)
@@ -448,7 +473,21 @@ Excluded from both: {B.esc(dc.get("excluded", ""))}. Neither component is hidden
 is large alone; the compounded number is the one a buyer meets.</p>
 """
 
-    return B.head(title, desc, PAGE) + f"""
+    # The monitor's Product block. Declared here because this is the page about the thing
+    # it watches, and because the visible figure two sections down is the same reading —
+    # Google's rule is that marked-up content must be content the reader can see, and a
+    # Product declaring a price no visitor can find is how a rich result is lost rather
+    # than won. `assert_page` refuses the page if the two ever disagree.
+    extra = ('<script type="application/ld+json">\n'
+             + live_price.product_jsonld(
+                 monitor, name="Gumroad checkout monitor",
+                 description=(
+                     "A weekly walk of every product on your Gumroad store, loaded logged "
+                     "out from a UK address and followed through to its own pay step, with "
+                     "an email the day a page figure stops matching what a buyer is "
+                     "actually charged. The first month is the full storefront audit."))
+             + "\n</script>\n")
+    return B.head(title, desc, PAGE, extra) + f"""
 <h1>{B.esc(title)}</h1>
 <p class=lede>Every product page below was loaded logged out from London, then its own
 &ldquo;I want this&rdquo; control was followed to Gumroad&rsquo;s checkout and the checkout was read.
@@ -515,10 +554,12 @@ costs nothing and removes the surprise at the exact step where surprise loses th
 you are reading their pre-tax number and your buyer is paying a post-tax one.</li>
 <li><strong>Or have it re-read for you.</strong> The first bullet is a thing you do once, and the
 number it gives you goes stale the next time you change a price, add a product or Gumroad changes
-what it collects. <a href="{MONITOR}">The checkout monitor</a> is that same walk, run against every
+what it collects. <a href="{MONITOR}">The checkout monitor, {monitor['display']} a month</a>, is that
+same walk, run against every
 product on your store on a schedule, and it writes to you only when a page and its pay step start
 disagreeing. It is the paid, recurring version of the free script above &mdash; the script is not a
-teaser for it, and if once is all you need, once is free.</li>
+teaser for it, and if once is all you need, once is free. Your first month is the full storefront
+audit, included rather than added on. Cancel from your receipt.</li>
 </ul>
 
 {B.buy_block("It reads " + f"{B.REPORT_CATS:,}" + " Gumroad categories the same way this page reads checkouts: from what the platform actually shows, not from what it says about itself.")}
@@ -536,7 +577,7 @@ one real storefront, nine products, the seller's name removed and not one figure
 """ + B.FOOTER
 
 
-def assert_page(html, recs):
+def assert_page(html, recs, monitor):
     """A check that only exists in a transcript is not a check (price_sweep.py's rule).
 
     Three things must be true of the published bytes, and each of them has already gone
@@ -556,6 +597,25 @@ def assert_page(html, recs):
         problems.append("the attribution to Gumroad is missing from the page")
     if "not an accusation" not in html:
         problems.append("the no-fault sentence is missing")
+    # THE RECURRING SKU'S PRICE, ADDED 2026-08-22. Three things have to hold together or
+    # the page is worse than it was when it showed nothing: the figure must be a LIVE
+    # reading, the Product markup must carry the same reading, and no price may be typed
+    # into this generator. The third arm is the tripwire — the cheap way to quiet a red
+    # price gate is to hardcode the number, and a live read is precisely what is missing
+    # on the day somebody is tempted to.
+    src = pathlib.Path(__file__).read_text().split("def assert_page")[0]
+    for typed in ("$99", "$149", "$249"):
+        if typed in src:
+            problems.append(f"a price is typed into this generator: {typed}")
+    if True:
+        if monitor["display"] not in html:
+            problems.append(f"the monitor price {monitor['display']} was read live and did "
+                            f"not reach the page")
+        if f'"price": "{monitor["usd"]}"' not in html:
+            problems.append("the Product markup does not carry the live monitor price")
+        if '"unitText": "month"' not in html:
+            problems.append("the monitor is marked up without its monthly recurrence — a "
+                            "parser would read a subscription as a one-off charge")
     # The split is the paragraph a later edit shortens first, because it is the only one
     # that complicates the headline. If the data file is there, the page must carry it.
     if DECOMP.exists():
