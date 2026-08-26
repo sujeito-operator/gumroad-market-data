@@ -12,12 +12,15 @@ These pages answer those questions from the free data, honestly, including where
 answer is discouraging. What they deliberately do NOT publish is the per-category
 Opening/Crowded/Thin table — that classification is the paid report's centrepiece. The
 headline concentration figure is here because it is the hook and it is true; the
-category-by-category verdict is what the $79 buys.
+category-by-category verdict is what the paid report buys. (This sentence used to name a
+price. It named the report's first one for weeks after the price moved — build_site's
+superseded-price check refuses a stale literal on a *page* and could not see one in a
+docstring. No price belongs in this file at all; `build_site.PRICE` reads the live one.)
 
 Imported and called by build_site.py, so `python3 scripts/build_site.py` remains the one
 command that regenerates every surface. Never hand-edit docs/g/*.html.
 """
-import csv, json, statistics as st
+import csv, datetime as dt, json, statistics as st, sys
 
 # build_site owns the shared chrome (head/footer/CSS/buy block) so the guides cannot
 # drift into looking like a different site.
@@ -37,6 +40,7 @@ GUIDES = [
     ("gumroad-sales-per-rating", "Sales per rating"),
     ("gumroad-multiple-categories", "Multiple categories"),
     ("gumroad-free-product-strategy", "A free product too?"),
+    ("how-many-sales-do-gumroad-products-get", "How fast they sell"),
 ]
 
 # The one guide derived from the seller column, so the seller pages can link it by name
@@ -50,6 +54,11 @@ SELLER_GUIDE = "how-many-products-to-sell-on-gumroad"
 # any page that wants to say "ratings are a proxy, here is what one is worth" should
 # link it without a literal slug that would rot in silence.
 SALES_GUIDE = "gumroad-sales-per-rating"
+
+# The only guide built on TWO readings of the same pages rather than one. Referenced by
+# name for the same reason as the two above: any page that wants to say "and here is what
+# moved since" should link it without a literal slug that would rot in silence.
+VELOCITY_GUIDE = "how-many-sales-do-gumroad-products-get"
 
 # Catalogue-size bands for the seller guide. Kept coarse on purpose: the tail is thin
 # (20 sellers have 20+ products) and finer bands would report noise as structure.
@@ -387,6 +396,76 @@ def sales_analyse():
     visitor downloads and the page they read cannot disagree.
     """
     return json.load(open(B.ROOT / "data" / "sales-ratio-summary.json"))
+
+
+# The movement bands for the velocity guide, in units sold between the two readings.
+# Coarse on purpose and cut at the two places a reader actually cares about: did it move
+# at all, and did it move enough to be worth the time. Finer bands would report noise —
+# the whole comparable set is a few hundred rows.
+MOVE_BANDS = [(1, 4, "1&ndash;4 units"), (5, 19, "5&ndash;19"), (20, 99, "20&ndash;99"),
+              (100, 10 ** 9, "100 or more")]
+
+_VELOCITY = None
+
+
+def velocity_analyse():
+    """The two-readings guide's figures, RECOMPUTED here from the two CSVs.
+
+    WHY IT RECOMPUTES RATHER THAN READING THE SUMMARY. Every other guide reads a summary
+    JSON because the summary and the CSV are written by the same normaliser in the same
+    run. This pair is different: `data/sales-rescan-summary.json` was produced by a
+    separate tool on a separate day, and the page tells the reader in as many words to go
+    and check the figures against the CSVs themselves. So the page computes from the CSVs
+    a visitor can download, through `rescan_diff.diff()` — the published second
+    implementation — and then ASSERTS that its own result matches the published summary
+    key for key. If they ever disagree the build stops, rather than shipping a page and a
+    data file that quietly say different things.
+
+    The band histogram is the one thing not in the summary, and it is the part of the
+    answer a seller actually wants: "73.5% moved" is true and nearly useless on its own,
+    because a listing that sold two units in eighteen days and one that sold four hundred
+    are both in it.
+    """
+    global _VELOCITY
+    if _VELOCITY is not None:
+        return _VELOCITY
+    sys.path.insert(0, str(B.ROOT / "scripts"))
+    import rescan_diff as R                                    # noqa: E402
+
+    old = R.read(R.BASELINE, R.BASE_COLS)
+    new = R.read(R.RESCAN, R.NEW_COLS)
+    stamps = sorted(v["fetched_at"][:10] for v in R.read(R.RESCAN, R.DATE_COL).values()
+                    if v.get("fetched_at"))
+    to = stamps[-1] if stamps else None
+    frm = R.baseline_date(R.BASELINE)
+    days = (dt.date.fromisoformat(to) - dt.date.fromisoformat(frm)).days if frm and to else None
+    d = R.diff(old, new, frm, to, days)
+
+    published = json.load(open(B.ROOT / "data" / "sales-rescan-summary.json"))
+    disagree = {k: (v, published.get(k)) for k, v in d.items()
+                if k in published and published[k] != v}
+    if disagree:
+        raise SystemExit(
+            "BUILD ABORTED: the velocity guide's recomputation disagrees with the "
+            f"published data/sales-rescan-summary.json on {sorted(disagree)}: {disagree}. "
+            "One of the two is stale. Fix the data, not this check.")
+
+    # The per-row deltas, for the histogram the summary does not carry.
+    comparable = [u for u in old
+                  if u in new and old[u]["discloses"] and old[u]["units"] is not None
+                  and new[u]["status"] == "disclosed" and new[u]["units"] is not None]
+    deltas = [new[u]["units"] - old[u]["units"] for u in comparable]
+    ups = [x for x in deltas if x > 0]
+    bands = [{"label": lab, "n": sum(1 for x in ups if lo <= x <= hi),
+              "pct": round(100.0 * sum(1 for x in ups if lo <= x <= hi) / len(deltas), 1)}
+             for lo, hi, lab in MOVE_BANDS]
+    assert sum(b["n"] for b in bands) == len(ups), "a band cut dropped a row"
+
+    d["bands"] = bands
+    d["still_pct"] = round(100.0 * d["units_same"] / d["comparable"], 1)
+    d["down_pct"] = round(100.0 * d["units_down"] / d["comparable"], 1)
+    _VELOCITY = d
+    return d
 
 
 def coverage_warn(d, what):
@@ -2003,13 +2082,110 @@ are in the <a href="https://doi.org/{B.DOI}">DOI-archived record</a>, CC BY 4.0,
         body)
 
 
+def g_velocity(s, a):
+    """"How many sales does a listing actually get?" — the only page here built on TWO readings.
+
+    Every other page on this site is a photograph. This one is the difference between two
+    photographs of the same 226 product pages eighteen days apart, which is the only way
+    to answer the question a seller is really asking — not "how much has this listing sold
+    since it was published" but "is anything happening on it now".
+
+    THE ONE THING NOT TO DO HERE is lead with 73.5%. It is true, it is the headline the
+    source data was published under, and on its own it flatters: a listing that shifted
+    two units in eighteen days is inside it. The distribution is the finding, and the
+    quarter that moved nothing at all is the half of it a prospective seller needs.
+    """
+    d = velocity_analyse()
+    cw = sales_analyse()
+    rows = "".join(f"<tr><td>{b['label']}</td><td class=n>{b['n']}</td>"
+                   f"<td class=n>{b['pct']}%</td></tr>" for b in d["bands"])
+    body = f"""
+<h2>The same {d['comparable']} listings, read twice</h2>
+<p>On {d['from']} this project recorded the lifetime unit counter on every product page in its
+crawl that published one. On {d['to']} — {d['days']} days later — it read the same pages again.
+{d['joined']} of them were still live; {d['comparable']} were still publishing a counter at both
+readings, and those are the only rows compared below. Nothing here is an estimate: it is one
+number minus another number, and
+<a href="https://github.com/sujeito-operator/gumroad-market-data/tree/main/data">both CSVs are in
+the repository</a> if you would rather do the subtraction yourself.</p>
+
+{coverage_warn(cw, f"these {d['comparable']} product pages")}
+
+<h2>What actually moved in {d['days']} days</h2>
+<table><thead><tr><th>Units sold in the window</th><th>Listings</th><th>Share</th></tr></thead>
+<tbody>
+<tr><td><strong>Nothing at all</strong></td><td class=n><strong>{d['units_same']}</strong></td>
+<td class=n><strong>{d['still_pct']}%</strong></td></tr>
+{rows}
+</tbody></table>
+<p>So {d['units_moved_pct']}% of these listings sold <em>something</em> in {d['days']} days, which
+is the cheerful way to say it. The useful way is the first row: <strong>{d['still_pct']}% sold
+nothing at all</strong>, and another {d['bands'][0]['pct']}% sold four units or fewer. Roughly a
+quarter of the set — {d['bands'][2]['n'] + d['bands'][3]['n']} listings — moved twenty units or
+more.</p>
+<p>The median listing that moved at all moved {d['median_abs_move']} units. Against its own
+lifetime total that is a change of {d['median_pct_change']}%, so the median mover is a product
+that is ticking over rather than taking off. The largest single move in the window was
+{d['largest_abs_move']:,} units.</p>
+
+<h2>Three things in this data that argue against it</h2>
+<p><strong>{d['units_down']} counters went down.</strong> A lifetime unit total should not fall.
+Refunds and sellers resetting a counter both produce this and they cannot be told apart from
+outside, so {d['down_pct']}% of the set is doing something the measurement cannot explain. It is
+reported rather than filtered out.</p>
+<p><strong>{d['stopped_disclosing']} sellers switched the counter off</strong> between the two
+readings. That is the one change no single snapshot of this marketplace can show you, and it is
+the reason this page exists.</p>
+<p><strong>Only listings that publish a counter are in here at all.</strong> Publishing one is
+voluntary, and a seller who turns it on is likelier to be happy with the number. Read every figure
+above as the optimistic end of the marketplace, not the middle of it.</p>
+
+<h2>What did not move</h2>
+<p>Prices barely did: of the {d['price_comparable']} listings priced in US dollars at both
+readings, <strong>{d['price_moved']} changed price</strong> in {d['days']} days.
+({d['price_excluded_non_usd']} listings quoted in another currency are excluded — the earlier
+reading carries no currency column, and comparing across two would manufacture movement out of a
+unit mismatch.) Ratings moved on {d['ratings_moved']} of the {d['comparable']}, which is well
+under half the {d['units_moved']} that moved units — a reminder that
+<a href="{SALES_GUIDE}.html">ratings are a lagging and lossy proxy for sales</a>, which is the
+subject of its own page here.</p>
+
+<h2>What this means if you are deciding whether to list something</h2>
+<p>The honest read is that an established listing on this platform is more likely to be quiet than
+busy, and that the difference between the quiet quarter and the busy quarter is not price —
+<a href="gumroad-pricing.html">the correlation between a category's price and the share of it
+selling is close to zero</a>. It is which category you are in and whether that category's demand
+is already held by its incumbents. <a href="what-to-sell-on-gumroad.html">The demand ranking is
+here</a> and <a href="is-gumroad-worth-it.html">the case against bothering is here</a>. Both are
+free.</p>
+
+{B.buy_block(f"The report is the version of this with the answer in it: every one of "
+             f"{B.REPORT_CATS} categories classified by whether its demand is reachable or "
+             f"already held, and what changes about your approach in each case.")}
+"""
+    return page(
+        "how-many-sales-do-gumroad-products-get",
+        f"How many sales do Gumroad products get? {d['comparable']} listings, read {d['days']} days apart",
+        f"The same {d['comparable']} Gumroad listings measured twice, {d['days']} days apart: "
+        f"{d['still_pct']}% sold nothing at all, and the median listing that did move sold "
+        f"{d['median_abs_move']} units.",
+        "How many sales do Gumroad products actually get?",
+        f"The same {d['comparable']} listings read on {d['from']} and again on {d['to']} "
+        f"&middot; {d['days']} days apart",
+        f"Every other page on this site is a photograph of one day. This one is the difference "
+        f"between two photographs of the same product pages, which is the only way to answer "
+        f"whether anything is still happening on a listing. {d['still_pct']}% of them sold "
+        f"nothing in {d['days']} days.",
+        body)
+
+
 BUILDERS = [g_what_to_sell, g_earnings, g_pricing, g_worth_it, g_statistics, g_free_vs_paid,
-            g_calculator, g_how_many, g_sales_ratio, g_breadth, g_mix]
+            g_calculator, g_how_many, g_sales_ratio, g_breadth, g_mix, g_velocity]
 
 
 # Pages whose figures come from the per-product crawl, and which therefore MUST carry the
 # category-coverage caveat. Both shipped without it and read as platform-wide answers.
-CRAWL_BACKED = {"how-much-do-people-make-on-gumroad", SALES_GUIDE}
+CRAWL_BACKED = {"how-much-do-people-make-on-gumroad", SALES_GUIDE, VELOCITY_GUIDE}
 
 # The one page carrying the observed-gross section. It must render BOTH branch medians;
 # every other page merely must not quote the pooled one on its own.

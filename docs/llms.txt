@@ -32,6 +32,7 @@
 - [Sales per rating](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-sales-per-rating.html)
 - [Multiple categories](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-multiple-categories.html)
 - [A free product too?](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-free-product-strategy.html)
+- [How fast they sell](https://sujeito-operator.github.io/gumroad-market-data/g/how-many-sales-do-gumroad-products-get.html)
 
 ## Category pages
 
