@@ -79,6 +79,10 @@ KNOWN = {
     "zyoqbc": "checkout monitor, recurring monthly",
     "xlvfeb": "storefront audit, one-off",
     "bylafq": "the written report, one-off",
+    # Added 2026-08-26. The entry rung: ONE product page walked, against the storefront
+    # audit's every product. It exists because this storefront had nothing between free
+    # and $99 and a reader arriving on `/audit-sample.html` had no cheap way to say yes.
+    "xmzlkz": "one product page walked as a UK/EU buyer, one-off",
 }
 
 
