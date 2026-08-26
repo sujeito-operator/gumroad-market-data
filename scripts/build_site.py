@@ -1111,6 +1111,74 @@ def checkout_summary():
             "lo": d[0], "hi": d[-1]}
 
 
+def rescan_summary():
+    """-> (comparison dict, rescan CSV name), or (None, None) if none is published.
+
+    Read from the file rather than recomputed here so the README, `rescan_diff.py` and the
+    published JSON cannot disagree about the same rows. Returns None rather than raising:
+    a repo with no rescan is a repo that has not made the claim yet, and the section below
+    disappears with it rather than publishing an empty table.
+
+    THE CSV NAME IS GLOBBED, NOT TYPED. It carries the rescan's date, so a second rescan
+    lands under a new name and a hardcoded link would 404 in the one section whose whole
+    argument is "go and re-derive this yourself".
+    """
+    p = ROOT / "data" / "sales-rescan-summary.json"
+    if not p.exists():
+        return None, None
+    d = json.loads(p.read_text())
+    csvs = sorted(x.name for x in (ROOT / "data").glob("gumroad-sales-rescan-*.csv"))
+    if not d.get("comparable") or not csvs:
+        return None, None
+    return d, csvs[-1]
+
+
+def rescan_block(rs, csv_name, cov_pct, cov_branch):
+    """The re-read section, every figure interpolated. No sentence survives an empty `rs`."""
+    if not rs:
+        return ""
+    return f"""
+### The same {rs['joined']} listings, read again {rs['days']} days later
+
+A unit counter is only worth re-reading if it changes. Every listing in the paired subset
+above was fetched again on {rs['to']} — the same URLs, the same extractor,
+{rs['unread_on_rescan']} failed reads — and joined to the {rs['from']} reading **by product
+URL**, because a corpus can hold a steady total while the rows underneath it move.
+
+| Between {rs['from']} and {rs['to']} | |
+|---|---:|
+| listings disclosing a unit count at **both** readings | {rs['comparable']} |
+| **came back with a different unit count** | **{rs['units_moved']} ({rs['units_moved_pct']}%)** |
+| unchanged | {rs['units_same']} |
+| median move, among those that moved | {rs['median_abs_move']} units |
+| largest single move | {rs['largest_abs_move']:,} units |
+| rating count changed | {rs['ratings_moved']} |
+| price changed (USD listings only, {rs['price_excluded_non_usd']} excluded as non-USD) \
+| {rs['price_moved']} of {rs['price_comparable']} |
+| sellers who switched the counter **off** between the two readings | {rs['stopped_disclosing']} |
+
+- **A snapshot of this data is stale in weeks, not months.** {rs['units_moved_pct']}% of
+  these listings disagreed with themselves inside {rs['days']} days, and the typical
+  disagreement was small — {rs['median_abs_move']} units, a median of
+  {rs['median_pct_change']}%. A figure quoted from the first reading is usually close, and
+  usually wrong.
+- **{rs['units_down']} counters went DOWN, which a lifetime total should not do.** Refunds and
+  seller-side resets both produce it and this data cannot tell them apart. It is reported
+  rather than filtered, because filtering it would hide the one movement that says the
+  counter is not the clean cumulative number it looks like.
+- **{rs['stopped_disclosing']} sellers stopped publishing the number.** That is the change no
+  single snapshot can show you: the row does not move, it goes blank.
+- **Same caveat as the section above.** This is the same {cov_pct}%-{cov_branch} sample,
+  re-read. It says what happens to *these* listings over {rs['days']} days, not what happens
+  to Gumroad.
+
+Data: [`data/{csv_name}`](data/{csv_name}),
+[`data/sales-rescan-summary.json`](data/sales-rescan-summary.json). Reproduce the table with
+[`scripts/rescan_diff.py`](scripts/rescan_diff.py) — it re-derives every figure above from
+the two CSVs.
+"""
+
+
 def build_readme(s, mix, ts, ss, sr):
     ck = checkout_summary()
     top, bottom = s["by_category"][0], s["by_category"][-1]
@@ -1120,6 +1188,10 @@ def build_readme(s, mix, ts, ss, sr):
     cov_branch = next((x["node"].split(" > ")[0] for x in ts["by_node"]
                        if x["slug"].split("/")[0] == sr["coverage"]["dominant"]),
                       sr["coverage"]["dominant"])
+    # The re-read of the same paired subset. Empty string when this repo has published
+    # no rescan, so the section cannot exist without the data behind it.
+    rescan = rescan_block(*rescan_summary(), f"{sr['coverage']['dominant_pct']:.0f}",
+                          cov_branch)
     # The ratio, bucketed both ways, with the direction words derived rather than typed.
     # Bucketing units/ratings by BANDS OF UNITS sorts it partly by its own numerator and
     # is censored besides (with >=1 rating the ratio cannot exceed the sales count), so
@@ -1301,7 +1373,7 @@ Data: [`data/gumroad-sales.csv`](data/gumroad-sales.csv) (one row per product fe
 including the {sr['fetched'] - sr['disclosing']:,} publishing no sales count, so the opt-in
 rate is re-derivable), [`data/sales-ratio-summary.json`](data/sales-ratio-summary.json),
 derived by [`scripts/normalize_products.py`](scripts/normalize_products.py).
-
+{rescan}
 → [**How many sales is one Gumroad rating?**]({SITE}/g/gumroad-sales-per-rating.html)
 
 ## The demand table

@@ -1,0 +1,22 @@
+{
+  "from": "2026-08-08",
+  "to": "2026-08-26",
+  "days": 18,
+  "joined": 229,
+  "disclosing_then": 229,
+  "unread_on_rescan": 0,
+  "stopped_disclosing": 3,
+  "comparable": 226,
+  "units_moved": 166,
+  "units_same": 60,
+  "units_up": 156,
+  "units_down": 10,
+  "units_moved_pct": 73.5,
+  "median_abs_move": 10,
+  "largest_abs_move": 2797,
+  "ratings_moved": 68,
+  "price_comparable": 177,
+  "price_moved": 2,
+  "price_excluded_non_usd": 49,
+  "median_pct_change": 1.9
+}

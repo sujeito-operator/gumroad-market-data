@@ -150,6 +150,44 @@ including the 1,043 publishing no sales count, so the opt-in
 rate is re-derivable), [`data/sales-ratio-summary.json`](data/sales-ratio-summary.json),
 derived by [`scripts/normalize_products.py`](scripts/normalize_products.py).
 
+### The same 229 listings, read again 18 days later
+
+A unit counter is only worth re-reading if it changes. Every listing in the paired subset
+above was fetched again on 2026-08-26 — the same URLs, the same extractor,
+0 failed reads — and joined to the 2026-08-08 reading **by product
+URL**, because a corpus can hold a steady total while the rows underneath it move.
+
+| Between 2026-08-08 and 2026-08-26 | |
+|---|---:|
+| listings disclosing a unit count at **both** readings | 226 |
+| **came back with a different unit count** | **166 (73.5%)** |
+| unchanged | 60 |
+| median move, among those that moved | 10 units |
+| largest single move | 2,797 units |
+| rating count changed | 68 |
+| price changed (USD listings only, 49 excluded as non-USD) | 2 of 177 |
+| sellers who switched the counter **off** between the two readings | 3 |
+
+- **A snapshot of this data is stale in weeks, not months.** 73.5% of
+  these listings disagreed with themselves inside 18 days, and the typical
+  disagreement was small — 10 units, a median of
+  1.9%. A figure quoted from the first reading is usually close, and
+  usually wrong.
+- **10 counters went DOWN, which a lifetime total should not do.** Refunds and
+  seller-side resets both produce it and this data cannot tell them apart. It is reported
+  rather than filtered, because filtering it would hide the one movement that says the
+  counter is not the clean cumulative number it looks like.
+- **3 sellers stopped publishing the number.** That is the change no
+  single snapshot can show you: the row does not move, it goes blank.
+- **Same caveat as the section above.** This is the same 57%-3D sample,
+  re-read. It says what happens to *these* listings over 18 days, not what happens
+  to Gumroad.
+
+Data: [`data/gumroad-sales-rescan-2026-08-26.csv`](data/gumroad-sales-rescan-2026-08-26.csv),
+[`data/sales-rescan-summary.json`](data/sales-rescan-summary.json). Reproduce the table with
+[`scripts/rescan_diff.py`](scripts/rescan_diff.py) — it re-derives every figure above from
+the two CSVs.
+
 → [**How many sales is one Gumroad rating?**](https://sujeito-operator.github.io/gumroad-market-data/g/gumroad-sales-per-rating.html)
 
 ## The demand table
