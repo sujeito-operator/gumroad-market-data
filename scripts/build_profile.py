@@ -62,6 +62,14 @@ BLOCKS = {
     "vsx": "scripts/account_surfaces.py --apply",
     "paid": "scripts/profile_lead.py --apply",
     "lead": "scripts/profile_lead.py --apply",
+    # ADDED 2026-08-26. Both of these were live on the published page and carried by NOTHING,
+    # so the next run of this build would have deleted them — the exact defect the `carry`
+    # mechanism was built for, committed twice more after it was built. `aipolicy` had been
+    # unprotected since it was published; `btscan` carries the only offer whose arithmetic
+    # reaches the 2026-10-01 target. A build that silently drops a published section is worse
+    # than a build that stops.
+    "aipolicy": "scripts/aipolicy_site.py --apply",
+    "btscan": "scripts/profile_v25_offer.py --apply",
 }
 VSX_A, VSX_B = "<!-- vsx:begin -->", "<!-- vsx:end -->"
 
@@ -209,13 +217,17 @@ numbers stay citable after the site changes.
 {checkout_bullet()}
 {carry_vsx_block()}
 
+{carry('aipolicy')}
+
+{carry('btscan')}
+
 **[gumroad-checkout-gap](https://github.com/sujeito-operator/gumroad-checkout-gap)** — a single-file tool that
 measures the above on YOUR product: it loads the page, follows the page's own buy control to
 Gumroad's checkout, and prints what each one says. It completes no order and touches no
 account. MIT, no signup, no email. The sample above is in there by price band, with the frame
 and the seed needed to redraw it.
 
-- **[Both datasets on one page]({HOST}/)** — what each one measures, what it does not, and
+- **[The datasets on one page]({HOST}/)** — what each one measures, what it does not, and
   where to get it.
 
 ## Also here
@@ -271,6 +283,8 @@ def assert_readme(md, t):
         "the VS Code section": VSX_A,
         "the paid section": "<!-- paid:begin -->",
         "the pull-request lead": "<!-- lead:begin -->",
+        "the AI-policy dataset": "<!-- aipolicy:begin -->",
+        "the bounty-board census": "<!-- btscan:begin -->",
         "a reply address on the page": "@",
     }
     missing = [k for k, v in required.items() if v not in md]
