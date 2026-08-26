@@ -1,0 +1,50 @@
+{
+  "measured_on": "2026-08-26",
+  "source": "buyer-walk-2026-08-26.json",
+  "walked_from": "a UK address (this VPS); Gumroad localises the render to it",
+  "products_walked": 5,
+  "products_compared": 3,
+  "excluded": 2,
+  "excluded_reason": "free tills, tills charging no more than they advertise (the monthly one with a free first month), and any page whose currency does not match its own checkout total \u2014 none of these can produce a gap figure that means anything",
+  "rows": [
+    {
+      "product": "What Actually Sells on Gumroad \u2014 255 categories, 8,311 products measured (2nd ed, Aug 2026)",
+      "permalink": "bylafq",
+      "url": "https://sujeitooperator.gumroad.com/l/bylafq",
+      "recurring": false,
+      "currency": "\u00a3",
+      "advertised": 183.17,
+      "charged": 221.8,
+      "gap": 38.63,
+      "gap_pct": 21.1,
+      "tax_line": "VAT \u00a337.04",
+      "subtotal_line": "Subtotal \u00a3184.76"
+    },
+    {
+      "product": "Gumroad checkout audit - every product in your store, what a UK/EU buyer is actually charged",
+      "permalink": "xlvfeb",
+      "url": "https://sujeitooperator.gumroad.com/l/xlvfeb",
+      "recurring": false,
+      "currency": "\u00a3",
+      "advertised": 109.61,
+      "charged": 132.8,
+      "gap": 23.19,
+      "gap_pct": 21.2,
+      "tax_line": "VAT \u00a322.17",
+      "subtotal_line": "Subtotal \u00a3110.63"
+    },
+    {
+      "product": "Gumroad checkout monitor - a walk of your whole store every week, and an email the day a price stops matching the pay st",
+      "permalink": "zyoqbc",
+      "url": "https://sujeitooperator.gumroad.com/l/zyoqbc",
+      "recurring": true,
+      "currency": "\u00a3",
+      "advertised": 72.83,
+      "charged": 88.8,
+      "gap": 15.97,
+      "gap_pct": 21.9,
+      "tax_line": "VAT \u00a314.73",
+      "subtotal_line": "Subtotal \u00a374.07"
+    }
+  ]
+}

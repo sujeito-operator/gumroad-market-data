@@ -104,6 +104,77 @@ Prefer to look at the underlying data first? The category crawl behind
 the price comparison is <a href="{B.SITE}/">free and openly licensed</a>.</span></div>"""
 
 
+OWN_GLOB = "own-store-checkout-*.json"
+
+
+def own_store_data():
+    """The newest first-party walk of OUR OWN store, or None if none is published.
+
+    Globbed rather than pinned to a date, for the reason `pilot_terms_evidence.SCAN_JSON`
+    taught: a pinned filename goes stale silently and puts two different measurements on
+    one site. Returns None when the file is absent, and `own_store()` then renders NOTHING
+    — the section is evidence or it is not there. A placeholder that says "coming soon"
+    on a page whose entire argument is "every figure here was measured" is worse than a
+    shorter page.
+    """
+    import json
+    files = sorted((ROOT / "data").glob(OWN_GLOB))
+    if not files:
+        return None
+    return json.loads(files[-1].read_text())
+
+
+def own_store(d):
+    """"Don't take the redacted sample's word for it — here is my own shop."
+
+    THE WEAKNESS THIS FIXES. Everything above this block is somebody else's storefront
+    with the seller removed. That redaction is right and it is not negotiable, and it
+    costs the reader the ability to check a single number: they must trust a stranger
+    about a shop they cannot look at. Our own store has the opposite property. It is
+    public, it is already named on this page, and the reader can reproduce every row
+    below in their own browser in under a minute — which is the strongest form the same
+    claim can take, and it was sitting unused.
+
+    WHAT IS AND IS NOT CLAIMED. Every gap below is a named VAT line, and VAT is lawful:
+    Gumroad is the merchant of record and is required to add it. This block says so in
+    its own copy, above the table, because a page that let the reader infer wrongdoing
+    would be selling on a misunderstanding. The claim is the one the audit actually
+    makes — that the seller cannot SEE it from inside their own account — and our own
+    store is the proof precisely BECAUSE nothing is wrong with it.
+    """
+    if not d or not d.get("rows"):
+        return ""
+    rows = "".join(
+        f"<tr><td>{html.escape(r['product'][:70])}</td>"
+        f"<td>{html.escape(r['currency'])}{r['advertised']:.2f}</td>"
+        f"<td>{html.escape(r['currency'])}{r['charged']:.2f}</td>"
+        f"<td>+{html.escape(r['currency'])}{r['gap']:.2f} ({r['gap_pct']:.1f}%)</td>"
+        f"<td>{html.escape(r['tax_line'] or '—')}</td></tr>"
+        for r in d["rows"])
+    biggest = d["rows"][0]
+    return f"""<h2>And here is the same walk against my own storefront, unredacted</h2>
+<div class=lede><p>Everything above is somebody else's shop with the seller removed. You
+have to take my word for it. So here is the measurement run against <em>my</em> store,
+which is public, which is linked from this page, and which you can check yourself right
+now &mdash; open any product below in a private window and click through to the pay
+step.</p>
+<p><strong>Every gap below is VAT, and VAT is lawful.</strong> Gumroad is the merchant of
+record and is required to add it. That is exactly the point: there is nothing wrong with
+my checkout, and I still cannot see these numbers from inside my own account. My dashboard
+reports in my currency, and my own visits are localised to where I am. Neither shows me
+what the row below shows.</p></div>
+<table><thead><tr><th>Product</th><th>Page says</th><th>Pay step charges</th>
+<th>Difference</th><th>Line that explains it</th></tr></thead><tbody>{rows}</tbody></table>
+<p class=fine>{d['products_walked']} published products walked logged out from
+{html.escape(d['walked_from'])} on {d['measured_on']}; {d['products_compared']} are
+comparable and {d['excluded']} are excluded ({html.escape(d['excluded_reason'])}). The
+largest gap is {html.escape(biggest['currency'])}{biggest['gap']:.2f} on a product whose
+page advertises {html.escape(biggest['currency'])}{biggest['advertised']:.2f}. Nothing was
+ordered and no form was submitted; every reading stops at the pay step. The walk is the
+same instrument that produces the report above, pointed at my own shop instead of a
+customer's.</p>"""
+
+
 # ---------------------------------------------------------------- markdown, the subset
 INLINE = [
     (re.compile(r"\*\*(.+?)\*\*"), r"<strong>\1</strong>"),
@@ -203,9 +274,13 @@ def build():
              + "\n</script>\n")
     # The CTA goes after the first table — a reader who has seen the checkout half has seen
     # enough to decide, and one who has not should not be asked yet.
+    own = own_store(own_store_data())
+    # The own-store block goes AFTER the ask, not before it. The reader has just been
+    # asked to pay a stranger for a measurement; "here is that measurement on my own
+    # public shop, go and reproduce it" answers the objection at the moment it arrives.
     cut = body.index("</table>") + len("</table>")
     doc = (B.head(TITLE, DESC, PAGE, extra)
-           + body[:cut] + block + body[cut:]
+           + body[:cut] + block + own + body[cut:]
            + f"""<nav class=sib><a href="{B.SITE}/checkout.html">How widespread this is
 across 32 stores</a> &middot; <a href="{B.SITE}/">The free dataset</a></nav>
 <footer>Walked and published 2026-08-12 by the operator of
@@ -285,8 +360,49 @@ def assert_page(doc, md, audit, monitor):
             problems.append(f"the page no longer says {must!r}")
     if "<table>" not in doc:
         problems.append("no table rendered — the report is the tables")
+    # 5. THE OWN-STORE BLOCK. Absent is fine; present and wrong is not.
+    problems += own_store_problems(doc, own_store_data())
     if problems:
         raise SystemExit("audit-sample.html: " + "; ".join(problems))
+
+
+def own_store_problems(doc, d):
+    """The own-store block must recompute, and must not lose its own caveat.
+
+    Two failure modes, and the second is the one that would actually cost something.
+
+    (a) ARITHMETIC. Every row's difference is RECOMPUTED here from the advertised and
+        charged figures rather than trusted from the file, and the recomputed value must
+        be the one on the page. This is `velocity_analyse()`'s rule (§WO-0d): a generator
+        that renders a summary another tool wrote will publish that tool's bug.
+
+    (b) THE CAVEAT. The block's whole defensibility is the sentence saying the gap is
+        VAT and VAT is lawful. Without it a table headed "page says / pay step charges"
+        reads as an accusation against Gumroad, published on a page selling a product
+        that measures Gumroad. Deleting that sentence must abort the build, exactly as
+        deleting the coverage caveat aborts the guides build.
+    """
+    if not d or not d.get("rows"):
+        return []
+    bad = []
+    for r in d["rows"]:
+        want = round(r["charged"] - r["advertised"], 2)
+        if abs(want - r["gap"]) > 0.005:
+            bad.append(f"own-store row {r['permalink']}: file says the gap is "
+                       f"{r['gap']} and {r['charged']} - {r['advertised']} is {want}")
+        shown = f"+{r['currency']}{want:.2f}"
+        if shown not in doc:
+            bad.append(f"own-store row {r['permalink']}: recomputed {shown} is not on "
+                       f"the page")
+        if r["tax_line"] and html.escape(r["tax_line"]) not in doc:
+            bad.append(f"own-store row {r['permalink']}: the line that explains the gap "
+                       f"({r['tax_line']!r}) did not reach the page")
+    for must in ("Every gap below is VAT, and VAT is lawful",
+                 "merchant of\nrecord and is required to add it",
+                 "I still cannot see these numbers from inside my own account"):
+        if must not in doc:
+            bad.append(f"the own-store block lost its caveat: {must!r} is not on the page")
+    return bad
 
 
 if __name__ == "__main__":
