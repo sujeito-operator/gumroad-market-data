@@ -19,10 +19,13 @@ Figures come from data/*.json, same as every other surface here. Nothing is type
 """
 import json
 import pathlib
+import re
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import build_site  # noqa: E402  — reuse CSS, DOI, PRICE, links: one source of truth
+import build_audit_sample_page  # noqa: E402 — the residual, computed once, rendered twice
+import live_price  # noqa: E402 — the service tills are read live, never typed
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT.parent / "root-site"
@@ -45,29 +48,126 @@ INDEXNOW_KEY = "836c912b4f4eefa4d1f3c35538e2e588087078e1aaf2f4353771b6b04dae8da2
 # every correct figure and deleted the whole VS Code section without a word.
 VSX_A, VSX_B = "<!-- vsx:begin -->", "<!-- vsx:end -->"
 
+# 2026-08-27. THE GUARD ABOVE WAS WRITTEN FOR ONE BLOCK AND A SECOND ONE ARRIVED WITHOUT IT.
+# `ai-contribution-policy` — 703 repositories screened, 267 shipping an agent file — is
+# carried into this page by the operator repo's `aipolicy_site.py` between its own markers,
+# and nothing here knew that. The first build after this section's edit DELETED IT ENTIRELY
+# and printed "root index OK". It was caught by reading the diff, not by any check.
+#
+# That is the shape §WW-0c names: a fix that reaches one member of a family and not its
+# siblings, silently, because every check verifies what it was told about. So the carrier is
+# now a LIST, and `main()` refuses to publish an index that carries fewer blocks than the
+# published one already had — which is the arm that catches the THIRD block nobody has
+# written yet.
+CARRIED = (
+    ("vsx", VSX_A, VSX_B, "the operator repo's scripts/account_surfaces.py"),
+    ("aipolicy", "<!-- aipolicy:begin -->", "<!-- aipolicy:end -->",
+     "the operator repo's scripts/aipolicy_site.py"),
+)
 
-def carry_vsx_block():
-    """Carry the section this build does not own. Refuse to build if it has vanished."""
-    prev = (OUT / "index.html").read_text() if (OUT / "index.html").exists() else ""
-    if VSX_A not in prev or VSX_B not in prev:
+
+def published_index():
+    return (OUT / "index.html").read_text() if (OUT / "index.html").exists() else ""
+
+
+def carry_block(name):
+    """Carry a section this build does not own. Refuse to build if it has vanished."""
+    a, b, owner = next((a, b, o) for n, a, b, o in CARRIED if n == name)
+    prev = published_index()
+    if a not in prev or b not in prev:
         raise SystemExit(
-            "REFUSING TO BUILD: the published index.html carries no "
-            f"{VSX_A}...{VSX_B} block. That section is written by the operator repo's "
-            "scripts/account_surfaces.py and this build would delete it. Run "
-            "`python3 scripts/account_surfaces.py --apply` there first, or restore the "
-            "markers by hand — an empty result set is a failure, not a pass.")
-    return VSX_A + prev.split(VSX_A, 1)[1].split(VSX_B, 1)[0] + VSX_B
+            f"REFUSING TO BUILD: the published index.html carries no {a}...{b} block. "
+            f"That section is written by {owner} and this build would delete it. Run that "
+            "generator first, or restore the markers by hand — an empty result set is a "
+            "failure, not a pass.")
+    return a + prev.split(a, 1)[1].split(b, 1)[0] + b
+
+
+def assert_no_block_lost(new_html):
+    """Refuse an index that carries fewer marker pairs than the one already published.
+
+    `carry_block` only checks the blocks this file has been TOLD about. This checks the
+    ones it has not — a fourth generator adding `<!-- foo:begin -->` gets the same
+    protection on the day it lands, without anyone remembering to come back here.
+    """
+    pat = re.compile(r"<!-- ([a-z0-9_-]+):begin -->")
+    was = set(pat.findall(published_index()))
+    now = set(pat.findall(new_html))
+    lost = sorted(was - now)
+    if lost:
+        raise SystemExit(
+            "REFUSING TO PUBLISH: this build would delete " + ", ".join(lost)
+            + " from the root index. Those sections are written by other generators. Add "
+              "each to CARRIED and render it with carry_block(), or restore it by hand.")
 
 
 def load(name):
     return json.loads((ROOT / "data" / name).read_text())
 
 
+# --- the three service tills -------------------------------------------------
+#
+# WHY THIS BLOCK EXISTS, 2026-08-27. The section below used to open with the words "One
+# thing here costs money", and on the day it was written that was true. It stopped being
+# true on 2026-08-22 and again on 2026-08-26, when a $149 storefront audit, a monthly
+# checkout monitor and a one-page entry rung were published on the same storefront. Nobody
+# re-read the sentence, because the sentence carries no figure and every gate in this
+# repository checks FIGURES. So the root of the hostname — the page a stranger lands on —
+# said "stated plainly" and then understated what is for sale by three products.
+#
+# The money half is the same fact from the other side. Every measured arrival this site has
+# ever produced landed on the $249 report, because it was the only paid thing linked from
+# here, and the reader this site attracts is a Gumroad seller: the exact buyer for the three
+# tills that were invisible. The ladder existed on `audit-sample.html` and the root did not
+# link to it.
+#
+# Every figure below is READ LIVE from Gumroad at build time by `live_price.price()` and the
+# residual is computed by the audit-sample generator's own function, so the two surfaces
+# cannot drift apart. Nothing here is typed. `assert_index` refuses the old sentence by name.
+SERVICES = (
+    ("xmzlkz", "One product page",
+     "Your busiest listing, loaded logged out from a UK address, buy control clicked, pay "
+     "step read. You get the three figures side by side and the arithmetic between them."),
+    ("xlvfeb", "Every product in your store",
+     "The same walk across your whole catalogue, so you can see which listings disagree "
+     "with their own checkout and by how much."),
+    ("zyoqbc", "The whole store, every week",
+     "The same walk on a schedule, and an email on the day a price stops matching the pay "
+     "step. Cancel any time."),
+)
+
+
+def residual_reading():
+    """-> (n_comparable, n_differing, median_pct, min_pct, max_pct, n_negative).
+
+    `build_audit_sample_page.third_party_residual()` returns the DIFFERING rows and no
+    denominator, so a page that wrote "every one of them" off that number would be
+    asserting something the helper does not measure. The denominator is counted here, by
+    the same rule, and `main()` refuses to publish the word "every" unless they agree.
+    That is §WW's set-vs-count defect caught one file earlier: the two numbers happened to
+    be equal today, and "happens to be equal" is not a thing to publish.
+    """
+    tp = build_audit_sample_page.third_party_residual()
+    if not tp:
+        raise SystemExit(
+            "REFUSING TO BUILD: data/checkout-audit.json yields no comparable rows, so the "
+            "paid section has no measurement behind it. A claim with no reading is not a "
+            "shorter section, it is a false one.")
+    n_diff, med, lo, hi, neg = tp
+    comparable = 0
+    for r in json.loads((ROOT / "data" / build_audit_sample_page.TP_SRC).read_text()):
+        c = r.get("checkout") or {}
+        sub, pp = c.get("subtotal"), r.get("page_price")
+        if sub and pp and pp[1]:
+            comparable += 1
+    return comparable, n_diff, med, lo, hi, neg
+
+
 # Every promise on this page a reader could act on, bound to the value that makes it true.
 # The affiliate block is the only place on the ROOT of this hostname that offers the reader
 # money rather than asking them for attention, and it was absent for the whole of the first
 # day the self-serve link existed while all 542 pages three clicks deeper carried it.
-def assert_index(html, t):
+def assert_index(html, t, prices):
     required = {
         "the price": build_site.PRICE,
         "the commission percentage": f"{t['commission_pct']}%",
@@ -80,10 +180,31 @@ def assert_index(html, t):
         "the free sample": build_site.SAMPLE_PAGE,
         "the zero-sales disclosure": f"sold {t['sales_to_date']}",
         "the VS Code section": VSX_A,
+        "the AI-policy section": "<!-- aipolicy:begin -->",
+        # Added 2026-08-27. The evidence page the three tills rest on: a price on this
+        # page with no free reading behind it is the ask the section above learned not
+        # to make, made again three products wider.
+        "the audit evidence page": build_site.AUDIT_SAMPLE_PAGE,
     }
+    for permalink, name, _ in SERVICES:
+        required[f"the {permalink} price"] = prices[permalink]["display"]
+        required[f"the {permalink} link"] = prices[permalink]["url"]
+        required[f"the {permalink} name"] = name
+
+    # A sentence can be false without carrying a figure, and every other check in this
+    # file checks figures. This one is here because the page shipped "One thing here costs
+    # money" for five days after it stopped being true, and no gate anywhere could see it.
+    # A future edit that reintroduces the singular must fail the build, not the reader.
+    banned = {
+        "the withdrawn singular claim": "One thing here costs money",
+        "the withdrawn singular claim, lowercased": "one thing here costs money",
+    }
+    present = [k for k, v in banned.items() if v in html]
     missing = [k for k, v in required.items() if v not in html]
-    if missing:
-        raise SystemExit("root index is missing: " + ", ".join(missing))
+    if missing or present:
+        raise SystemExit(
+            "root index is missing: " + (", ".join(missing) or "nothing")
+            + " / and must not contain: " + (", ".join(present) or "nothing"))
     return len(html)
 
 
@@ -93,13 +214,42 @@ def main():
     t = build_site.load_terms()
     OUT.mkdir(exist_ok=True)
 
+    # --- the paid section's figures, all of them read rather than typed ------
+    prices = {p: live_price.price(p) for p, _, _ in SERVICES}
+    n_comparable, n_diff, med, lo, hi, neg = residual_reading()
+    # "Every" is a claim about the denominator. Publish it only when it is one.
+    every_word = "Every one" if n_diff == n_comparable else f"{n_diff}"
+    services_html = "\n".join(
+        f'<li><a href="{prices[p]["url"]}"><b>{name} &mdash; {prices[p]["display"]}'
+        f'{" a month" if prices[p]["recurring"] else ""}</b></a>\n<span>{blurb}</span></li>'
+        for p, name, blurb in SERVICES)
+
     # --- robots.txt, the whole reason this site exists -----------------------
+    #
+    # 2026-08-27: THIS FILE WAS A TWO-LINE LITERAL AND IT HAD FOUR LINES PUBLISHED. Two
+    # later datasets — `vscode-marketplace-data` and `ai-contribution-policy` — added their
+    # own `Sitemap:` directives here from another repository, and re-running this generator
+    # deleted both. robots.txt is the ONLY way a crawler that is not Bing finds a sitemap
+    # without a gated webmaster console; the docstring at the top of this file says exactly
+    # that and then the code below it de-listed two whole datasets. Same shape as the
+    # carried HTML blocks, one file lower down: **this build owns two lines of a file that
+    # other builds also write, and it was treating the file as its own.**
+    #
+    # The union is taken from the published bytes, order preserved, duplicates dropped, and
+    # nothing is ever removed. A directive that should go has to be deleted by the
+    # generator that added it, or by hand — never as a side effect of building this page.
+    owned = [f"Sitemap: {HOST}/sitemap.xml", f"Sitemap: {DATASET_SITE}/sitemap.xml"]
+    prev_robots = (OUT / "robots.txt").read_text() if (OUT / "robots.txt").exists() else ""
+    sitemaps = list(owned)
+    for line in prev_robots.splitlines():
+        line = line.strip()
+        if line.startswith("Sitemap:") and line not in sitemaps:
+            sitemaps.append(line)
     (OUT / "robots.txt").write_text(
         "User-agent: *\n"
         "Allow: /\n"
         "\n"
-        f"Sitemap: {HOST}/sitemap.xml\n"
-        f"Sitemap: {DATASET_SITE}/sitemap.xml\n"
+        + "".join(f"{line}\n" for line in sitemaps)
     )
 
     # --- IndexNow key at the root, so root URLs are submittable --------------
@@ -147,19 +297,39 @@ version, so a citation made today does not go stale.</span></li>
 nothing else, total $0.</span></li>
 </ul>
 
-{carry_vsx_block()}
+{carry_block("vsx")}
+
+{carry_block("aipolicy")}
 
 <h2>What is paid, stated plainly</h2>
-<p>One thing here costs money: a written report, <strong>{build_site.PRICE}</strong>, covering
-which categories are worth entering. <strong>Every row of data on this site is free and stays
-free</strong>, and the report is interpretation of data you can download for nothing. If the
-data is all you wanted, take it and skip the report &mdash;
-<a href="{build_site.BUY}">it is here</a> if you want it.</p>
-<p><strong>You can read part of it before deciding.</strong>
+<p><strong>Every row of data on this site is free and stays free.</strong> Four things are
+not, and this is all four of them.</p>
+
+<p><strong>A written report, {build_site.PRICE}</strong>, covering which categories are worth
+entering. It is interpretation of data you can download for nothing, so if the data is all you
+wanted, take it and skip the report &mdash; <a href="{build_site.BUY}">it is here</a> if you
+want it. <strong>You can read part of it before deciding.</strong>
 <a href="{build_site.SAMPLE_PAGE}">A free sample</a> is three of the report's ten sections,
 lifted unedited out of the document &mdash; what was measured, the background rate you are
 competing against, and the method and limits in full. No signup and no email. Every section
 that says what to actually do is in the paid one.</p>
+
+<p><strong>And three readings of a checkout, which are the same job at three sizes.</strong>
+They exist because of one measurement on this site: <em>a Gumroad seller cannot see their own
+checkout.</em> Gumroad localises every render to whoever is looking, and your dashboard
+reports in your currency, so what a UK or EU buyer is actually asked for at the pay step is
+the one number about your own store you are structurally unable to read. I walked
+{n_comparable} third-party product pages logged out from a UK address and compared each
+advertised price against the checkout's own subtotal. <strong>{every_word} of them
+differed &mdash; before a penny of tax</strong>: median {med}%, from {lo}% to +{hi}%, and
+{neg} were <em>cheaper</em> at the pay step than on the page. Tax is a separate line and it is
+not what this is. <a href="{build_site.AUDIT_SAMPLE_PAGE}"><strong>The full reading, every
+row, with the arithmetic &mdash; free, no email</strong></a>.</p>
+<ul class=next>
+{services_html}
+</ul>
+<p class=cite>Those three prices were read from the live Gumroad pages when this page was
+built, not typed into it.</p>
 
 <h2>If you have an audience, I would rather pay you than ask you for anything</h2>
 <p><strong>{t['commission_pct']}% of that report &mdash; {t['affiliate_cut_display']} a
@@ -196,7 +366,14 @@ principal. Source for every page: <a href="{build_site.REPO}">the repository</a>
 Machine-readable index: <a href="{DATASET_SITE}/llms.txt">llms.txt</a>.</footer>
 </main></body></html>
 """)
-    print(f"  root index OK: {assert_index(html, t):,} bytes")
+    assert_no_block_lost(html)
+    print(f"  root index OK: {assert_index(html, t, prices):,} bytes")
+    for p, _, _ in SERVICES:
+        r = prices[p]
+        print(f"    {p} {r['display']}{' /mo' if r['recurring'] else ''} "
+              f"({r['source']}, read {r['read_at']})")
+    print(f"    residual: {n_diff}/{n_comparable} differ, median {med}%, "
+          f"{lo}%..{hi}%, {neg} negative")
     (OUT / "index.html").write_text(html)
 
     (OUT / "sitemap.xml").write_text(
