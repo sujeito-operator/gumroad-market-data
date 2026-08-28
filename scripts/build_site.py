@@ -108,6 +108,66 @@ PRICE = "$249"
 # nearest variable in scope.
 REPORT_CATS = json.loads((ROOT / "data" / "taxonomy-summary.json").read_text())["nodes"]
 BUY = "https://sujeitooperator.gumroad.com/l/bylafq"
+
+# PER-SURFACE ATTRIBUTION ON THE BUY LINK. Added 2026-08-28.
+#
+# WHY. `gumroad_views_by_product.py` in the operator repo reports ten real arrivals at a
+# priced checkout in the trailing 30 days, and FIVE of them — half, and more than the
+# entire mail rail's three — arrive with referrer `sujeito-operator.github.io`. That host
+# serves TWO different things: the one-page root profile site, and this 542-page site.
+# Gumroad reports the referring HOST and not the path, so which of the two produced those
+# five has never been knowable. `evidence/pages-site-is-the-largest-arrival-source-2026-08-26.md`
+# names the ambiguity and ends with an instruction: "Probe first; do not tag 550 pages on
+# an assumption."
+#
+# THE PROBE RAN AND IT SAID YES. `clicktag_probe.py` had only ever shown that Gumroad
+# honours `?referrer=` when NO `Referer` header is sent — the mail case. Every link on
+# this site is the opposite case: a browser click sends a real header, and header and
+# parameter then disagree. `webctx_clicktag_probe.py` (2026-08-28) fired one render with
+# BOTH present, verified `document.referrer` was genuinely populated so the run was the
+# web case and not the mail case again, and Gumroad filed the view under the PARAMETER.
+# So a tag placed here survives a real click. That is what licenses this.
+#
+# THESE ARE PRODUCTION TAGS AND A CLICK ON ONE IS A REAL STRANGER. They must NEVER be
+# added to `selfview.PROBE_HOSTS` in the operator repo — that set marks views as OURS, and
+# a production tag landing in it makes the instrument read zero while working. The default
+# is already correct: `selfview.classify("c-notion-template.pages.sujeito.org")` returns
+# `referred`, i.e. audience. Verified before this shipped.
+TAG_SUFFIX = "pages.sujeito.org"
+
+
+def buy_url(tag):
+    """`BUY` with a per-surface label in the query string. Built, never typed.
+
+    The label is a host under a domain we control that deliberately resolves to nothing —
+    it is never fetched by anyone. It exists to be a readable string in Gumroad's referrer
+    column, exactly like the `click.sujeito.org` tags the mail rail already uses.
+
+    The tag is validated rather than trusted: a malformed one would silently produce an
+    unreadable column entry, which is the failure this whole mechanism exists to end.
+    """
+    if not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,48}", tag):
+        raise ValueError(f"bad attribution tag {tag!r}: must be a DNS-safe label")
+    label = f"https://{tag}.{TAG_SUFFIX}/"
+    return f"{BUY}?referrer={urllib.parse.quote(label, safe='')}"
+
+
+def tag_of(prefix, identity):
+    """A tag for a page whose identity is DATA, not a literal typed by an author.
+
+    `buy_url` validates strictly, which is right for the dozen tags written by hand in
+    this repo — a typo there should stop the build. But seller and taxonomy slugs come out
+    of the dataset: there are thousands of them, they are only promised to be URL-safe,
+    and a single seller who names themselves with an underscore or an accent would
+    otherwise crash a 542-page build over an analytics label. That trade is the wrong way
+    round, so identities are SANITISED here. The result is still a tag, and it still goes
+    through `buy_url`, which stays the one place a bad tag can be rejected.
+
+    Collisions are possible in principle (two sellers sanitising to the same label) and
+    are accepted: this is an attribution hint on a $249 link, not a primary key.
+    """
+    ident = re.sub(r"-{2,}", "-", re.sub(r"[^a-z0-9]+", "-", str(identity).lower())).strip("-")
+    return f"{prefix}-{ident}"[:49].rstrip("-") if ident else prefix
 # The same free CSV, mirrored as a $0 Gumroad product. Not a second paywall and not a
 # lead magnet: gumroad.com already ranks where this site does not, so it is a download
 # location that search engines will actually find. Keep it $0 with a $0 minimum.
@@ -281,7 +341,7 @@ def head(title, desc, canonical, extra=""):
 </style></head><body><main>"""
 
 
-def buy_block(scope):
+def buy_block(scope, tag):
     # Two steps, not one. Until 2026-08-07 this block offered a single {PRICE} button on all
     # 542 pages and no route to the free mirror, so a reader who was not buying today left
     # with nothing recorded on either side. The second link is the same four CSVs at $0 with
@@ -311,7 +371,7 @@ def buy_block(scope):
     return f"""<div class=buy><strong>The written report — {PRICE}</strong><br>
 {scope} You are paying for the interpretation, not for the rows. The rows are free, above and in the
 repository. If the data is all you wanted, take it and skip this.
-<br><a href="{BUY}">Read the report — {PRICE}</a>
+<br><a href="{buy_url(tag)}">Read the report — {PRICE}</a>
 <a class=alt href="{SAMPLE_PAGE}">Read three sections free first</a>
 <a class=alt href="{FREE_GET}">Or take all four CSVs free</a>
 <a class=alt href="{AUDIT_SAMPLE_PAGE}">Selling here yourself? Read a worked audit of one storefront</a>
@@ -678,7 +738,7 @@ landing page that will not move. GitHub
 {buy_block("What is <em>not</em> free is the analysis: a report that reads the table rather than "
            "prints it — which categories are openings versus crowded rooms, where price and demand "
            "come apart, and what the " + str(s['zpct']) + "%-unrated background rate means if you "
-           "are choosing what to build next.")}
+           "are choosing what to build next.", "home")}
 
 <p class=cite><strong>Sell on Gumroad? Your UK and EU buyers are not charged what your page
 says.</strong> <a href="{CHECKOUT_PAGE}">We walked a seeded random sample of Gumroad stores from
@@ -822,7 +882,7 @@ by the same rated-share figure quoted at the top of this page.</span></li>
 {buy_block(f"What is <em>not</em> free is the analysis: a report that reads all {REPORT_CATS} categories "
            f"together — which are openings versus crowded rooms, where price and demand come apart, "
            f"and what the {s['zpct']}%-unrated background rate means if you are choosing what to "
-           f"build next.")}
+           f"build next.", f"c-{slug(topic)}")}
 
 <nav class=sib>More categories: {sib} &middot; <a href="../">all {s['cats']}</a></nav>
 <nav class=sib>Guides: {" &middot; ".join(f'<a href="../g/{g}.html">{lab}</a>'
@@ -1085,7 +1145,7 @@ def llms_txt(s, cats, guides, ts=None, sr=None):
         "",
         "## Optional",
         "",
-        f"- [What Actually Sells on Gumroad]({BUY}): paid report, {PRICE}. The analysis, "
+        f"- [What Actually Sells on Gumroad]({buy_url('repo-readme')}): paid report, {PRICE}. The analysis, "
         f"not the data — the data above is free and complete.",
         f"- [Free CSV mirror on Gumroad]({FREE_GET}): the same file, $0.",
         "",

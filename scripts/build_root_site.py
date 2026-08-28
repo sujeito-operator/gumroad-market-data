@@ -307,7 +307,7 @@ not, and this is all four of them.</p>
 
 <p><strong>A written report, {build_site.PRICE}</strong>, covering which categories are worth
 entering. It is interpretation of data you can download for nothing, so if the data is all you
-wanted, take it and skip the report &mdash; <a href="{build_site.BUY}">it is here</a> if you
+wanted, take it and skip the report &mdash; <a href="{build_site.buy_url('root')}">it is here</a> if you
 want it. <strong>You can read part of it before deciding.</strong>
 <a href="{build_site.SAMPLE_PAGE}">A free sample</a> is three of the report's ten sections,
 lifted unedited out of the document &mdash; what was measured, the background rate you are

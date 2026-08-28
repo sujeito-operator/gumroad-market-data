@@ -562,7 +562,7 @@ teaser for it, and if once is all you need, once is free. Your first month is th
 audit, included rather than added on. Cancel from your receipt.</li>
 </ul>
 
-{B.buy_block("It reads " + f"{B.REPORT_CATS:,}" + " Gumroad categories the same way this page reads checkouts: from what the platform actually shows, not from what it says about itself.")}
+{B.buy_block("It reads " + f"{B.REPORT_CATS:,}" + " Gumroad categories the same way this page reads checkouts: from what the platform actually shows, not from what it says about itself.", "checkout")}
 
 <h2>What one storefront's full audit looks like</h2>
 <p>This page reads one product from each of many stores. The other half of the same

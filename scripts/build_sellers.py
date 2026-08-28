@@ -216,7 +216,7 @@ CC BY 4.0, no signup, no email wall.</p>
 {B.buy_block("What is <em>not</em> free is the analysis: which categories are openings "
              "versus crowded rooms, where price and demand come apart, and what the "
              "background rate of unsold listings means if you are choosing what to "
-             "build next.")}
+             "build next.", B.tag_of("s", seller_slug(name)))}
 
 {nav}
 <nav class=sib>Also: <a href="../g/{__import__("build_guides").SELLER_GUIDE}.html">does listing
@@ -379,7 +379,7 @@ code <strong>MIT</strong>. Use it for anything.</p>
 {B.buy_block("What is <em>not</em> free is the analysis: which categories are openings "
              "versus crowded rooms, where price and demand come apart, and what the "
              "background rate of unsold listings means if you are choosing what to "
-             "build next.")}
+             "build next.", "s-index")}
 
 <nav class=sib>Also: <a href="../t/index.html">all {ts['nodes']} categories, ranked</a>
 &middot; <a href="../">what actually sells on Gumroad</a></nav>

@@ -612,5 +612,5 @@ Read these two samples as two frames on one marketplace, not as one superseding 
 
 ## Optional
 
-- [What Actually Sells on Gumroad](https://sujeitooperator.gumroad.com/l/bylafq): paid report, $249. The analysis, not the data — the data above is free and complete.
+- [What Actually Sells on Gumroad](https://sujeitooperator.gumroad.com/l/bylafq?referrer=https%3A%2F%2Frepo-readme.pages.sujeito.org%2F): paid report, $249. The analysis, not the data — the data above is free and complete.
 - [Free CSV mirror on Gumroad](https://gumroad.com/checkout?product=docef&quantity=1): the same file, $0.

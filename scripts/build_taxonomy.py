@@ -252,7 +252,7 @@ same rated-share figure quoted at the top of this page.</span></li>
 {B.buy_block("What is <em>not</em> free is the analysis: which categories are openings "
              "versus crowded rooms, where price and demand come apart, and what the "
              "background rate of unsold listings means if you are choosing what to "
-             "build next.")}
+             "build next.", B.tag_of("t", flat(x["slug"])))}
 
 {nav_html}
 <nav class=sib>Guides: {" &middot; ".join(f'<a href="../g/{g}.html">{lab}</a>'
@@ -477,7 +477,7 @@ effect.</p>
 {B.buy_block("What is <em>not</em> free is the analysis: which categories are openings "
              "versus crowded rooms, where price and demand come apart, and what the "
              "background rate of unsold listings means if you are choosing what to "
-             "build next.")}
+             "build next.", "t-index")}
 
 <nav class=sib>Guides: {" &middot; ".join(f'<a href="../g/{g}.html">{lab}</a>'
     for g, lab in __import__("build_guides").GUIDES)}</nav>

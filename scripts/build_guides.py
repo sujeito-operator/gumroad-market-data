@@ -741,7 +741,7 @@ because it looks lucrative is not supported by this data.</p>
 {B.buy_block(f"The report reads all {B.REPORT_CATS} of Gumroad's own categories together and classifies "
              f"each one as an "
              f"opening, a crowded room or thin — with the concentration figure and the demand "
-             f"figure for every category, and what to do differently in each case.")}
+             f"figure for every category, and what to do differently in each case.", "g-what-to-sell")}
 
 <h2>Check the data yourself</h2>
 <p>Every figure on this page comes from a free, openly licensed dataset of {s['n']:,} listings —
@@ -923,7 +923,7 @@ any success story you have read, and the base rate is on this page.</p>
 {B.buy_block(f"What the base rate does not tell you is where the remaining room is. The report "
              f"classifies all {B.REPORT_CATS} categories by demand and by how locked-up that demand "
              f"already is, which is the difference between a category that is busy and one you can "
-             f"actually enter.")}
+             f"actually enter.", "g-earnings")}
 """
     return page(
         "how-much-do-people-make-on-gumroad",
@@ -997,7 +997,7 @@ every listing measured — start from <a href="../">the demand table</a> and ope
 
 {B.buy_block("Where the report goes beyond this: price and demand come apart in specific, "
              "identifiable places, and those are the categories where a pricing decision is "
-             "actually worth thinking about rather than copied from the median.")}
+             "actually worth thinking about rather than copied from the median.", "g-pricing")}
 """
     return page(
         "gumroad-pricing",
@@ -1047,7 +1047,7 @@ categories has <a href="../">its own measured page</a>. All of it is free.</p>
 
 {B.buy_block(f"The report is the version of this with the answer in it: every one of "
              f"{B.REPORT_CATS} categories classified by whether its demand is reachable, and what "
-             f"changes about your approach in each case.")}
+             f"changes about your approach in each case.", "g-worth-it")}
 """
     return page(
         "is-gumroad-worth-it",
@@ -1156,7 +1156,7 @@ across {s['cats']} categories.</em> Zenodo. <a href="https://doi.org/{B.DOI}">ht
 
 {B.buy_block("The statistics above are the free layer. The report is the reading of them: each of "
              f"the {B.REPORT_CATS} categories classified by whether its demand is reachable or already "
-             "held, and what that changes about what you do next.")}
+             "held, and what that changes about what you do next.", "g-statistics")}
 """
     return page(
         "gumroad-statistics",
@@ -1234,7 +1234,7 @@ ourselves.</p>
 
 {B.buy_block(f"The report classifies all {B.REPORT_CATS} categories by whether their demand is "
              "reachable or already held by incumbents — which is the question a free lead product "
-             "is trying to answer before you build the paid one.")}
+             "is trying to answer before you build the paid one.", "g-free-vs-paid")}
 
 <h2>Check it yourself</h2>
 <p>Every figure above is computed from a free, openly licensed CSV of {s['n']:,} products, with the
@@ -1414,7 +1414,7 @@ tell you whether the market is worth entering.</p>
 
 {B.buy_block(f"The report is the part this tool deliberately does not do: it reads all {B.REPORT_CATS} "
              "categories together and classifies each as an opening, crowded or thin &mdash; "
-             "whether the demand in it is reachable or already held by three incumbents.")}
+             "whether the demand in it is reachable or already held by three incumbents.", "g-calculator")}
 
 <h2>Check it yourself</h2>
 <p>The table above, the calculator's data and the collector that produced them are all public:
@@ -1552,7 +1552,7 @@ Averaging them would produce a third set of numbers describing neither, so this 
 {B.buy_block("This page is about sellers. The report is the other axis: it reads all "
              f"{B.REPORT_CATS} categories together and classifies each as an opening, a crowded room "
              "or thin &mdash; which is the question you hit immediately after deciding that one "
-             "product done properly beats ten.")}
+             "product done properly beats ten.", "g-how-many")}
 
 <h2>Check it yourself</h2>
 <p>Every figure above comes from
@@ -1756,7 +1756,7 @@ the other one.</p>
 {B.buy_block("This page tells you what a rating is worth. The report tells you where the "
              f"ratings are: all {s['cats']} categories read together and each classified as an "
              "opening, a crowded room or thin &mdash; which is the question you hit the moment "
-             "you can convert a competitor's rating count into a plausible unit figure.")}
+             "you can convert a competitor's rating count into a plausible unit figure.", "g-sales-ratio")}
 
 <h2>Check it yourself</h2>
 <p>Every figure above comes from
@@ -1909,7 +1909,7 @@ never averaged; each is published as it was measured.</p>
 
 {B.buy_block("This page says breadth is not a lever. The question underneath it &mdash; which "
              f"category is worth being in at all &mdash; is the report: all {s['cats']} categories "
-             "read together and each one classified as an opening, a crowded room or thin.")}
+             "read together and each one classified as an opening, a crowded room or thin.", "g-breadth")}
 
 <h2>Check it yourself</h2>
 <p>Every figure above comes from
@@ -2055,7 +2055,7 @@ is published as it was measured.</p>
 {B.buy_block("This page says a free product beside your paid work is the cheapest thing in "
              "the sample worth trying. What the paid work should be &mdash; which category is "
              f"an opening and which is a crowded room &mdash; is the report: all {s['cats']} "
-             "categories read together and each one classified.")}
+             "categories read together and each one classified.", "g-mix")}
 
 <h2>Check it yourself</h2>
 <p>Every figure above comes from
@@ -2161,7 +2161,7 @@ free.</p>
 
 {B.buy_block(f"The report is the version of this with the answer in it: every one of "
              f"{B.REPORT_CATS} categories classified by whether its demand is reachable or "
-             f"already held, and what changes about your approach in each case.")}
+             f"already held, and what changes about your approach in each case.", "g-velocity")}
 """
     return page(
         "how-many-sales-do-gumroad-products-get",
