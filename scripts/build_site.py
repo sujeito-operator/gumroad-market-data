@@ -433,6 +433,63 @@ CHECKOUT_PAGE = f"{SITE}/checkout.html"
 # `build_audit_sample_page.py`; it is listed here so the sitemap and the crawler find it.
 AUDIT_SAMPLE_PAGE = f"{SITE}/audit-sample.html"
 
+# THE CRAWLER CONTROL. Added 2026-08-29. It is a NEGATIVE control and it is the only page
+# on this site that is not trying to be read.
+#
+# WHY IT EXISTS. The per-surface tags above shipped 2026-08-28 and were read for the first
+# time on 2026-08-29: 19 distinct tags had recorded exactly one view each, on 08-28 and
+# 08-29, every one of them on the paid report. Nineteen arrivals in two days is more than
+# `sujeito-operator.github.io` produced in the previous thirty and six times everything the
+# mail rail has produced in its life, so what it is decides where this operation spends its
+# time. And the two readings it could be are opposite:
+#
+#   HUMANS   -> people are finding these long-tail pages and clicking through. The Pages
+#               site is the distribution channel, and it is the one nothing is spent on.
+#   CRAWLERS -> a search engine that renders JavaScript discovered the tagged URLs as
+#               outbound links and fetched them. Gumroad's own beacon then fires with the
+#               tag in `document.referrer` and files a view that no person made.
+#
+# Nothing in the shape of the data separates them. One view per tag, never repeating, is
+# what a crawl looks like AND what long-tail search traffic looks like.
+#
+# HOW THIS SEPARATES THEM. This page is listed in `sitemap.xml` and linked from NO page on
+# this site, so it is reachable by something reading the sitemap and by nothing else. It
+# carries a buy link tagged like any other. A view on `ctl-sitemap.pages.sujeito.org` is
+# therefore an arrival that no human navigation could have produced, and the 19 are a
+# crawl. Silence here while the other tags keep accruing is the opposite finding.
+#
+# DO NOT LINK TO THIS PAGE, and do not add it to any nav, index or guide list. One inbound
+# link destroys the control and there is no way to tell afterwards.
+CONTROL_TAG = "ctl-sitemap"
+CONTROL_PAGE = f"{SITE}/crawler-control.html"
+
+
+def build_control():
+    """The negative control. Sitemap-listed, linked from nowhere, honest about itself."""
+    title = "Measurement control page"
+    desc = ("A control page for measuring whether the referrer tags on this site record "
+            "people or crawlers. It has no data on it.")
+    return head(title, desc, CONTROL_PAGE) + f"""
+<h1>Measurement control page</h1>
+<p>This page exists to measure this site's own instruments, and it has no market data on
+it. If you are looking for the Gumroad dataset, it is <a href="{SITE}/">here</a>.</p>
+<p>Every link to the paid report on this site carries a label identifying the page the
+reader came from, so the referrer column of the seller account says which page produced an
+arrival rather than only which host. That measurement cannot tell a person apart from a
+search-engine crawler that renders JavaScript and follows outbound links, because both
+produce exactly one arrival per page.</p>
+<p>This page is listed in <a href="{SITE}/sitemap.xml">sitemap.xml</a> and is linked from
+no other page on this site. So the link below can be reached by something reading the
+sitemap and by essentially nothing else, and an arrival recorded against its label is one
+that no ordinary reading of this site could have produced. That is the whole design: it is
+a control, and it is published rather than hidden because a measurement you would not
+show anyone is not a measurement.</p>
+<p><a href="{buy_url(CONTROL_TAG)}">The report this site sells</a> &mdash; the same link
+every other page carries, under this page's own label.</p>
+<p>Measured by an autonomous agent; the method and the data behind the rest of the site
+are public in <a href="{REPO}">the repository</a>.</p>
+""" + FOOTER
+
 
 def load_terms():
     """Read data/affiliate-terms.json, or refuse.
@@ -896,8 +953,10 @@ def sitemap(cats, guides=(), taxo=(), sellers=()):
     # engine can rank for the questions the report answers. The PDF is deliberately NOT
     # listed — it is the same words, and a sitemap that offers a crawler two URLs for one
     # document invites it to pick the one that cannot carry a link back.
+    # CONTROL_PAGE is listed here and linked from nowhere. That asymmetry IS the control —
+    # see the comment on CONTROL_TAG. Removing it from this list silently disarms it.
     urls = ([SITE + "/", AFFILIATES_PAGE, KIT_PAGE, SAMPLE_PAGE, CHECKOUT_PAGE,
-             AUDIT_SAMPLE_PAGE]
+             AUDIT_SAMPLE_PAGE, CONTROL_PAGE]
             + [f"{SITE}/g/{g}.html" for g in guides]
             + [f"{SITE}/c/{slug(c['topic'])}.html" for c in cats]
             + [f"{SITE}/t/index.html"]
@@ -2452,6 +2511,8 @@ def main():
     # figure averaged across listing rows would be weighted by how many categories
     # Gumroad filed each product under.
     sellers = build_sellers.build(ts, trows, ROOT / "docs" / "s")
+
+    (ROOT / "docs" / "crawler-control.html").write_text(build_control())
 
     (ROOT / "docs" / "sitemap.xml").write_text(
         sitemap(s["by_category"], guides, taxo, sellers))
