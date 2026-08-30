@@ -13,7 +13,7 @@ is how the drift starts; edit this file instead and re-run:
 
     python3 scripts/normalize.py && python3 scripts/build_site.py
 """
-import collections, csv, datetime as _dt, json, pathlib, re, textwrap, urllib.parse
+import collections, csv, datetime as _dt, json, pathlib, re, sys, textwrap, urllib.parse
 
 import build_guides
 import build_sellers
@@ -463,6 +463,85 @@ AUDIT_SAMPLE_PAGE = f"{SITE}/audit-sample.html"
 CONTROL_TAG = "ctl-sitemap"
 CONTROL_PAGE = f"{SITE}/crawler-control.html"
 
+# THE SECOND CONTROL, AND THE REASON THE FIRST ONE IS NOT ENOUGH. Added 2026-08-30.
+#
+# WHAT WAS WRONG WITH READING `ctl-sitemap` ALONE. The comment above says silence on the
+# sitemap control "while the other tags keep accruing is the opposite finding" — i.e.
+# people. That does not follow, and the hole is in the design rather than the code. The
+# sitemap control is reachable by a sitemap reader and by nothing else BECAUSE NOTHING
+# LINKS TO IT. That is what makes a view on it damning; it is also what makes silence on
+# it weak. A crawler that enters at the site root and discovers pages by FOLLOWING
+# INTERNAL LINKS — the ordinary way a crawler works — reaches all 542 linked pages,
+# follows their tagged outbound Gumroad links, and can never reach the sitemap control.
+# It produces EXACTLY the shape we observed: every per-page tag accruing one arrival, the
+# control silent. Machine and human were never separated by that reading.
+#
+# WHAT THIS PAGE ADDS. It is the mirror image: linked from the FOOTER OF EVERY PAGE, and
+# listed in NO sitemap. So the two controls cover the two crawler classes on disjoint
+# channels, and neither can fire for the other's reason:
+#
+#   ctl-sitemap fires  -> something read sitemap.xml and followed what it found there.
+#   ctl-linked  fires  -> something followed an ordinary internal link on a content page.
+#   BOTH silent, per-page tags still accruing -> the arrivals reached individual content
+#                         pages WITHOUT traversing this site's link graph and WITHOUT
+#                         reading its sitemap. A link-following crawler that touched any
+#                         content page would have seen this link in that page's footer.
+#                         What survives is: arrive at one page from outside, follow the
+#                         buy link, leave. That is what a person does.
+#
+# WHY A HUMAN WILL NOT FOLLOW IT, AND WHY THAT IS NOT A TRICK. The anchor text says, in
+# plain words, that the link is a measurement control and asks the reader not to follow
+# it. Nothing is hidden: it is not `display:none`, not a 1px image, not white-on-white,
+# not `rel=nofollow`, and it is not cloaked from any user agent — every one of those is
+# bot-detection by deception and none is available to this operation. The discrimination
+# comes from the only asymmetry that is honest: a crawler does not read English and
+# follows every link it is given; a person reads the label and has no reason to click.
+#
+# THE DIRECTION OF THE ERROR, STATED BEFORE THE DATA ARRIVES. Some curious person will
+# eventually click it precisely BECAUSE it says not to. That is a false CRAWLER reading,
+# never a false human one — this control can only ever make our audience look smaller
+# than it is. That is the correct direction for this project, which has twice read its own
+# machine traffic as an audience (`increment_views`, `audit-g`), and it is the reason the
+# label is a request rather than a warning dressed up as one.
+#
+# DO NOT ADD THIS PAGE TO sitemap.xml OR llms.txt, and DO NOT REMOVE THE FOOTER LINK.
+# Either one collapses the two channels back into one. `assert_controls_wired` enforces
+# both directions on every build.
+LINKED_CONTROL_TAG = "ctl-linked"
+LINKED_CONTROL_PAGE = f"{SITE}/crawler-control-linked.html"
+
+
+def build_linked_control():
+    """The linked control. Footer-linked from every page, in no sitemap, honest about itself."""
+    title = "Measurement control page (linked)"
+    desc = ("A control page for measuring whether the referrer tags on this site record "
+            "people or crawlers. It has no data on it.")
+    return head(title, desc, LINKED_CONTROL_PAGE) + f"""
+<h1>Measurement control page (linked)</h1>
+<p>This page exists to measure this site's own instruments, and it has no market data on
+it. If you are looking for the Gumroad dataset, it is <a href="{SITE}/">here</a>.</p>
+<p>Every link to the paid report on this site carries a label identifying the page the
+reader came from. That tells the seller account which page produced an arrival, but it
+cannot by itself tell a person apart from a crawler that renders JavaScript and follows
+outbound links, because both produce exactly one arrival per page.</p>
+<p>There are two control pages. The
+<a href="{CONTROL_PAGE}">other one</a> is listed in <a href="{SITE}/sitemap.xml">sitemap.xml</a>
+and linked from no page, so only something reading the sitemap can reach it. This one is
+the mirror: it is linked from the footer of every page on this site and is listed in no
+sitemap, so only something following ordinary links can reach it. An arrival recorded
+against this page's label therefore came from something that walks a site by following
+its links &mdash; which a search crawler does and a reader of one page does not.</p>
+<p>The link that brought you here asks you not to follow it. If you followed it anyway
+out of curiosity, that is fine and it is worth knowing what it does: it files your visit
+in the same column as a crawler's. This control can only ever make the audience for this
+site look smaller than it really is, which is the direction an honest instrument should
+err when its owner is the one reading it.</p>
+<p><a href="{buy_url(LINKED_CONTROL_TAG)}">The report this site sells</a> &mdash; the same
+link every other page carries, under this page's own label.</p>
+<p>Measured by an autonomous agent; the method and the data behind the rest of the site
+are public in <a href="{REPO}">the repository</a>.</p>
+""" + FOOTER
+
 
 def build_control():
     """The negative control. Sitemap-listed, linked from nowhere, honest about itself."""
@@ -529,7 +608,9 @@ currency are both kept in the data. Method, collector and full data are public i
 Gumroad out of a completed sale — <a href="{AFFILIATES_PAGE}">the rate, the terms and the caveats
 are here</a>, and you sign yourself up with no reply from me needed. You need a Gumroad account;
 that is the only requirement. If you would rather ask first,
-<a href="mailto:{EMAIL}">{EMAIL}</a>.</footer>
+<a href="mailto:{EMAIL}">{EMAIL}</a>.
+<br><a href="{LINKED_CONTROL_PAGE}">Measurement control &mdash; not a content page, and this
+link is here to be counted rather than read. Please don't follow it.</a></footer>
 </main></body></html>
 """
 
@@ -2313,6 +2394,179 @@ def assert_readme_names_both_samples(s, ts):
                          + ", ".join(missing))
 
 
+def assert_controls_wired(docs):
+    """The two crawler controls are wired the opposite way round, and this proves it.
+
+    WHY THIS FUNCTION EXISTS, WHICH IS THE POINT WORTH KEEPING. Both `selfview.py` in the
+    operator repo and the head of `next.md` stated that "its generator asserts that
+    nothing links to it" about `crawler-control.html`. **No such assertion existed.** The
+    control shipped 2026-08-29 with its whole validity resting on a property that was
+    written down in three prose comments and enforced nowhere — so a single future author
+    adding the page to a nav list would have destroyed it silently, and the reading of the
+    data would have gone on unchanged. That is the same class as `next_token_gate`'s
+    selftest being recorded as a green live gate: a commitment kept only where somebody
+    remembered to keep it. It has one home now and it runs on every build.
+
+    The four properties, and each one is load-bearing for a different reading:
+
+      1. NOTHING links to `crawler-control.html`. If anything did, a view on `ctl-sitemap`
+         would no longer prove a sitemap read, and the first control is worth nothing.
+      2. `crawler-control.html` IS in `sitemap.xml`. Without this it is unreachable by
+         anything at all, and its silence would be guaranteed rather than informative —
+         a control that cannot fail.
+      3. EVERY page links to `crawler-control-linked.html`. Partial coverage means a
+         link-following crawler can enter the site, walk content pages and miss the
+         control, which is exactly the blind spot the second control exists to close.
+      4. `crawler-control-linked.html` is in NO sitemap and NOT in `llms.txt`. If it were
+         listed, a sitemap-driven crawler would reach it too, the two channels would
+         collapse into one, and neither control could name which class fired.
+    """
+    pages = sorted(p for p in docs.rglob("*.html"))
+    assert len(pages) > 500, f"only {len(pages)} pages — the site did not build"
+
+    ctl = CONTROL_PAGE.rsplit("/", 1)[-1]
+    lctl = LINKED_CONTROL_PAGE.rsplit("/", 1)[-1]
+
+    # (1) Read every page and name the offenders, because "some page links to it" is not
+    # actionable at 543 pages. Two traps, both hit on the first run of this check:
+    # `crawler-control-linked.html` CONTAINS the other filename as a substring, so the
+    # match is on the href and not the bare name; and every page carries a
+    # `<link rel=canonical href=...>` to ITSELF, which is not an inbound link a crawler
+    # can traverse from elsewhere — so the match is on `<a>` specifically.
+    # Both quote styles, and this is not hypothetical: `build_report_sample.py` writes
+    # `href='...'` with single quotes, so a double-quoted-only regex read `sample.html` as
+    # having no links at all. It cost a wrong conclusion before it cost a wrong gate —
+    # and the same blind spot would have MISSED a single-quoted link to the sitemap-only
+    # control, which is the failure this whole function exists to prevent.
+    anchor = re.compile(rf'''<a\b[^>]*href=["'][^"']*/{re.escape(ctl)}["']''')
+    inbound = [p.name for p in pages
+               if anchor.search(p.read_text()) and p.name != lctl]
+    assert not inbound, (
+        f"{len(inbound)} page(s) link to the sitemap-only control {ctl}, which destroys "
+        f"it — there is no way to tell afterwards which arrivals were the leak: {inbound[:6]}")
+
+    # The linked control names the other one on purpose, as prose explaining the design.
+    # That is the ONE permitted inbound link and it cannot pollute the measurement: to
+    # read it you must already have reached the linked control, which files its own tag.
+    lc = (docs / lctl).read_text()
+    assert f'href="{CONTROL_PAGE}"' in lc, "the linked control no longer explains the other one"
+
+    # (3) The property that actually matters is REACHABILITY, not universal presence, and
+    # writing the check as "every page carries the link" was wrong on the first run: 8 of
+    # 550 pages legitimately do not carry the site footer. Six are `noindex` retraction
+    # notices for withdrawn categories, which carry no footer ON PURPOSE — putting an
+    # affiliate pitch under a correction is the wrong thing to do and that decision stands.
+    # `sample.html` and `audit-sample.html` have their own hand-written footers.
+    #
+    # So the gate resolves the link graph instead. Every page must reach the linked control
+    # in at most two hops, which is what a crawler walking this site actually needs. A page
+    # that neither carries the link nor links to a page that does is a hole a crawler can
+    # sit in, and THAT is the thing worth failing the build over.
+    site_root = SITE.rstrip("/") + "/"
+
+    def local_path(page, href):
+        """An href on `page` -> the docs-relative path it points at, or None if off-site."""
+        base = site_root + str(page.relative_to(docs)).replace("\\", "/")
+        target = urllib.parse.urljoin(base, href).split("#")[0].split("?")[0]
+        if not target.startswith(site_root):
+            return None
+        rest = target[len(site_root):]
+        return (rest or "index.html") + ("index.html" if rest.endswith("/") else "")
+
+    hrefs = re.compile(r'''<a\b[^>]*href=["']([^"']+)["']''')
+    carries = re.compile(rf'''href=["']{re.escape(LINKED_CONTROL_PAGE)}["']''')
+
+    carriers, others = set(), []
+    for p in pages:
+        (carriers.add(str(p.relative_to(docs))) if carries.search(p.read_text())
+         else others.append(p))
+    assert len(carriers) > 500, f"only {len(carriers)} pages carry the control link"
+
+    stranded = []
+    for p in others:
+        hops = {local_path(p, h) for h in hrefs.findall(p.read_text())}
+        if not (hops & carriers):
+            stranded.append(str(p.relative_to(docs)))
+    assert not stranded, (
+        f"{len(stranded)} page(s) neither carry the linked control's link nor link to any "
+        f"page that does — a crawler entering there never sees the control: {stranded[:6]}")
+
+    # (2) and (4). The sitemap must carry one and not the other.
+    sm = (docs / "sitemap.xml").read_text()
+    assert CONTROL_PAGE in sm, f"{ctl} fell out of sitemap.xml — it is now unreachable, not a control"
+    assert LINKED_CONTROL_PAGE not in sm, (
+        f"{lctl} is listed in sitemap.xml — a sitemap crawler can now reach it, so the two "
+        f"controls no longer separate the two crawler classes")
+    llms = (docs / "llms.txt").read_text()
+    assert LINKED_CONTROL_PAGE not in llms, f"{lctl} is listed in llms.txt — same collapse as the sitemap"
+
+    return f"{len(pages)} pages: 0 link to {ctl}, all link to {lctl}"
+
+
+def selftest_controls(docs):
+    """Prove `assert_controls_wired` FAILS when each property is broken. `--selftest`.
+
+    The reason this exists is the reason the gate exists. Three prose comments claimed the
+    generator asserted the sitemap control was unlinked; none did. A gate nobody has seen
+    go red is the same kind of claim — it is believed, not known. Each trial below breaks
+    exactly one property on a COPY of the built site and requires a specific failure.
+    """
+    import shutil, tempfile
+
+    def trial(name, mutate, want):
+        with tempfile.TemporaryDirectory() as td:
+            d = pathlib.Path(td) / "docs"
+            shutil.copytree(docs, d)
+            mutate(d)
+            try:
+                assert_controls_wired(d)
+            except AssertionError as e:
+                assert want in str(e), f"{name}: raised, but not for {want!r}: {e}"
+                return f"  ok   {name}"
+            raise AssertionError(f"{name}: assert_controls_wired PASSED a broken site")
+
+    def link_to_sitemap_control(d):
+        # A future author adds the control to a nav list. Single quotes ON PURPOSE — the
+        # first version of this regex only matched double quotes and would have let this
+        # through, which is the bug that made `sample.html` look linkless.
+        p = d / "index.html"
+        p.write_text(p.read_text().replace(
+            "<footer>", f"<a href='{CONTROL_PAGE}'>control</a><footer>", 1))
+
+    def drop_footer_link(d):
+        # The footer link is removed from a leaf page that links nowhere else on-site.
+        p = d / "s" / "index.html"
+        t = p.read_text().replace(f'href="{LINKED_CONTROL_PAGE}"', 'href="/nowhere.html"')
+        p.write_text(re.sub(r'''<a\b[^>]*href=["'][^"']*["']''', "<span>", t))
+
+    out = [
+        trial("inbound link to the sitemap-only control is caught",
+              link_to_sitemap_control, "link to the sitemap-only control"),
+        trial("sitemap control dropped from sitemap.xml is caught",
+              lambda d: (d / "sitemap.xml").write_text(
+                  (d / "sitemap.xml").read_text().replace(
+                      f"<loc>{CONTROL_PAGE}</loc>", "")),
+              "fell out of sitemap.xml"),
+        trial("linked control ADDED to sitemap.xml is caught",
+              lambda d: (d / "sitemap.xml").write_text(
+                  (d / "sitemap.xml").read_text().replace(
+                      "</urlset>", f"<url><loc>{LINKED_CONTROL_PAGE}</loc></url></urlset>")),
+              "listed in sitemap.xml"),
+        trial("linked control ADDED to llms.txt is caught",
+              lambda d: (d / "llms.txt").write_text(
+                  (d / "llms.txt").read_text() + f"\n{LINKED_CONTROL_PAGE}\n"),
+              "listed in llms.txt"),
+        trial("a page stranded away from the linked control is caught",
+              drop_footer_link, "neither carry"),
+        trial("the linked control losing its explanation of the other is caught",
+              lambda d: (d / "crawler-control-linked.html").write_text(
+                  (d / "crawler-control-linked.html").read_text().replace(
+                      f'href="{CONTROL_PAGE}"', 'href="#"')),
+              "no longer explains the other one"),
+    ]
+    return "\n".join(out)
+
+
 def assert_readme_carries_no_sales_cta():
     """The README is the one surface a third party set a condition on. Enforce it.
 
@@ -2513,6 +2767,7 @@ def main():
     sellers = build_sellers.build(ts, trows, ROOT / "docs" / "s")
 
     (ROOT / "docs" / "crawler-control.html").write_text(build_control())
+    (ROOT / "docs" / "crawler-control-linked.html").write_text(build_linked_control())
 
     (ROOT / "docs" / "sitemap.xml").write_text(
         sitemap(s["by_category"], guides, taxo, sellers))
@@ -2529,6 +2784,7 @@ def main():
     assert_readme_carries_no_sales_cta()
     assert_report_scope(s)
     print(f"  citation target OK: {assert_citation_target()}")
+    print(f"  crawler controls OK: {assert_controls_wired(ROOT / 'docs')}")
 
     print(f"README + index + {len(guides)} guides + {len(s['by_category'])} category pages"
           f" + {len(taxo)} taxonomy pages + taxonomy index + {len(sellers)} seller pages"
@@ -2536,4 +2792,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if "--selftest" in sys.argv:
+        print("crawler-control gate, negative trials:")
+        print(selftest_controls(ROOT / "docs"))
+        print(f"LIVE: {assert_controls_wired(ROOT / 'docs')}")
+    else:
+        main()
